@@ -16,9 +16,6 @@
   ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "canvas": "^2.11.2"
-  },
   "devDependencies": {
     "serve": "^14.2.1"
   }
