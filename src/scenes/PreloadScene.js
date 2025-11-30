@@ -67,30 +67,30 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('shrimp-up-left', 'assets/sprites/enemies/shrimp/shrimp-top-left.png');
         this.load.image('shrimp-up-right', 'assets/sprites/enemies/shrimp/shrimp-top-right.png');
 
+        // Load 8-directional sprites for Flying Fish
+        this.load.image('flying-fish-down', 'assets/sprites/enemies/flying-fish/flying-fish-bottom.png');
+        this.load.image('flying-fish-up', 'assets/sprites/enemies/flying-fish/flying-fish-top.png');
+        this.load.image('flying-fish-left', 'assets/sprites/enemies/flying-fish/flying-fish-left.png');
+        this.load.image('flying-fish-right', 'assets/sprites/enemies/flying-fish/flying-fish-right.png');
+        this.load.image('flying-fish-down-left', 'assets/sprites/enemies/flying-fish/flying-fish-bottom-left.png');
+        this.load.image('flying-fish-down-right', 'assets/sprites/enemies/flying-fish/flying-fish-bottom-right.png');
+        this.load.image('flying-fish-up-left', 'assets/sprites/enemies/flying-fish/flying-fish-top-left.png');
+        this.load.image('flying-fish-up-right', 'assets/sprites/enemies/flying-fish/flying-fish-top-right.png');
+
+        // Load 8-directional sprites for Jellyfish
+        this.load.image('jellyfish-down', 'assets/sprites/enemies/jellyfish/jellyfish-bottom.png');
+        this.load.image('jellyfish-up', 'assets/sprites/enemies/jellyfish/jellyfish-top.png');
+        this.load.image('jellyfish-left', 'assets/sprites/enemies/jellyfish/jellyfish-left.png');
+        this.load.image('jellyfish-right', 'assets/sprites/enemies/jellyfish/jellyfish-right.png');
+        this.load.image('jellyfish-down-left', 'assets/sprites/enemies/jellyfish/jellyfish-bottom-left.png');
+        this.load.image('jellyfish-down-right', 'assets/sprites/enemies/jellyfish/jellyfish-bottom-right.png');
+        this.load.image('jellyfish-up-left', 'assets/sprites/enemies/jellyfish/jellyfish-top-left.png');
+        this.load.image('jellyfish-up-right', 'assets/sprites/enemies/jellyfish/jellyfish-top-right.png');
+
         this.load.spritesheet('lobster-bandit', 'assets/sprites/enemies/lobster-bandit-idle.png', {
             frameWidth: 64,
             frameHeight: 48
         });
-
-        // this.load.spritesheet('shrimp-quickdraw', 'assets/sprites/enemies/shrimp-quickdraw-idle.png', {
-        //     frameWidth: 32,
-        //     frameHeight: 32
-        // });
-
-        // this.load.spritesheet('hermit-tank', 'assets/sprites/enemies/hermit-tank-idle.png', {
-        //     frameWidth: 56,
-        //     frameHeight: 56
-        // });
-
-        // this.load.spritesheet('jellyfish-ghost', 'assets/sprites/enemies/jellyfish-ghost-float.png', {
-        //     frameWidth: 48,
-        //     frameHeight: 64
-        // });
-
-        // this.load.spritesheet('flyingfish', 'assets/sprites/enemies/flyingfish-fly.png', {
-        //     frameWidth: 48,
-        //     frameHeight: 32
-        // });
 
         // === PROJECTILES ===
 

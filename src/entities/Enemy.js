@@ -198,6 +198,18 @@ export class Enemy {
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
             this.spritePrefix = 'shrimp';
+        } else if (type === 'flyingfish') {
+            // Use directional sprites for flying fish
+            this.sprite = scene.add.sprite(x, y, 'flying-fish-down');
+            this.currentDirection = 'down';
+            this.useDirectionalSprites = true;
+            this.spritePrefix = 'flying-fish';
+        } else if (type === 'jellyfish') {
+            // Use directional sprites for jellyfish
+            this.sprite = scene.add.sprite(x, y, 'jellyfish-down');
+            this.currentDirection = 'down';
+            this.useDirectionalSprites = true;
+            this.spritePrefix = 'jellyfish';
         } else {
             // Create placeholder graphics for other enemies
             this.sprite = scene.add.circle(x, y, config.radius, config.color);
@@ -284,23 +296,10 @@ export class Enemy {
                 // Hermit now uses sprites, no visual indicators needed
                 break;
             case 'jellyfish':
-                // Tentacles
-                this.tentacles = [];
-                for (let i = 0; i < 4; i++) {
-                    const angle = (i / 4) * Math.PI * 2;
-                    const tentacle = this.scene.add.circle(
-                        this.sprite.x + Math.cos(angle) * 15,
-                        this.sprite.y + Math.sin(angle) * 15,
-                        4,
-                        0x9966cc
-                    );
-                    this.tentacles.push(tentacle);
-                }
+                // Jellyfish now uses sprites, no visual indicators needed
                 break;
             case 'flyingfish':
-                // Wings
-                this.wing1 = this.scene.add.circle(this.sprite.x - 10, this.sprite.y, 6, 0x0099cc);
-                this.wing2 = this.scene.add.circle(this.sprite.x + 10, this.sprite.y, 6, 0x0099cc);
+                // Flying fish now uses sprites, no visual indicators needed
                 break;
             case 'boss_kraken_arm':
                 // Create tentacle system
@@ -661,21 +660,10 @@ export class Enemy {
                 // Hermit now uses sprites, no visual indicators to update
                 break;
             case 'jellyfish':
-                if (this.tentacles) {
-                    this.tentacles.forEach((tentacle, i) => {
-                        const angle = (i / 4) * Math.PI * 2 + (Date.now() / 500);
-                        tentacle.setPosition(
-                            this.sprite.x + Math.cos(angle) * 15,
-                            this.sprite.y + Math.sin(angle) * 15
-                        );
-                    });
-                }
+                // Jellyfish now uses sprites, no visual indicators to update
                 break;
             case 'flyingfish':
-                if (this.wing1 && this.wing2) {
-                    this.wing1.setPosition(this.sprite.x - 10, this.sprite.y);
-                    this.wing2.setPosition(this.sprite.x + 10, this.sprite.y);
-                }
+                // Flying fish now uses sprites, no visual indicators to update
                 break;
         }
 
@@ -842,24 +830,19 @@ export class Enemy {
         // Clean up type-specific visuals
         switch(this.type) {
             case 'lobster':
-                if (this.claw1) this.claw1.destroy();
-                if (this.claw2) this.claw2.destroy();
+                // Lobster now uses sprites, no visual indicators to destroy
                 break;
             case 'shrimp':
-                if (this.antenna1) this.antenna1.destroy();
-                if (this.antenna2) this.antenna2.destroy();
+                // Shrimp now uses sprites, no visual indicators to destroy
                 break;
             case 'hermit':
-                if (this.shell) this.shell.destroy();
+                // Hermit now uses sprites, no visual indicators to destroy
                 break;
             case 'jellyfish':
-                if (this.tentacles) {
-                    this.tentacles.forEach(t => t.destroy());
-                }
+                // Jellyfish now uses sprites, no visual indicators to destroy
                 break;
             case 'flyingfish':
-                if (this.wing1) this.wing1.destroy();
-                if (this.wing2) this.wing2.destroy();
+                // Flying fish now uses sprites, no visual indicators to destroy
                 break;
             case 'boss_kraken_arm':
                 // Destroy tentacle sprites
@@ -1919,19 +1902,12 @@ export class Enemy {
         this.sprite.setAlpha(this.alphaValue);
 
         // Also update child elements
-        if (this.claw1) this.claw1.setAlpha(this.alphaValue);
-        if (this.claw2) this.claw2.setAlpha(this.alphaValue);
-        if (this.antenna1) this.antenna1.setAlpha(this.alphaValue);
-        if (this.antenna2) this.antenna2.setAlpha(this.alphaValue);
-        if (this.shell) this.shell.setAlpha(this.alphaValue);
         // Kraken boss tentacle sprites
         if (this.tentacleSprites) {
             this.tentacleSprites.forEach(sprite => {
                 if (sprite) sprite.setAlpha(this.alphaValue);
             });
         }
-        if (this.wing1) this.wing1.setAlpha(this.alphaValue);
-        if (this.wing2) this.wing2.setAlpha(this.alphaValue);
         if (this.bountyIcon) this.bountyIcon.setAlpha(this.alphaValue);
         if (this.spotLight) this.spotLight.setAlpha(this.alphaValue * 0.5);
     }
