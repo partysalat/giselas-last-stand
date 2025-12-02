@@ -442,26 +442,63 @@ AESTHETIC: Aerial bandit meets ocean creature. Conveys speed and flight. Bold an
 
 #### 1. Iron Shell (Wave 3 Boss - Multi-Directional)
 
-**ChatGPT Optimized:**
+**ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
 
-BOSS CHARACTER: Iron Shell - Wave 3 boss. A massive dark gray hermit crab. 3x the size of regular hermit crabs. Fortress-like tank boss. [ADD DIRECTION]
+BOSS CHARACTER: Iron Shell - Wave 3 boss. A massive dark gray armored hermit crab. 3x the size of regular enemies. Fortress-like tank unit with heavy metal plating.
 
-ARMOR: Heavy iron-plated shell with reinforced metal plating covering the spiral shell. Metal rivets, bolts, and armor plates visible. Additional cowboy-style metal armor over shell. Thick armored claws like iron gauntlets. Battle-worn metal with scratches.
+ARMOR & FEATURES: Enormous spiral shell covered in iron armor plating with rivets and bolts. Thick armored claws like iron gauntlets. Multiple sturdy legs. Eye stalks with menacing red eyes. Battle-worn metal with scratches. Dark gray and black metal with brown shell visible underneath. Hermit crab anatomy at massive intimidating scale.
 
-FEATURES: Hermit crab anatomy at massive scale - enormous armored spiral shell dominates, thick powerful claws encased in metal, multiple sturdy legs, eye stalks. Fortress-like, slow but incredibly durable. Boss-level intimidation.
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. No gradients. Wild west meets heavy armor aesthetic.
 
-STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Dark gray metal, iron tones, brown shell underneath. Metallic sheen on armor. No gradients, flat color zones with clear shadows.
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. Think of it as North, South, East, West views.
 
-COMPOSITION: Boss centered, taking up 85-90% of frame (massive boss enemy). Solid, planted tank stance. White or transparent background with no environmental elements.
+FRAME LAYOUT - 2x2 Grid with clear separation:
 
-AESTHETIC: Iron fortress meets armored ocean creature. Most intimidating enemy yet. Bold and readable at small sizes despite large size.
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Character faces directly toward the viewer
+- Front of face visible with eye stalks pointing forward
+- Both armored claws prominently displayed in front, held in threatening forward pose
+- Front of armored shell visible from front angle
+- This is what the player sees when the boss moves DOWN on screen toward them
+
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Character faces directly away from the viewer
+- BACK of the massive spiral shell dominates - this is the key identifying feature
+- Eye stalks barely visible or not visible (viewing from behind)
+- Claws visible at the sides pointing away
+- Legs visible from behind
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Character in complete LEFT PROFILE moving toward the left side
+- Shell visible from side angle showing its curved spiral depth
+- BOTH claws extended forward toward the LEFT direction
+- Legs in walking stance moving left
+- Side profile of head/eye stalks visible on left
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Character in complete RIGHT PROFILE moving toward the right side
+- Shell visible from side angle showing its curved spiral depth (mirror of left view)
+- BOTH claws extended forward toward the RIGHT direction
+- Legs in walking stance moving right
+- Side profile of head/eye stalks visible on right
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. Front view and back view should look VERY different (front shows face/claws forward, back shows shell back). Left and right profiles should be clear mirror images.
+
+COMPOSITION: Each frame equal size, boss centered taking up 85% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size and detail level.
 ```
 
-**Bing Base:** `Isometric 3/4 view massive dark gray hermit crab, heavy iron-plated shell, imposing boss appearance, much larger than normal, reinforced cowboy armor plating, intimidating, 45° angle, RimWorld boss sprite, comic art, thick outlines, cel-shading, wild west beach, transparent background`
+**Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
 
-**Direction modifiers:** `, facing toward camera` | `, facing away showing armored shell back` | `, left profile` | `, right profile`
+If you need to generate each direction separately, use the base prompt below and add the direction modifier:
+
+**Base Prompt:** Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. Iron Shell - massive dark gray armored hermit crab boss, 3x regular size, fortress-like. Heavy iron-plated spiral shell with rivets and bolts, thick armored claws like gauntlets, eye stalks, sturdy legs. Battle-worn metal with scratches. Bold comic book art with thick black outlines, cel-shaded, dark gray metal with brown shell underneath. Boss centered taking 85% of frame, solid stance, transparent background.
+
+**Direction modifiers:** `, facing toward camera with claws forward` | `, facing away showing back of armored shell` | `, left profile with claws pointing left` | `, right profile with claws pointing right`
 
 **Behavior notes:** Phase 1 fires bubble spread attacks. Phase 2 (below 50% HP) adds charge attacks with cracks visible on shell.
 
@@ -469,26 +506,64 @@ AESTHETIC: Iron fortress meets armored ocean creature. Most intimidating enemy y
 
 #### 2. The Kraken's Arm (Wave 6 Boss - Multi-Directional with Tentacles)
 
-**ChatGPT Optimized:**
+**ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
 
-BOSS CHARACTER: The Kraken's Arm - Wave 6 boss. A massive purple kraken with large bulbous central body. Deep-sea horror boss. [ADD DIRECTION]
+BOSS CHARACTER: The Kraken's Arm - Wave 6 boss. A massive purple kraken with large bulbous central body and four thick powerful tentacles. Deep-sea horror pirate boss.
 
-OUTFIT: Tattered, weathered pirate hat sitting on top of body. Hat is torn and aged, showing years at sea.
+OUTFIT & FEATURES: Tattered weathered pirate hat sitting on top of bulbous body, torn and aged. Large purple bulbous head/body as center mass with four thick powerful tentacles extending outward (all 4 must be visible in each frame). Tentacles writhing and independently alive with circular sucker marks. Glowing intelligent eyes. Bioluminescent spots. Oceanic texture. Enormous - dwarfs all regular enemies.
 
-FEATURES: Kraken anatomy - large purple bulbous head/body as center mass, four thick powerful tentacles extending outward (must show all 4). Tentacles writhing and independently alive. Sucker marks covering tentacles. Glowing intelligent eyes. Hints of bioluminescent spots. Oceanic texture on skin. Enormous - dwarfs all regular enemies. Deep sea creature.
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Deep purple body, darker blue shadows, glowing spots. Mystical supernatural appearance. No gradients.
 
-STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Deep purple body, darker blue shadows, glowing spots. Mystical supernatural appearance. No gradients, flat color zones with clear shadows.
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. The central body rotates while all 4 tentacles remain visible spreading outward.
 
-COMPOSITION: Boss centered with tentacles spread, taking up 90% of frame (huge boss). All four tentacles must be visible. White or transparent background with no environmental elements.
+FRAME LAYOUT - 2x2 Grid with clear separation:
 
-AESTHETIC: Deep sea horror meets pirate. Mystical and menacing. Bold and readable at small sizes.
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Central bulbous body faces directly toward the viewer
+- Glowing eyes visible on front of body, staring forward
+- Tattered pirate hat visible from front angle on top of body
+- All four tentacles spread outward around the body, extending toward viewer and sides
+- Sucker marks visible on tentacle undersides
+- This is what the player sees when the boss moves DOWN on screen toward them
+
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Central body faces away from the viewer
+- BACK of the bulbous body dominates - rear view of head/body
+- Back of pirate hat visible from behind
+- Eyes not visible or barely visible (viewing from behind)
+- All four tentacles still visible spreading outward from sides and back
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Central body in LEFT PROFILE orientation
+- Side view of bulbous body and head
+- Pirate hat visible from left side angle
+- One glowing eye visible in side profile
+- All four tentacles visible - two extending forward toward left, two toward back/sides
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Central body in RIGHT PROFILE orientation (mirror of left view)
+- Side view of bulbous body and head from right angle
+- Pirate hat visible from right side angle
+- One glowing eye visible in side profile
+- All four tentacles visible - two extending forward toward right, two toward back/sides
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. All four tentacles must be visible in every frame. Front and back views should look very different (front shows eyes, back shows rear of body).
+
+COMPOSITION: Each frame equal size, boss with tentacles centered taking up 90% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size and detail level.
 ```
 
-**Bing Base:** `Isometric 3/4 view massive purple kraken body, four large writhing tentacles extending, mystical deep-sea creature, tattered pirate hat, boss with glowing eyes, enormous menacing, 45° angle, RimWorld boss sprite, comic art, thick outlines, cel-shading, wild west beach, transparent background`
+**Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
 
-**Direction modifiers:** `, facing toward camera with all tentacles visible` | `, facing away from camera` | `, left side showing tentacles` | `, right side showing tentacles`
+If you need to generate each direction separately, use the base prompt below and add the direction modifier:
+
+**Base Prompt:** Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Kraken's Arm - massive purple kraken with large bulbous body, tattered pirate hat, four thick writhing tentacles with sucker marks, glowing eyes, bioluminescent spots. Deep-sea horror pirate. Bold comic book art with thick black outlines, cel-shaded, deep purple with darker shadows. Boss centered with all 4 tentacles visible taking 90% of frame, transparent background.
+
+**Direction modifiers:** `, facing toward camera with eyes forward and tentacles spread` | `, facing away showing back of body with tentacles spread` | `, left profile with tentacles spreading left` | `, right profile with tentacles spreading right`
 
 **Behavior notes:** Body is invulnerable until all 4 tentacles are destroyed. Tentacles regenerate over time. Creates ink clouds that slow players.
 
@@ -496,80 +571,200 @@ AESTHETIC: Deep sea horror meets pirate. Mystical and menacing. Bold and readabl
 
 #### 2b. Kraken Tentacle/Arm (Separate Destructible Parts)
 
-**ChatGPT Optimized:**
+**ChatGPT Sprite Sheet - 4 Variations in One Image:**
 ```
-Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a video game boss component sprite sheet showing 4 tentacle variations arranged in a 2x2 grid. This is for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
-ENEMY PART: A single Kraken tentacle/arm - a destructible boss part for the Kraken boss fight. This is one of four tentacles that protect the main boss body.
+BOSS COMPONENT: Kraken tentacles/arms - destructible boss parts for The Kraken's Arm boss fight. These are the four tentacles that protect the main boss body and must be destroyed independently.
 
-FEATURES: Large thick purple tentacle with muscular appearance. Covered in circular sucker marks along underside. Textured oceanic skin with deep purple coloring and darker blue-purple shadows. Bioluminescent spots glowing faintly. The tentacle should look powerful and alive, slightly curved or coiled to show movement. Base end where it would connect to body should be thicker, tapering toward the tip.
+FEATURES: Large thick purple tentacles with muscular appearance. Covered in circular sucker marks along underside. Textured oceanic skin with deep purple coloring and darker blue-purple shadows. Bioluminescent spots glowing faintly scattered along length. Base end (where it connects to body) is thicker, tapering toward the tip. Battle-scarred with possible notches or scars showing they've been in combat.
 
-DETAILS: Writhing, independently alive appearance. Battle-scarred with possible notches or scars. Menacing but clearly a destructible target. The tentacle should feel substantial - this is a mini-boss component.
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Deep purple with darker shadows, subtle glowing spots. Mystical deep-sea creature aesthetic. No gradients. Must match the main Kraken boss visual style.
 
-STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Deep purple with darker shadows, subtle glowing spots. Mystical deep-sea creature aesthetic. No gradients, flat color zones with clear shadows.
+CRITICAL: Each tentacle should have a DIFFERENT POSE/CURVE for visual variety, but maintain the same design, color, and style. This creates natural variation when all 4 are positioned around the boss.
 
-COMPOSITION: Single tentacle centered, taking up 70% of frame. Curved or coiled pose showing life and threat. White or transparent background with no environmental elements.
+FRAME LAYOUT - 2x2 Grid with clear separation:
 
-AESTHETIC: Deep sea horror. Destructible boss component. Bold and readable at small sizes. Should match the main Kraken boss visual style.
+TOP-LEFT FRAME: "TENTACLE 1 - CURVED LEFT"
+- Tentacle curves in a strong leftward arc
+- Sucker marks visible on underside as it curves
+- Bioluminescent spots glowing along the length
+- Writhing, independently alive appearance
+- Base at bottom-right, tip extending toward top-left
+
+TOP-RIGHT FRAME: "TENTACLE 2 - CURVED RIGHT"
+- Tentacle curves in a strong rightward arc (mirror of Tentacle 1)
+- Sucker marks visible on underside as it curves
+- Bioluminescent spots glowing along the length
+- Writhing, independently alive appearance
+- Base at bottom-left, tip extending toward top-right
+
+BOTTOM-LEFT FRAME: "TENTACLE 3 - COILED/S-CURVE"
+- Tentacle forms an S-shaped coil showing dynamic movement
+- More complex curve creating visual interest
+- Sucker marks visible throughout the curves
+- Bioluminescent spots emphasizing the coiled shape
+- Base at bottom, tip curling back creating the S-shape
+
+BOTTOM-RIGHT FRAME: "TENTACLE 4 - REACHING FORWARD"
+- Tentacle extends more directly forward/upward
+- Less curved, more aggressive reaching pose
+- Sucker marks along length as it stretches
+- Bioluminescent spots running along the extended length
+- Base at bottom, tip reaching toward top with slight curve
+
+IMPORTANT: All four tentacles are the SAME tentacle type with identical coloring, texture, sucker marks, and bioluminescent spots. Only the POSE/CURVE differs. They should all look like they belong to the same creature. Each should feel substantial - these are mini-boss components.
+
+COMPOSITION: Each frame equal size, single tentacle centered taking up 70% of frame space. White/transparent background. Clear borders between frames. All four must be the same size and detail level, matching the Kraken boss aesthetic.
 ```
+
+**Alternative: Single Tentacle Prompt (if sprite sheet doesn't work)**
+
+If you need to generate variations separately, use this base prompt:
+
+**Base Prompt:** Create a single video game boss component sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. Single Kraken tentacle - large thick purple tentacle with muscular appearance, circular sucker marks on underside, textured oceanic skin, bioluminescent spots glowing faintly. Battle-scarred with notches. Base end thick tapering to tip. Bold comic book art with thick black outlines, cel-shaded, deep purple with darker shadows. Tentacle centered taking 70% of frame, transparent background. Deep-sea horror aesthetic matching main Kraken boss.
+
+**Pose variations to request separately:**
+- `, curved in a strong leftward arc`
+- `, curved in a strong rightward arc`
+- `, forming an S-shaped coil`
+- `, reaching forward with slight curve`
 
 **Bing Condensed (480 chars):**
 ```
 Isometric 3/4 view single large purple kraken tentacle, muscular with sucker marks, curved alive pose, bioluminescent spots, deep-sea creature, destructible boss part, 45° angle above, RimWorld style sprite, comic book art, thick black outlines, cel-shading, mystical oceanic appearance, wild west beach theme, game enemy sprite on transparent background
 ```
 
-**Animation/Variation Notes:**
-- Consider generating 2-3 variations with different coiling/curves for visual variety
-- Could add "damaged" versions showing cracks/wounds for when tentacle health is low
-- Each of the 4 tentacles could use slightly different poses while maintaining same design
+**Usage Notes:**
+- Generate 4 tentacles with different poses for visual variety when positioned around the boss
+- All 4 should match the main Kraken boss in color and style
+- Consider adding "damaged" versions showing cracks/wounds for when tentacle health is low
+- Each tentacle is independently targetable and destructible
 
-**Result:** Individual tentacle sprite that can be positioned around the central Kraken body, allowing players to target and destroy them independently.
+**Result:** Four tentacle variations that can be positioned around the central Kraken body, allowing players to target and destroy them independently while maintaining visual variety.
 
 ---
 
 #### 3. The Leviathan (Wave 9 Final Boss - Multi-Directional, Two-Phase)
 
-**Phase 1 ChatGPT Optimized:**
+**Phase 1 - ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a single video game FINAL BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game FINAL BOSS CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
 
-FINAL BOSS CHARACTER: The Leviathan Phase 1 - Wave 9 final boss. A colossal orange-red sea serpent. Legendary final boss - biggest enemy in entire game. Ancient sea monster. [ADD DIRECTION]
+FINAL BOSS CHARACTER: The Leviathan Phase 1 - Wave 9 final boss. A colossal orange-red sea serpent. Legendary final boss - biggest enemy in entire game. Ancient sea monster.
 
-OUTFIT: Golden cowboy accessories - golden cowboy hat on head, golden sheriff's badge on chest, golden spurs/bands on tail. All gold elements show legendary status.
+OUTFIT & FEATURES: Golden cowboy accessories - golden cowboy hat on head, golden sheriff's badge on chest, golden spurs/bands on tail showing legendary status. Long powerful serpentine body coiled, massive scaled body with prominent fins along spine, dragon-like fierce head with menacing eyes, battle-scarred ancient appearance. Weathered scales showing age and countless battles. Fierce, primal energy. Enormous - fills 95% of frame. Most intimidating enemy in game.
 
-FEATURES: Sea serpent anatomy at legendary scale - long powerful serpentine body coiled, massive scaled body with prominent fins along spine, dragon-like fierce head, battle-scarred ancient appearance. Weathered scales showing age and countless battles. Fierce, primal energy. Enormous - fills 95% of frame. Most intimidating enemy in game.
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Bold orange-red scales, golden accessories with shine, dark shadows. Epic final boss presence. No gradients.
 
-STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Bold orange-red scales, golden accessories with shine, dark shadows. Epic final boss presence. No gradients, flat color zones with clear shadows.
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. The serpentine body rotates while maintaining its coiled, powerful pose.
 
-COMPOSITION: Legendary boss dominates entire frame at 95%. Coiled serpentine pose showing power. White or transparent background with no environmental elements.
+FRAME LAYOUT - 2x2 Grid with clear separation:
 
-AESTHETIC: Ancient sea god meets wild west legend. Ultimate final challenge. Epic and readable even at large size.
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Serpent's head faces directly toward the viewer
+- Dragon-like fierce head prominent with eyes staring forward menacingly
+- Golden cowboy hat visible from front angle on head
+- Golden sheriff's badge visible on chest/front
+- Serpentine body coiled behind and around, showing scale texture and fins
+- This is what the player sees when the boss moves DOWN on screen toward them
+
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Serpent faces away from the viewer
+- BACK of the head and body dominates
+- Back of golden cowboy hat visible
+- Serpentine body coiling away, showing back scales and spine fins prominently
+- Golden spurs/bands visible on tail sections
+- Eyes not visible (viewing from behind)
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Serpent in LEFT PROFILE orientation
+- Side view of dragon-like head facing left
+- One eye visible in fierce side profile
+- Golden hat visible from left side angle
+- Badge visible from side angle on body
+- Serpentine body coiled showing side profile with prominent fins along spine
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Serpent in RIGHT PROFILE orientation (mirror of left view)
+- Side view of dragon-like head facing right
+- One eye visible in fierce side profile
+- Golden hat visible from right side angle
+- Badge visible from side angle on body
+- Serpentine body coiled showing side profile with prominent fins along spine
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. Front and back views should look very different (front shows fierce face, back shows rear/tail). Left and right profiles should be clear mirror images.
+
+COMPOSITION: Each frame equal size, legendary boss dominates 95% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size, scale detail, and epic presence.
 ```
 
-**Phase 2 ChatGPT Optimized:**
+**Phase 2 - ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a single video game FINAL BOSS EVOLVED FORM sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game FINAL BOSS EVOLVED FORM CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
 
-FINAL BOSS EVOLVED: The Leviathan Phase 2 - Wave 9 final boss SECOND FORM. Same colossal sea serpent but transformed with electrical powers. This is the "ultimate final form" moment. Storm god boss. [ADD DIRECTION]
+FINAL BOSS EVOLVED: The Leviathan Phase 2 - Wave 9 final boss SECOND FORM. Same colossal sea serpent but TRANSFORMED with electrical powers. This is the "ultimate final form" moment. Storm god boss.
 
-TRANSFORMATION: Electric blue coloring replaces orange-red. Crackling lightning and electricity arcing across entire body. Electrical aura surrounding boss. Glowing electric eyes. Energy visibly crackling from body. Yellow lightning bolts. Supernatural electrical power unleashed.
+TRANSFORMATION & FEATURES: Electric blue coloring replaces orange-red. Crackling lightning and electricity arcing across ENTIRE body. Electrical aura surrounding boss. Glowing electric eyes radiating power. Energy visibly crackling from body with yellow lightning bolts. Same golden cowboy accessories but now GLOWING with electrical energy - hat, badge, and spurs all energized and sparking. Same serpentine anatomy - long powerful coiled body, massive scaled body, fins along spine, dragon-like head. Godlike electrical storm powers unleashed. Enormous - fills 95% of frame. Most powerful form in game.
 
-OUTFIT: Same golden cowboy accessories but now glowing with electrical energy. Golden hat, badge, and spurs all energized.
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Bright electric blue scales, yellow lightning effects, glowing golden accessories. Dramatic electrical transformation. Lightning effects integrated into cel-shading style. No gradients.
 
-FEATURES: Same sea serpent anatomy - long powerful serpentine body coiled, massive scaled body with fins, dragon-like head. But now with godlike electrical powers. Ancient sea monster evolved to storm deity. Enormous - fills 95% of frame. Most powerful form.
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. The electrified serpentine body rotates while maintaining its powerful storm god pose.
 
-STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 tone levels. Bright electric blue scales, yellow lightning effects, glowing golden accessories. Dramatic transformation. Lightning effects integrated into cel-shading style. No gradients, flat color zones with clear shadows.
+FRAME LAYOUT - 2x2 Grid with clear separation:
 
-COMPOSITION: Legendary evolved boss dominates entire frame at 95%. Coiled with electricity radiating. White or transparent background with no environmental elements.
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Serpent's head faces directly toward the viewer with GLOWING ELECTRIC EYES
+- Dragon-like head prominent with electricity crackling around it
+- Golden cowboy hat GLOWING with electrical energy from front angle
+- Golden sheriff's badge GLOWING and sparking on chest/front
+- Electric blue serpentine body coiled behind with VISIBLE LIGHTNING ARCS
+- Yellow lightning bolts crackling across body
+- This is what the player sees when the boss moves DOWN on screen toward them
 
-AESTHETIC: Storm god meets wild west legend. Ultimate power unleashed. Epic "final form" moment. Bold and readable even at large size.
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Serpent faces away from the viewer
+- BACK of the electrified head and body dominates
+- Back of glowing golden hat visible with electrical aura
+- Electric blue serpentine body coiling away, electricity arcing along spine fins
+- Golden spurs GLOWING on tail sections with lightning effects
+- Eyes barely visible glowing through electrical aura
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Serpent in LEFT PROFILE orientation
+- Side view of dragon-like head facing left with GLOWING eye radiating electricity
+- Glowing golden hat visible from left side with electrical sparks
+- Glowing badge visible from side angle sparking with energy
+- Electric blue serpentine body coiled showing side profile with lightning arcing along fins
+- Yellow lightning bolts visible across body
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Serpent in RIGHT PROFILE orientation (mirror of left view)
+- Side view of dragon-like head facing right with GLOWING eye radiating electricity
+- Glowing golden hat visible from right side with electrical sparks
+- Glowing badge visible from side angle sparking with energy
+- Electric blue serpentine body coiled showing side profile with lightning arcing along fins
+- Yellow lightning bolts visible across body
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. Front and back views should look very different. Left and right profiles should be clear mirror images. The electrical effects (lightning, glow, arcs) must be present in ALL four views.
+
+COMPOSITION: Each frame equal size, legendary evolved boss dominates 95% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size, electrical effects, and epic transformed presence.
 ```
 
-**Bing Phase 1:** `Isometric 3/4 view colossal orange-red sea serpent boss, scales and fins, legendary final boss, golden cowboy accessories, massive terrifying, ancient sea monster, 45° angle, RimWorld boss sprite, comic art, thick outlines, cel-shading, wild west beach, transparent background`
+**Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
 
-**Bing Phase 2:** `Isometric 3/4 view colossal electric blue sea serpent boss, crackling lightning effects, transformed legendary boss, golden cowboy accessories, massive with electrical aura, ancient sea monster evolved, 45° angle, RimWorld boss sprite, comic art, thick outlines, cel-shading, wild west beach, transparent background`
+If you need to generate each direction separately, use these base prompts and add the direction modifier:
 
-**Direction modifiers (both phases):** `, facing toward camera` | `, facing away from camera` | `, left profile view` | `, right profile view`
+**Phase 1 Base Prompt:** Create a single video game FINAL BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Leviathan Phase 1 - colossal orange-red sea serpent, golden cowboy hat, golden sheriff's badge, golden spurs on tail, legendary final boss. Long powerful coiled serpentine body, massive scales, prominent spine fins, dragon-like fierce head, battle-scarred ancient. Bold comic book art with thick black outlines, cel-shaded, bold orange-red scales with golden accessories. Boss dominates 95% of frame, transparent background.
+
+**Phase 2 Base Prompt:** Create a single video game FINAL BOSS EVOLVED FORM sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Leviathan Phase 2 - same colossal sea serpent but ELECTRIC BLUE with crackling lightning across entire body, electrical aura, glowing electric eyes, yellow lightning bolts. Golden cowboy accessories now GLOWING with electrical energy. Storm god transformation. Bold comic book art with thick black outlines, cel-shaded, bright electric blue with yellow lightning effects. Boss dominates 95% of frame, transparent background.
+
+**Direction modifiers (both phases):** `, facing toward camera with head forward` | `, facing away showing back and tail` | `, left profile view` | `, right profile view`
 
 **Behavior notes:** Phase 1 (orange-red) uses bullet storms, ground pounds, and charges. At 0 HP, transitions to Phase 2 (electric blue) with full health restore, lightning strikes, tidal waves, and spawns minions.
 

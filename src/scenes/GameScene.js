@@ -768,7 +768,7 @@ export class GameScene extends Phaser.Scene {
 
                     // Flash enemy white (different methods for sprites vs circles)
                     const sprite = enemy.getSprite();
-                    if (enemy.useDirectionalSprites) {
+                    if (enemy.useDirectionalSprites || enemy.useSprite) {
                         // For sprites, use tint
                         sprite.setTint(0xffffff);
                         this.time.delayedCall(100, () => {

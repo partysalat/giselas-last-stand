@@ -210,6 +210,12 @@ export class Enemy {
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
             this.spritePrefix = 'jellyfish';
+        } else if (type === 'boss_iron_shell') {
+            // Use spritesheet for Iron Shell boss (4 frames, will use frame 0 as default)
+            this.sprite = scene.add.sprite(x, y, 'iron-shell-boss', 0);
+            this.useDirectionalSprites = false;
+            this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
+            this.bossFrameIndex = 0;
         } else {
             // Create placeholder graphics for other enemies
             this.sprite = scene.add.circle(x, y, config.radius, config.color);
@@ -1125,6 +1131,18 @@ export class Enemy {
                 Math.cos(angle) * currentSpeed,
                 Math.sin(angle) * currentSpeed
             );
+
+            // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=right, 3=left)
+            const absX = Math.abs(dx);
+            const absY = Math.abs(dy);
+
+            if (absY > absX) {
+                // Primarily vertical movement
+                this.sprite.setFrame(dy < 0 ? 1 : 0);  // Moving up: frame 1, Moving down: frame 0
+            } else {
+                // Primarily horizontal movement
+                this.sprite.setFrame(dx < 0 ? 3 : 2);  // Moving left: frame 3, Moving right: frame 2
+            }
         } else if (!this.chargingAttack) {
             this.sprite.body.setVelocity(0, 0);
         }
@@ -1137,10 +1155,8 @@ export class Enemy {
         this.scene.cameras.main.shake(200, 0.01);
         this.scene.cameras.main.flash(200, 255, 100, 100);
 
-        // Add cracks to shell visual
-        if (this.shell) {
-            this.shell.setStrokeStyle(3, 0xff0000);
-        }
+        // Add red tint to sprite to show damage/phase 2
+        this.sprite.setTint(0xff6666);
 
         console.log('Iron Shell entered Phase 2!');
     }

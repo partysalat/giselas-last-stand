@@ -92,6 +92,12 @@ export class PreloadScene extends Phaser.Scene {
             frameHeight: 48
         });
 
+        // Load Iron Shell boss sprite (4 directional views in 2x2 grid)
+        this.load.spritesheet('iron-shell-boss', 'assets/sprites/enemies/iron-shell.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+
         // === PROJECTILES ===
 
         this.load.image('bullet', 'assets/sprites/projectiles/bullet.png');
