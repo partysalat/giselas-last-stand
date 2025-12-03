@@ -57,7 +57,11 @@ export class EnvironmentManager {
             { type: 'oilLamp', x: 700, y: 700 }, // On card table
             { type: 'oilLamp', x: 1220, y: 700 }, // On bar counter
             { type: 'oilLamp', x: 650, y: 300 }, // On another table
-            { type: 'oilLamp', x: 1270, y: 300 } // On another table
+            { type: 'oilLamp', x: 1270, y: 300 }, // On another table
+            // Phase 4: Add tactical props
+            { type: 'bellRope', x: 960, y: 150 }, // Center ceiling
+            { type: 'stageLights', x: 600, y: 200 }, // Left stage light
+            { type: 'stageLights', x: 1320, y: 200 } // Right stage light
         ];
 
         this.spawnProps(propLayout);
@@ -125,6 +129,38 @@ export class EnvironmentManager {
 
         // Clean up dead props
         this.cleanup();
+    }
+
+    /**
+     * Check for player interaction with tactical props (Phase 4)
+     * Returns the nearest interactive prop within activation radius
+     */
+    getNearbyInteractiveProp(playerX, playerY) {
+        let nearestProp = null;
+        let nearestDistance = Infinity;
+
+        this.props.forEach(prop => {
+            if (!prop.isAlive() || !prop.interactive) return;
+
+            const dx = prop.x - playerX;
+            const dy = prop.y - playerY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < prop.activationRadius && dist < nearestDistance) {
+                nearestDistance = dist;
+                nearestProp = prop;
+            }
+        });
+
+        return nearestProp;
+    }
+
+    /**
+     * Activate a tactical prop (Phase 4)
+     */
+    activateTacticalProp(prop, playerX, playerY) {
+        if (!prop || !prop.interactive) return false;
+        return prop.activate(playerX, playerY);
     }
 
     /**
@@ -306,5 +342,13 @@ export class EnvironmentManager {
      */
     clearAllCover() {
         this.clearAllProps();
+    }
+
+    /**
+     * Compatibility method for old CoverManager API
+     * Damage props in radius (used by boss attacks)
+     */
+    damageInRadius(x, y, radius, damage) {
+        this.damagePropsInRadius(x, y, radius, damage);
     }
 }

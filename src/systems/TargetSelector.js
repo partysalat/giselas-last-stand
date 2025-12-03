@@ -183,8 +183,13 @@ export class TargetSelector {
             props.forEach(prop => {
                 if (!prop.isAlive()) return;
 
-                // Only add targetable props (explosives and hazards)
-                if (prop.explosionRadius > 0 || prop.className === 'HazardProp') {
+                // Only add targetable props (explosives, hazards, and stage lights)
+                // Note: Bell rope is NOT targetable (interactive only, not shootable)
+                const isTargetable = prop.explosionRadius > 0 ||
+                                    prop.className === 'HazardProp' ||
+                                    (prop.className === 'TacticalProp' && prop.type === 'stageLights');
+
+                if (isTargetable) {
                     targets.push({
                         type: 'prop',
                         prop: prop,

@@ -57,6 +57,23 @@ export class EnvironmentProp {
         this.impactDamage = config.impactDamage || 0;
         this.impactSpeed = config.impactSpeed || 50; // Minimum speed to deal damage
         this.friction = config.friction || 0.92;
+
+        // Tactical properties (Phase 4)
+        this.interactive = config.interactive || false;
+        this.activationRadius = config.activationRadius || 0;
+        this.onActivate = config.onActivate || null;
+        this.stunRadius = config.stunRadius || 0;
+        this.stunDuration = config.stunDuration || 0;
+        this.maxUses = config.maxUses || 0;
+        this.cooldown = config.cooldown || 0;
+        this.fallDamage = config.fallDamage || 0;
+        this.fallRadius = config.fallRadius || 0;
+        this.fallDirection = config.fallDirection || null;
+
+        // Tactical state tracking
+        this.usesRemaining = this.maxUses;
+        this.lastActivationTime = 0;
+        this.isOnCooldown = false;
     }
 
     /**
@@ -279,6 +296,11 @@ export class EnvironmentProp {
         if (this.onDestroy === 'createFireZone' && this.fireRadius > 0) {
             this.createFireZone();
         }
+
+        // Phase 4: Handle stage light falling
+        if (this.onDestroy === 'fallAndDealDamage') {
+            this.fallAndDealDamage();
+        }
     }
 
     /**
@@ -416,6 +438,164 @@ export class EnvironmentProp {
     update(delta) {
         // Base class has no per-frame logic
         // Subclasses can override for dynamic behavior
+
+        // Update cooldown state for tactical props
+        if (this.isOnCooldown && this.cooldown > 0) {
+            const timeSinceActivation = Date.now() - this.lastActivationTime;
+            if (timeSinceActivation >= this.cooldown) {
+                this.isOnCooldown = false;
+            }
+        }
+    }
+
+    /**
+     * Check if tactical prop can be activated (Phase 4)
+     */
+    canActivate() {
+        if (!this.interactive) return false;
+        if (!this.alive) return false;
+        if (this.maxUses > 0 && this.usesRemaining <= 0) return false;
+        if (this.isOnCooldown) return false;
+        return true;
+    }
+
+    /**
+     * Activate tactical prop effect (Phase 4)
+     */
+    activate(playerX, playerY) {
+        console.log(`Activate called on ${this.name}, canActivate: ${this.canActivate()}`);
+
+        if (!this.canActivate()) {
+            console.log(`Cannot activate: alive=${this.alive}, interactive=${this.interactive}, usesRemaining=${this.usesRemaining}, isOnCooldown=${this.isOnCooldown}`);
+            return false;
+        }
+
+        console.log(`Activating ${this.name} with onActivate: ${this.onActivate}`);
+
+        // Handle activation based on type
+        if (this.onActivate === 'stunEnemies') {
+            this.stunNearbyEnemies();
+        }
+
+        // Update usage tracking
+        if (this.maxUses > 0) {
+            this.usesRemaining--;
+            console.log(`Uses remaining: ${this.usesRemaining}/${this.maxUses}`);
+        }
+
+        // Start cooldown
+        if (this.cooldown > 0) {
+            this.isOnCooldown = true;
+            this.lastActivationTime = Date.now();
+            console.log(`Cooldown started: ${this.cooldown}ms`);
+        }
+
+        // Visual feedback
+        this.showActivationEffect();
+
+        return true;
+    }
+
+    /**
+     * Stun nearby enemies (bell rope effect)
+     */
+    stunNearbyEnemies() {
+        if (!this.scene.enemies || !this.stunRadius || !this.stunDuration) return;
+
+        let stunnedCount = 0;
+        this.scene.enemies.forEach(enemy => {
+            if (!enemy.isAlive()) return;
+
+            const dx = enemy.getSprite().x - this.x;
+            const dy = enemy.getSprite().y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < this.stunRadius) {
+                // Apply stun effect (if enemy has stun method)
+                if (enemy.stun) {
+                    enemy.stun(this.stunDuration);
+                    stunnedCount++;
+                }
+            }
+        });
+
+        console.log(`${this.name} activated - stunned ${stunnedCount} enemies`);
+    }
+
+    /**
+     * Show visual feedback for activation
+     */
+    showActivationEffect() {
+        // Create expanding ring effect
+        const ring = this.scene.add.circle(
+            this.x,
+            this.y,
+            10,
+            0xFFFF00,
+            0
+        );
+        ring.setStrokeStyle(4, 0xFFFF00);
+        ring.setDepth(25);
+
+        // Animate ring expanding
+        this.scene.tweens.add({
+            targets: ring,
+            radius: this.stunRadius || this.activationRadius || 100,
+            alpha: { from: 0.8, to: 0 },
+            duration: 400,
+            onComplete: () => ring.destroy()
+        });
+    }
+
+    /**
+     * Handle stage light falling (tactical prop)
+     */
+    fallAndDealDamage(direction) {
+        if (!this.alive) return;
+
+        // Calculate fall position based on direction
+        const fallDistance = 50;
+        const angle = direction || Math.atan2(this.y - 540, this.x - 960); // Default: fall toward center
+        const fallX = this.x + Math.cos(angle) * fallDistance;
+        const fallY = this.y + Math.sin(angle) * fallDistance;
+
+        // Animate falling
+        this.scene.tweens.add({
+            targets: this.sprite,
+            x: fallX,
+            y: fallY,
+            rotation: Math.PI * 2,
+            duration: 300,
+            onComplete: () => {
+                // Deal damage in radius on impact
+                this.dealFallDamage(fallX, fallY);
+                // Destroy the prop
+                this.destroy();
+            }
+        });
+    }
+
+    /**
+     * Deal damage from falling stage light
+     */
+    dealFallDamage(x, y) {
+        const radius = this.fallRadius || 30;
+        const damage = this.fallDamage || 15;
+
+        // Visual impact effect
+        const impact = this.scene.add.circle(x, y, radius, 0xFFFF00, 0.4);
+        impact.setDepth(25);
+
+        this.scene.tweens.add({
+            targets: impact,
+            scale: 1.5,
+            alpha: 0,
+            duration: 300,
+            onComplete: () => impact.destroy()
+        });
+
+        // Damage entities in radius
+        this.damageInRadius(x, y, radius, damage);
     }
 
     /**
@@ -534,5 +714,43 @@ export const PROP_TYPES = {
         explosionRadius: 200, // Increased from 60 for better physics visibility
         explosionDamage: 20,
         layer: 'ground'
+    },
+
+    // Phase 4: Tactical Props
+
+    // Stage Lights - shoot to drop and deal damage
+    stageLights: {
+        name: 'Stage Lights',
+        class: 'TacticalProp',
+        maxHealth: 40,
+        width: 30,
+        height: 20,
+        weightClass: null,
+        color: 0xFFFF00,
+        blocksBullets: true,
+        onDestroy: 'fallAndDealDamage',
+        fallDamage: 15,
+        fallRadius: 30,
+        layer: 'ceiling'
+    },
+
+    // Bell Rope - activate to stun enemies
+    bellRope: {
+        name: 'Bell Rope',
+        class: 'TacticalProp',
+        maxHealth: 30,
+        width: 10,
+        height: 60,
+        weightClass: null,
+        color: 0xCD853F,
+        blocksBullets: true,
+        interactive: true,
+        activationRadius: 50,
+        onActivate: 'stunEnemies',
+        stunRadius: 600,
+        stunDuration: 5000,
+        maxUses: 3,
+        cooldown: 2000,
+        layer: 'ceiling'
     }
 };

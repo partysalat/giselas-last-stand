@@ -300,6 +300,13 @@ export class Enemy {
         this.collisionEnabled = true;
         this.alphaValue = 1.0;
 
+        // Phase 4: Stun state (for tactical props)
+        this.stunned = false;
+        this.stunEndTime = 0;
+
+        // Track last hit by which player (for scoring in multiplayer)
+        this.lastHitByPlayerIndex = 0;
+
         console.log('Enemy created:', config.name, 'at', x, y);
     }
 
@@ -412,6 +419,18 @@ export class Enemy {
 
     update(time, playerX, playerY) {
         if (!this.alive) return;
+
+        // Phase 4: Check if stun has expired
+        if (this.stunned && Date.now() >= this.stunEndTime) {
+            this.stunned = false;
+            // Remove stun visual effect
+            if (this.sprite) {
+                this.sprite.clearTint();
+            }
+        }
+
+        // Skip update if stunned
+        if (this.stunned) return;
 
         // Handle formation positioning for movement
         let formationHandled = false;
@@ -833,6 +852,23 @@ export class Enemy {
 
     isAlive() {
         return this.alive;
+    }
+
+    /**
+     * Phase 4: Stun this enemy for a duration (tactical prop effect)
+     */
+    stun(duration) {
+        if (!this.alive || this.stunned) return;
+
+        this.stunned = true;
+        this.stunEndTime = Date.now() + duration;
+
+        // Visual feedback - tint enemy blue-white
+        if (this.sprite) {
+            this.sprite.setTint(0xADD8E6); // Light blue tint
+        }
+
+        console.log(`${this.config.name} stunned for ${duration}ms`);
     }
 
     getSprite() {

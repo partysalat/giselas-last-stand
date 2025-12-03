@@ -64,8 +64,12 @@ export class GameScene extends Phaser.Scene {
             W: Phaser.Input.Keyboard.KeyCodes.W,
             A: Phaser.Input.Keyboard.KeyCodes.A,
             S: Phaser.Input.Keyboard.KeyCodes.S,
-            D: Phaser.Input.Keyboard.KeyCodes.D
+            D: Phaser.Input.Keyboard.KeyCodes.D,
+            R: Phaser.Input.Keyboard.KeyCodes.R // Phase 4: Tactical prop activation
         });
+
+        // Track R key state for tactical props (to avoid JustDown timing issues)
+        this.lastRKeyState = false;
 
         // Create enemy array
         this.enemies = [];
@@ -169,6 +173,16 @@ export class GameScene extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 3
         }).setOrigin(0.5, 0);
+
+        // Phase 4: Tactical prop interaction UI
+        this.tacticalPropUI = this.add.text(960, 950, '', {
+            fontSize: '24px',
+            color: '#ffff00',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5, 0);
+        this.tacticalPropUI.setDepth(100);
 
         // Add stored cocktail indicator (bottom left of screen)
         this.storedCocktailHUD = this.add.container(30, 980);
@@ -557,6 +571,9 @@ export class GameScene extends Phaser.Scene {
 
         // Update stored cocktail HUD
         this.updateStoredCocktailHUD();
+
+        // Phase 4: Check for tactical prop interactions
+        this.updateTacticalPropInteraction();
 
         // Update health bars
         if (this.playerHealthBars) {
@@ -1477,6 +1494,101 @@ export class GameScene extends Phaser.Scene {
                     this.formationGraphics.lineBetween(x1, y1, x2, y2);
                 }
             }
+        });
+    }
+
+    /**
+     * Phase 4: Update tactical prop interaction system
+     */
+    updateTacticalPropInteraction() {
+        if (!this.environmentManager || !this.player) return;
+
+        // Get first living player for interaction (single player for now)
+        const livingPlayers = this.playerManager.getLivingPlayers();
+        if (livingPlayers.length === 0) {
+            this.tacticalPropUI.setText('');
+            return;
+        }
+
+        const player = livingPlayers[0];
+        const playerX = player.getX();
+        const playerY = player.getY();
+
+        // Check for nearby interactive props
+        const nearbyProp = this.environmentManager.getNearbyInteractiveProp(playerX, playerY);
+
+        if (nearbyProp && nearbyProp.canActivate()) {
+            // Check if player has a cocktail (if so, R key is reserved for drinking)
+            const hasCocktail = player.storedCocktail !== null;
+
+            if (hasCocktail) {
+                // Can't use tactical prop when holding cocktail
+                this.tacticalPropUI.setText(`${nearbyProp.name} available (drink cocktail first)`);
+                // Reset R key tracking when cocktail present
+                this.lastRKeyState = this.keys.R.isDown;
+            } else {
+                // Show interaction prompt
+                const usesText = nearbyProp.maxUses > 0
+                    ? ` (${nearbyProp.usesRemaining}/${nearbyProp.maxUses})`
+                    : '';
+                this.tacticalPropUI.setText(`Press R to use ${nearbyProp.name}${usesText}`);
+
+                // Detect R key press manually (to avoid JustDown timing issues with other systems)
+                const rPressed = this.keys.R.isDown && !this.lastRKeyState;
+                this.lastRKeyState = this.keys.R.isDown;
+
+                if (rPressed) {
+                    const activated = this.environmentManager.activateTacticalProp(nearbyProp, playerX, playerY);
+                    if (activated) {
+                        console.log(`Activated ${nearbyProp.name}`);
+                        // Show brief feedback
+                        this.showTacticalPropActivationFeedback(nearbyProp);
+                    }
+                }
+            }
+        } else if (nearbyProp && !nearbyProp.canActivate()) {
+            // Show why it can't be activated
+            if (nearbyProp.isOnCooldown) {
+                this.tacticalPropUI.setText(`${nearbyProp.name} on cooldown...`);
+            } else if (nearbyProp.usesRemaining <= 0) {
+                this.tacticalPropUI.setText(`${nearbyProp.name} depleted`);
+            }
+        } else {
+            // No nearby interactive prop
+            this.tacticalPropUI.setText('');
+        }
+    }
+
+    /**
+     * Show feedback when tactical prop is activated
+     */
+    showTacticalPropActivationFeedback(prop) {
+        // Flash screen
+        this.cameras.main.flash(200, 255, 255, 0);
+
+        // Show brief text
+        const text = this.add.text(
+            prop.x,
+            prop.y - 80,
+            `${prop.name} Activated!`,
+            {
+                fontSize: '28px',
+                color: '#ffff00',
+                fontFamily: 'Arial',
+                stroke: '#000000',
+                strokeThickness: 4
+            }
+        ).setOrigin(0.5);
+        text.setDepth(100);
+
+        // Fade out
+        this.tweens.add({
+            targets: text,
+            alpha: 0,
+            y: text.y - 40,
+            duration: 1000,
+            ease: 'Power2',
+            onComplete: () => text.destroy()
         });
     }
 }
