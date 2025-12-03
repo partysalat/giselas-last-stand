@@ -861,10 +861,10 @@ STYLE: Bold comic book art with thick black ink outlines around every shape. Cel
 COMPOSITION: Bowl centered, taking up 60% of frame. Bowl sitting at slight angle showing contents. White or transparent background with no environmental elements.
 
 AESTHETIC: Classic saloon snack with magical healing properties. Warm and inviting. Clearly a health restoration collectible. Bold and readable at small sizes.
-```a
+```
 
 **Bing Condensed (480 chars):**
-```
+
 Isometric 3/4 view wooden bowl filled with salted bar nuts, peanuts and cashews visible, glowing with golden healing magic, warm sparkles, rustic saloon bowl, comic book art style with thick black outlines and cel-shading, warm brown and golden tones, wild west saloon aesthetic, health powerup game sprite on transparent background
 ```
 

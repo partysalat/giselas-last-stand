@@ -222,6 +222,13 @@ export class Enemy {
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
+        } else if (type === 'boss_leviathan') {
+            // Use spritesheet for Leviathan boss (4 frames, will use frame 0 as default)
+            this.sprite = scene.add.sprite(x, y, 'leviathan-boss', 0);
+            this.useDirectionalSprites = false;
+            this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
+            this.bossFrameIndex = 0;
+            this.currentPhase = 1;  // Track phase for sprite switching
         } else {
             // Create placeholder graphics for other enemies
             this.sprite = scene.add.circle(x, y, config.radius, config.color);
@@ -1501,6 +1508,24 @@ export class Enemy {
                 Math.cos(angle) * this.config.speed,
                 Math.sin(angle) * this.config.speed
             );
+
+            // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=left, 3=right)
+            if (this.useSprite) {
+                const absX = Math.abs(dx);
+                const absY = Math.abs(dy);
+
+                if (absY > absX) {
+                    // Primarily vertical movement
+                    this.bossFrameIndex = dy < 0 ? 1 : 0;  // Moving up: frame 1, Moving down: frame 0
+                } else {
+                    // Primarily horizontal movement
+                    this.bossFrameIndex = dx < 0 ? 2 : 3;  // Moving left: frame 2, Moving right: frame 3
+                }
+
+                // Set the appropriate texture based on current phase
+                const textureName = this.currentPhase === 2 ? 'leviathan-evolved' : 'leviathan-boss';
+                this.sprite.setTexture(textureName, this.bossFrameIndex);
+            }
         } else if (!this.attackingInProgress) {
             this.sprite.body.setVelocity(0, 0);
         }
@@ -1589,9 +1614,10 @@ export class Enemy {
         console.log('Leviathan: Ground Pound!');
         this.attackingInProgress = true;
 
-        // Rise up visual - change fill color to yellow
-        const originalColor = this.sprite.fillColor;
-        this.sprite.setFillStyle(0xffff00);
+        // Rise up visual - add yellow tint for sprites
+        if (this.useSprite) {
+            this.sprite.setTint(0xffff00);
+        }
         const originalY = this.sprite.y;
 
         this.scene.tweens.add({
@@ -1600,8 +1626,10 @@ export class Enemy {
             duration: 500,
             yoyo: true,
             onComplete: () => {
-                // Impact - restore original color
-                this.sprite.setFillStyle(originalColor);
+                // Impact - clear tint for sprites
+                if (this.useSprite) {
+                    this.sprite.clearTint();
+                }
                 this.scene.cameras.main.shake(300, 0.02);
 
                 // Create shockwave visual
@@ -1830,14 +1858,19 @@ export class Enemy {
         console.log('Leviathan: PHASE 2!');
         this.bossPhase = 2;
         this.phaseTransitioning = true;
+        this.currentPhase = 2;
 
         // Full health restore
         this.health = this.maxHealth;
 
+        // Switch to evolved sprite (electric blue form)
+        if (this.useSprite) {
+            this.sprite.setTexture('leviathan-evolved', this.bossFrameIndex);
+        }
+
         // Visual effects
         this.scene.cameras.main.shake(500, 0.03);
         this.scene.cameras.main.flash(500, 100, 150, 255);
-        this.sprite.setFillStyle(this.config.phase2Color);
 
         // Announcement
         const announcement = this.scene.add.text(960, 400, 'THE LEVIATHAN EVOLVES', {

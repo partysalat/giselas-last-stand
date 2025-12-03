@@ -110,6 +110,18 @@ export class PreloadScene extends Phaser.Scene {
             frameHeight: 64
         });
 
+        // Load Leviathan boss sprite - Phase 1 (4 directional views in 2x2 grid)
+        this.load.spritesheet('leviathan-boss', 'assets/sprites/enemies/leviathan.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+
+        // Load Leviathan boss sprite - Phase 2 evolved form (4 directional views in 2x2 grid)
+        this.load.spritesheet('leviathan-evolved', 'assets/sprites/enemies/leviathan_evolved.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+
         // === PROJECTILES ===
 
         this.load.image('bullet', 'assets/sprites/projectiles/bullet.png');
