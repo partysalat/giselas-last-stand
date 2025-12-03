@@ -11,6 +11,7 @@ import { TargetSelector } from '../systems/TargetSelector.js';
 import { BossAnnouncer } from '../systems/BossAnnouncer.js';
 import { BossHealthBar } from '../ui/BossHealthBar.js';
 import { CoverManager } from '../systems/CoverManager.js';
+import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
 
 export class GameScene extends Phaser.Scene {
@@ -90,8 +91,14 @@ export class GameScene extends Phaser.Scene {
         // Initialize boss announcer
         this.bossAnnouncer = new BossAnnouncer(this);
 
-        // Initialize cover manager
-        this.coverManager = new CoverManager(this);
+        // Initialize cover manager (legacy - will be replaced)
+        // this.coverManager = new CoverManager(this);
+
+        // Initialize environment manager (new system)
+        this.environmentManager = new EnvironmentManager(this);
+
+        // Add compatibility alias so existing code still works
+        this.coverManager = this.environmentManager;
 
         // Create graphics for formation lines
         this.formationGraphics = this.add.graphics();

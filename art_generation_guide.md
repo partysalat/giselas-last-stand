@@ -864,7 +864,7 @@ AESTHETIC: Classic saloon snack with magical healing properties. Warm and inviti
 ```
 
 **Bing Condensed (480 chars):**
-
+```
 Isometric 3/4 view wooden bowl filled with salted bar nuts, peanuts and cashews visible, glowing with golden healing magic, warm sparkles, rustic saloon bowl, comic book art style with thick black outlines and cel-shading, warm brown and golden tones, wild west saloon aesthetic, health powerup game sprite on transparent background
 ```
 
