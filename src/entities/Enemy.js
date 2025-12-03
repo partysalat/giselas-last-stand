@@ -1519,7 +1519,7 @@ export class Enemy {
                     this.bossFrameIndex = dy < 0 ? 1 : 0;  // Moving up: frame 1, Moving down: frame 0
                 } else {
                     // Primarily horizontal movement
-                    this.bossFrameIndex = dx < 0 ? 2 : 3;  // Moving left: frame 2, Moving right: frame 3
+                    this.bossFrameIndex = dx < 0 ? 3 : 2;  // Moving left: frame 3, Moving right: frame 2
                 }
 
                 // Set the appropriate texture based on current phase
