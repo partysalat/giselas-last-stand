@@ -98,6 +98,18 @@ export class PreloadScene extends Phaser.Scene {
             frameHeight: 128
         });
 
+        // Load Kraken boss sprite (4 directional views in 2x2 grid)
+        this.load.spritesheet('kraken-boss', 'assets/sprites/enemies/kraken.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+
+        // Load Kraken tentacle/arm sprite (4 variations in 2x2 grid)
+        this.load.spritesheet('kraken-tentacle', 'assets/sprites/enemies/kraken_arm.png', {
+            frameWidth: 64,
+            frameHeight: 64
+        });
+
         // === PROJECTILES ===
 
         this.load.image('bullet', 'assets/sprites/projectiles/bullet.png');

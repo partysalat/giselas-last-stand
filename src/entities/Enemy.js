@@ -107,7 +107,7 @@ const ENEMY_TYPES = {
         // Ink cloud properties
         inkCloudRadius: 100,
         inkCloudDuration: 8000,
-        inkCloudSlowFactor: 0.7,
+        inkCloudSlowFactor: 0.2,
         inkTrigger1: 0.6,  // 60% body HP
         inkTrigger2: 0.3,  // 30% body HP
         // Sweep attack
@@ -213,6 +213,12 @@ export class Enemy {
         } else if (type === 'boss_iron_shell') {
             // Use spritesheet for Iron Shell boss (4 frames, will use frame 0 as default)
             this.sprite = scene.add.sprite(x, y, 'iron-shell-boss', 0);
+            this.useDirectionalSprites = false;
+            this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
+            this.bossFrameIndex = 0;
+        } else if (type === 'boss_kraken_arm') {
+            // Use spritesheet for Kraken boss (4 frames, will use frame 0 as default)
+            this.sprite = scene.add.sprite(x, y, 'kraken-boss', 0);
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
@@ -1198,14 +1204,13 @@ export class Enemy {
             const tentacleX = this.sprite.x + Math.cos(angle) * this.config.tentacleLength;
             const tentacleY = this.sprite.y + Math.sin(angle) * this.config.tentacleLength;
 
-            // Create tentacle visual
-            const tentacleSprite = this.scene.add.circle(
+            // Create tentacle visual using sprite (each tentacle uses a different frame for variety)
+            const tentacleSprite = this.scene.add.sprite(
                 tentacleX,
                 tentacleY,
-                20,
-                0x9966cc
+                'kraken-tentacle',
+                i  // Use frame 0, 1, 2, 3 for each of the 4 tentacles
             );
-            tentacleSprite.setStrokeStyle(2, 0x663399);
 
             this.tentacleSprites.push(tentacleSprite);
 
@@ -1261,11 +1266,11 @@ export class Enemy {
         const aliveTentacles = this.tentacles.filter(t => t.alive).length;
         this.bodyInvulnerable = aliveTentacles > 0;
 
-        // Visual indicator for invulnerability
+        // Visual indicator for invulnerability (use tint for sprites)
         if (this.bodyInvulnerable) {
-            this.sprite.setStrokeStyle(4, 0x00ffff, 0.7);
+            this.sprite.setTint(0x00ffff);  // Cyan tint when invulnerable
         } else {
-            this.sprite.setStrokeStyle(2, 0x9966cc, 1.0);
+            this.sprite.clearTint();  // Normal color when vulnerable
         }
 
         // Ink cloud triggers
@@ -1303,6 +1308,18 @@ export class Enemy {
             Math.cos(angle) * this.config.speed,
             Math.sin(angle) * this.config.speed
         );
+
+        // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=right, 3=left)
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
+
+        if (absY > absX) {
+            // Primarily vertical movement
+            this.sprite.setFrame(dy < 0 ? 1 : 0);  // Moving up: frame 1, Moving down: frame 0
+        } else {
+            // Primarily horizontal movement
+            this.sprite.setFrame(dx < 0 ? 3 : 2);  // Moving left: frame 3, Moving right: frame 2
+        }
     }
 
     createInkClouds(count) {
@@ -1371,9 +1388,9 @@ export class Enemy {
     tentacleSweep() {
         this.sweepDamageDealt = false;  // Add at start
 
-        // Make all tentacles glow
+        // Make all tentacles glow (use tint for sprites)
         this.tentacleSprites.forEach(sprite => {
-            sprite.setFillStyle(0xffff00, 0.8);
+            if (sprite) sprite.setTint(0xffff00);
         });
 
         // Rotate tentacles 360 degrees
@@ -1409,9 +1426,9 @@ export class Enemy {
                 });
 
                 if (progress >= 1) {
-                    // Reset tentacle colors
+                    // Reset tentacle colors (clear tint for sprites)
                     this.tentacleSprites.forEach(sprite => {
-                        sprite.setFillStyle(0x9966cc, 1.0);
+                        if (sprite) sprite.clearTint();
                     });
                 }
             }

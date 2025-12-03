@@ -809,11 +809,11 @@ export class GameScene extends Phaser.Scene {
                             enemy.lastHitByPlayerIndex = player.playerIndex;
                             hitEnemy = true;
 
-                            // Visual feedback
-                            tentSprite.setFillStyle(0xffffff);
+                            // Visual feedback (use tint for sprites)
+                            tentSprite.setTint(0xffffff);
                             this.time.delayedCall(100, () => {
                                 if (tentSprite && enemy.tentacles[k] && enemy.tentacles[k].alive) {
-                                    tentSprite.setFillStyle(0x9966cc);
+                                    tentSprite.clearTint();
                                 }
                             });
 
