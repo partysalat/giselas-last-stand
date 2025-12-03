@@ -438,6 +438,273 @@ AESTHETIC: Aerial bandit meets ocean creature. Conveys speed and flight. Bold an
 
 ---
 
+### Basic Enemies - 2x2 Sprite Sheet Bundles
+
+**These bundled prompts generate 4 directional views in a single 2x2 image for efficient sprite creation.**
+
+#### Enemy Bundle 1: Lobster + Shrimp (2x2 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Bandit Lobster - orange-red lobster bandit styled as western outlaw. Black cowboy hat, dark leather vest, holding pistols in large claws. Menacing villain with segmented tail curling behind, antennae, textured shell with ridges.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Orange-red shell, black hat, dark vest. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments.
+
+FRAME LAYOUT - 2x2 Grid with clear separation:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Lobster faces directly toward viewer
+- Front of face visible, eye stalks pointing forward
+- Both claws prominently displayed holding pistols aimed forward
+- Black cowboy hat visible from front angle
+- This is what player sees when enemy moves DOWN on screen
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Lobster faces away from viewer
+- BACK of shell and tail dominates
+- Back of black cowboy hat visible
+- Claws at sides pointing away
+- This is what player sees when enemy moves UP on screen
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Lobster in LEFT PROFILE
+- Side view of shell, tail curling left
+- Both claws extended toward left with pistols
+- Hat visible from left side
+- This is what player sees when enemy moves LEFT
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Lobster in RIGHT PROFILE (mirror of left)
+- Side view of shell, tail curling right
+- Both claws extended toward right with pistols
+- Hat visible from right side
+- This is what player sees when enemy moves RIGHT
+
+COMPOSITION: Enemy centered taking 70% of frame. White/transparent background. Clear borders between frames. All four views must maintain consistent size.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: orange-red lobster bandit, black cowboy hat, dark vest, pistols in claws, 4 directions (front/back/left/right). Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, western outlaw lobster, enemy sprite sheet, transparent background
+```
+
+---
+
+#### Enemy Bundle 2: Quick-Draw Shrimp (2x2 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Quick-Draw Shrimp - bright pink shrimp styled as quick-draw gunslinger. Small and nimble. Tiny red bandana, small brown cowboy hat, dual pistols in small claws. Curved segmented body, long antennae, multiple small legs, tail fan. Fast, agile threat.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Bright pink body, brown hat, red bandana. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION rotating 90-degree increments. Smaller than other enemies.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Shrimp faces toward viewer
+- Antennae pointing forward
+- Both small claws with dual pistols in quick-draw stance
+- Hat visible from front
+- Dynamic forward stance
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Shrimp faces away
+- Back of curved body and tail fan visible
+- Back of hat visible
+- Pistols at sides
+- Away movement stance
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Shrimp in LEFT PROFILE
+- Curved body side view
+- Both pistols aimed left
+- Hat from left side
+- Fast leftward movement
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Shrimp in RIGHT PROFILE
+- Curved body side view (mirror)
+- Both pistols aimed right
+- Hat from right side
+- Fast rightward movement
+
+COMPOSITION: Shrimp centered taking 60% of frame (smaller than lobster). White/transparent background. Clear borders. Consistent size across all views.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: pink shrimp gunslinger, small cowboy hat, bandana, dual pistols, fast nimble pose, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, quick-draw shrimp enemy, sprite sheet, transparent background
+```
+
+---
+
+#### Enemy Bundle 3: Hermit Crab Tank (2x2 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Hermit Crab Tank - large hermit crab styled as heavy tank unit. Big and intimidating. Enormous spiral shell with iron armor plating and rivets. Worn brown leather vest, heavy weapons in thick claws. Battle-hardened appearance. Multiple sturdy legs, eye stalks. Twice the size of regular enemies.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Brown/tan shell, dark metal armor, brown leather. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION. Larger enemy, heavy tank appearance.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Hermit crab faces toward viewer
+- Front of armored shell visible
+- Thick powerful claws with heavy weapons forward
+- Eye stalks pointing forward
+- Intimidating frontal stance
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Hermit crab faces away
+- BACK of massive spiral shell dominates
+- Armor plating on shell back visible
+- Claws at sides
+- Heavy tank moving away
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Hermit crab in LEFT PROFILE
+- Side view of spiral shell depth
+- Heavy weapons aimed left
+- Armored shell from side angle
+- Sturdy leftward stance
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Hermit crab in RIGHT PROFILE
+- Side view of spiral shell (mirror)
+- Heavy weapons aimed right
+- Armored shell from right side
+- Sturdy rightward stance
+
+COMPOSITION: Tank enemy centered taking 80% of frame (large unit). White/transparent background. Clear borders. Massive, durable appearance maintained across all views.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: large hermit crab tank, armored spiral shell, heavy weapons, battle-worn, intimidating size, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, tank enemy unit, sprite sheet, transparent background
+```
+
+---
+
+#### Enemy Bundle 4: Jellyfish Ghost (2x2 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Jellyfish Ghost - translucent ghostly jellyfish styled as supernatural western outlaw. Floating above ground with eerie spectral presence. Tattered weathered brown cowboy hat with holes. Translucent bell-shaped dome body, long flowing tentacles trailing beneath that wave and drift. Semi-transparent with faint ethereal purple/blue glow. Eye-like spots visible through body.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Translucent purple/blue body with glow, weathered brown hat. Use lighter tones for transparency. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION. Ghostly, supernatural appearance with floating pose.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Jellyfish faces toward viewer
+- Front of bell-shaped body visible
+- Eye-like spots staring forward through translucent body
+- Tattered hat from front angle
+- Tentacles flowing beneath toward viewer
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Jellyfish faces away
+- BACK of bell dome visible
+- Back of tattered hat
+- Tentacles trailing away behind
+- Ghostly floating away
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Jellyfish in LEFT PROFILE
+- Side view of bell dome
+- Hat from left side
+- Tentacles trailing to left and down
+- Floating leftward
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Jellyfish in RIGHT PROFILE
+- Side view of bell dome (mirror)
+- Hat from right side
+- Tentacles trailing to right and down
+- Floating rightward
+
+COMPOSITION: Ghost enemy centered taking 70% of frame. White/transparent background. Clear borders. Ethereal, translucent appearance maintained. Tentacles must be visible in all views.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: translucent ghostly jellyfish, tattered cowboy hat, floating with tentacles, supernatural purple glow, eerie spectral, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, ghost enemy, sprite sheet, transparent background
+```
+
+---
+
+#### Enemy Bundle 5: Flying Fish (2x2 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Flying Fish - aerial bandit styled as flying ace. Dynamic flying pose showing motion and agility. Brown aviator goggles on head, red bandana around neck. Streamlined body, large wing-like pectoral fins spread wide for gliding, forked tail. Wings look like natural fins but extended for flight. Silver-blue scales with shine. Fast, agile aerial enemy.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Silver-blue body, brown goggles, red bandana. Motion lines optional. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION. Dynamic aerial poses with wings spread.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FLYING TOWARD CAMERA"
+- Flying fish flies toward viewer
+- Front of streamlined body
+- Both wing-fins spread wide visible from front
+- Goggles on head facing forward
+- Forked tail behind
+- Dynamic forward flight
+
+TOP-RIGHT: "BACK VIEW - FLYING AWAY FROM CAMERA"
+- Flying fish flies away
+- BACK of body and tail prominent
+- Wing-fins spread visible from behind
+- Back of goggles/head
+- Flying away from viewer
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FLYING LEFT"
+- Flying fish in LEFT PROFILE
+- Side view of streamlined body
+- Both wings extended left
+- Goggles from left side
+- Forked tail trailing right
+- Fast leftward flight
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FLYING RIGHT"
+- Flying fish in RIGHT PROFILE
+- Side view of body (mirror)
+- Both wings extended right
+- Goggles from right side
+- Forked tail trailing left
+- Fast rightward flight
+
+COMPOSITION: Flying enemy centered taking 70% of frame. White/transparent background. Clear borders. Wings must be prominently visible in all views. Aerial, gliding appearance maintained.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: flying fish aerial bandit, wings spread wide, aviator goggles, bandana, dynamic flying pose, silver-blue scales, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, aerial enemy, sprite sheet, transparent background
+```
+
+---
+
 ### Boss Enemies (3 bosses - Multi-Directional)
 
 #### 1. Iron Shell (Wave 3 Boss - Multi-Directional)
