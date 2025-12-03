@@ -270,11 +270,36 @@ export class EnvironmentProp {
      * Trigger special destruction effects (fire, explosion, etc.)
      */
     triggerDestructionEffect() {
-        // This will be extended in Phase 3 for hazard props
-        // For now, handle basic explosion if configured
+        // Handle explosion effects
         if (this.explosionRadius > 0) {
             this.explode();
         }
+
+        // Phase 3: Handle fire zone creation
+        if (this.onDestroy === 'createFireZone' && this.fireRadius > 0) {
+            this.createFireZone();
+        }
+    }
+
+    /**
+     * Create fire zone on destruction (Phase 3)
+     */
+    createFireZone() {
+        if (!this.scene.environmentManager || !this.scene.environmentManager.fireSystem) {
+            console.warn('FireSystem not available - cannot create fire zone');
+            return;
+        }
+
+        // Create fire zone using configured properties
+        this.scene.environmentManager.fireSystem.createFireZone(
+            this.x,
+            this.y,
+            this.fireRadius,
+            this.fireDuration,
+            this.fireDamage
+        );
+
+        console.log(`${this.name} destroyed - fire zone created!`);
     }
 
     /**
@@ -488,7 +513,7 @@ export const PROP_TYPES = {
         height: 15,
         weightClass: 'light',
         color: 0xFFD700,
-        blocksBullets: false,
+        blocksBullets: true,
         onDestroy: 'createFireZone',
         fireRadius: 40,
         fireDuration: 8000,

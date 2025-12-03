@@ -1,5 +1,6 @@
 import { EnvironmentProp, PROP_TYPES } from '../entities/EnvironmentProp.js';
 import { PhysicsManager } from './PhysicsManager.js';
+import { FireSystem } from './FireSystem.js';
 
 /**
  * EnvironmentManager
@@ -15,6 +16,9 @@ export class EnvironmentManager {
 
         // Initialize PhysicsManager (Phase 2)
         this.physicsManager = new PhysicsManager(scene);
+
+        // Initialize FireSystem (Phase 3)
+        this.fireSystem = new FireSystem(scene);
     }
 
     /**
@@ -48,7 +52,12 @@ export class EnvironmentManager {
             { type: 'woodenChair', x: 800, y: 600 },
             { type: 'woodenChair', x: 1100, y: 600 },
             { type: 'barrel', x: 750, y: 550 }, // Closer to explosive barrel
-            { type: 'barrel', x: 1150, y: 550 } // Closer to explosive barrel
+            { type: 'barrel', x: 1150, y: 550 }, // Closer to explosive barrel
+            // Phase 3: Add oil lamps for fire system testing
+            { type: 'oilLamp', x: 700, y: 700 }, // On card table
+            { type: 'oilLamp', x: 1220, y: 700 }, // On bar counter
+            { type: 'oilLamp', x: 650, y: 300 }, // On another table
+            { type: 'oilLamp', x: 1270, y: 300 } // On another table
         ];
 
         this.spawnProps(propLayout);
@@ -103,6 +112,9 @@ export class EnvironmentManager {
     update(delta) {
         // Update physics manager (Phase 2)
         this.physicsManager.update(delta);
+
+        // Update fire system (Phase 3)
+        this.fireSystem.update(delta);
 
         // Update each prop
         this.props.forEach(prop => {

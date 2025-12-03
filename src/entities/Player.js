@@ -141,6 +141,10 @@ export class Player {
             if (!targetEnemy.enemy || !targetEnemy.enemy.isAlive()) {
                 return;
             }
+        } else if (targetEnemy.type === 'prop') {
+            if (!targetEnemy.prop || !targetEnemy.prop.isAlive()) {
+                return;
+            }
         } else {
             // Legacy format: plain enemy object
             if (!targetEnemy.isAlive || !targetEnemy.isAlive()) {
@@ -177,6 +181,9 @@ export class Player {
         } else if (targetEnemy.type === 'enemy') {
             targetX = targetEnemy.enemy.getSprite().x;
             targetY = targetEnemy.enemy.getSprite().y;
+        } else if (targetEnemy.type === 'prop') {
+            targetX = targetEnemy.prop.x;
+            targetY = targetEnemy.prop.y;
         } else {
             // Legacy format: plain enemy object
             targetX = targetEnemy.getSprite().x;

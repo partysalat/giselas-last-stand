@@ -283,9 +283,9 @@ export class GameScene extends Phaser.Scene {
             this.waveManager.update(time);
         }
 
-        // Update cover manager
+        // Update cover manager (environmentManager)
         if (this.coverManager) {
-            this.coverManager.update();
+            this.coverManager.update(delta);
         }
 
         // Update PlayerManager (handles all players and input)
@@ -620,6 +620,12 @@ export class GameScene extends Phaser.Scene {
                     if (lockedTarget.enemy && lockedTarget.enemy.isAlive()) {
                         targetX = lockedTarget.enemy.getSprite().x;
                         targetY = lockedTarget.enemy.getSprite().y;
+                        isAlive = true;
+                    }
+                } else if (lockedTarget.type === 'prop') {
+                    if (lockedTarget.prop && lockedTarget.prop.isAlive()) {
+                        targetX = lockedTarget.prop.x;
+                        targetY = lockedTarget.prop.y;
                         isAlive = true;
                     }
                 }

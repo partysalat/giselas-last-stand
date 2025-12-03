@@ -19,6 +19,10 @@ export class TargetSelector {
                 if (!this.lockedTarget.enemy || !this.lockedTarget.enemy.isAlive() || !tentacle || !tentacle.alive) {
                     this.clearLock();
                 }
+            } else if (this.lockedTarget.type === 'prop') {
+                if (!this.lockedTarget.prop || !this.lockedTarget.prop.isAlive()) {
+                    this.clearLock();
+                }
             }
         }
 
@@ -141,7 +145,7 @@ export class TargetSelector {
     }
 
     cycleToBountyTarget(playerX, playerY, enemies, direction) {
-        // Build list of all targetable objects (enemies + Kraken tentacles)
+        // Build list of all targetable objects (enemies + Kraken tentacles + explosive props)
         const targets = [];
 
         enemies.forEach(enemy => {
@@ -173,6 +177,25 @@ export class TargetSelector {
             }
         });
 
+        // Add explosive props (barrels, oil lamps, etc.)
+        if (this.scene.environmentManager) {
+            const props = this.scene.environmentManager.getProps();
+            props.forEach(prop => {
+                if (!prop.isAlive()) return;
+
+                // Only add targetable props (explosives and hazards)
+                if (prop.explosionRadius > 0 || prop.className === 'HazardProp') {
+                    targets.push({
+                        type: 'prop',
+                        prop: prop,
+                        x: prop.x,
+                        y: prop.y,
+                        label: prop.name || prop.type
+                    });
+                }
+            });
+        }
+
         if (targets.length === 0) {
             this.clearLock();
             return;
@@ -190,11 +213,14 @@ export class TargetSelector {
             if (!this.lockedTarget) return false;
             if (t.type === 'enemy') {
                 return t.enemy === this.lockedTarget.enemy && this.lockedTarget.type === 'enemy';
-            } else {
+            } else if (t.type === 'tentacle') {
                 return t.enemy === this.lockedTarget.enemy &&
                        t.tentacleIndex === this.lockedTarget.tentacleIndex &&
                        this.lockedTarget.type === 'tentacle';
+            } else if (t.type === 'prop') {
+                return t.prop === this.lockedTarget.prop && this.lockedTarget.type === 'prop';
             }
+            return false;
         });
 
         if (currentIndex === -1) {
