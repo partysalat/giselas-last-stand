@@ -891,6 +891,546 @@ Isometric 3/4 top-down view of a [OBJECT] in western saloon style with beach the
 
 ---
 
+## Environment Props (Dynamic Saloon System)
+
+**Organization:** Props are bundled into 3x3 sprite sheets for efficient generation. Each bundle groups thematically similar items.
+
+### Bundle 1: Heavy Cover Props (3x3 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game environment prop sprite sheet showing 9 different heavy cover objects arranged in a 3x3 grid. These are for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like environment props in Stardew Valley or Enter the Gungeon.
+
+PROP CATEGORY: Heavy cover furniture - large destructible objects that provide solid protection. Western saloon furniture with beach/ocean theme elements. All props are stationary, durable, and block bullets.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. No gradients. Wild west saloon aesthetic with subtle beach elements (sand, shells, driftwood accents).
+
+CRITICAL: Each frame must show a DIFFERENT object. All objects should be similar size and detail level for game consistency. View each from slightly above at 45-degree angle.
+
+FRAME LAYOUT - 3x3 Grid with clear separation:
+
+ROW 1:
+TOP-LEFT: "BAR COUNTER"
+- Long wooden bar counter, dark brown (0x654321)
+- 120x50px approximate size
+- Weathered wood with bottles on shelves behind
+- Brass rail along front
+- Heavy, immovable saloon bar
+
+TOP-CENTER: "PIANO"
+- Upright saloon piano, dark slate gray (0x2F4F4F)
+- 90x60px approximate size
+- Visible keys, music stand
+- Weathered and aged appearance
+- Classic western saloon piano
+
+TOP-RIGHT: "HEAVY BOOKSHELF"
+- Tall wooden bookshelf, saddle brown (0x8B4513)
+- 100x40px approximate size
+- Books visible on shelves
+- Some nautical books, ocean themes
+- Sturdy library furniture
+
+ROW 2:
+MIDDLE-LEFT: "POKER TABLE (FLIPPED)"
+- Overturned poker table on its side for cover
+- Forest green felt top (0x228B22) visible
+- Brown wooden legs pointing sideways
+- 100x60px approximate size
+- Defensive position furniture
+
+MIDDLE-CENTER: "SAFE"
+- Heavy metal safe, slate gray (0x708090)
+- 50x50px approximate size, square shape
+- Visible dial lock on front
+- Reinforced corners and edges
+- Most durable object
+
+MIDDLE-RIGHT: "POKER TABLE (UPRIGHT)"
+- Round poker table standing normally
+- Forest green felt surface (0x228B22)
+- Wooden legs, brown border
+- 100x60px approximate size
+- Playing cards and chips on surface
+
+ROW 3:
+BOTTOM-LEFT: "WOODEN CHEST"
+- Large wooden storage chest
+- Brown wood with metal bindings
+- Beach elements: rope, shells as decoration
+- 80x60px approximate size
+- Treasure chest style
+
+BOTTOM-CENTER: "HEAVY BARREL"
+- Large wooden barrel, dark brown
+- Metal bands around barrel
+- Weathered and aged
+- 50x50px approximate size
+- Sturdy cask
+
+BOTTOM-RIGHT: "CABINET"
+- Wooden cabinet with glass doors
+- Bottles and glassware visible inside
+- Brown wood, aged appearance
+- 70x80px approximate size
+- Saloon storage furniture
+
+IMPORTANT: All props same viewing angle (isometric 3/4 from 45° above). Consistent comic book style with thick outlines and cel-shading. Similar detail levels. All heavy, solid furniture that provides cover.
+
+COMPOSITION: Each frame equal size within grid. Props centered in frames taking 70-80% of space. White or transparent background. Clear borders between frames.
+```
+
+**Bing Condensed (480 chars):**
+```
+3x3 grid of heavy saloon furniture: bar counter, piano, bookshelf, flipped poker table, safe, upright poker table, chest, barrel, cabinet. Isometric 3/4 view at 45°, comic book art, thick black outlines, cel-shading, dark brown and gray tones, western saloon with beach accents, game environment props, transparent background, sprite sheet
+```
+
+---
+
+### Bundle 2: Light Cover & Furniture (3x3 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game environment prop sprite sheet showing 9 different light furniture objects arranged in a 3x3 grid. These are for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like environment props in Stardew Valley or Enter the Gungeon.
+
+PROP CATEGORY: Light cover furniture - small to medium destructible objects that provide temporary protection. Western saloon furniture. These props can be knocked around or moved by physics.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. No gradients. Wild west saloon aesthetic with beach elements.
+
+CRITICAL: Each frame must show a DIFFERENT object. All objects should be game-ready sprites with consistent detail level.
+
+FRAME LAYOUT - 3x3 Grid:
+
+ROW 1:
+TOP-LEFT: "WOODEN CHAIR"
+- Simple wooden saloon chair
+- Brown wood (0x8B4513)
+- 30x30px approximate size
+- Four legs, straight back
+- Lightweight furniture
+
+TOP-CENTER: "BAR STOOL"
+- Tall bar stool
+- Sienna brown (0xA0522D)
+- 20x20px approximate size
+- Round seat, three legs
+- Very lightweight
+
+TOP-RIGHT: "SMALL CRATE"
+- Wooden supply crate
+- Burlwood color (0xDEB887)
+- 35x35px approximate size
+- Visible wood slats
+- Storage box
+
+ROW 2:
+MIDDLE-LEFT: "CARD TABLE"
+- Small round card table
+- Dark green felt top (0x006400)
+- Brown wooden legs
+- 60x40px approximate size
+- Playing cards on surface
+
+MIDDLE-CENTER: "BARREL (STANDARD)"
+- Medium wooden barrel
+- Sienna brown (0xA0522D)
+- 40x40px circular
+- Metal bands
+- Can roll when hit
+
+MIDDLE-RIGHT: "WOODEN BENCH"
+- Long wooden bench
+- Brown wood
+- 70x30px approximate size
+- Simple plank construction
+- Saloon seating
+
+ROW 3:
+BOTTOM-LEFT: "SMALL TABLE"
+- Small square table
+- Brown wood with lighter top
+- 40x40px approximate size
+- Four legs, simple design
+- Side table
+
+BOTTOM-CENTER: "WOODEN STOOL"
+- Short wooden stool
+- Brown wood
+- 25x25px approximate size
+- Round top, four legs
+- Low seating
+
+BOTTOM-RIGHT: "AMMUNITION BOX"
+- Small ammo crate
+- Olive green or tan
+- 35x30px approximate size
+- Military markings
+- Reinforced corners
+
+COMPOSITION: Each frame equal size, props centered taking 60-70% of space. White or transparent background. Clear borders. All viewed from same isometric angle.
+```
+
+**Bing Condensed (480 chars):**
+```
+3x3 grid light saloon furniture: wooden chair, bar stool, crate, card table, barrel, bench, small table, stool, ammo box. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, brown wood tones, western saloon style, moveable props, game sprites, transparent background
+```
+
+---
+
+### Bundle 3: Hazard Props (3x3 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game environment hazard sprite sheet showing 9 dangerous objects arranged in a 3x3 grid. These are for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above.
+
+PROP CATEGORY: Hazard props - explosive, flammable, or dangerous objects that create fire, explosions, or special effects when destroyed. Western saloon hazards.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Bright warning colors (reds, oranges, yellows) to indicate danger.
+
+CRITICAL: Each hazard should look dangerous and volatile. Consistent viewing angle and style.
+
+FRAME LAYOUT - 3x3 Grid:
+
+ROW 1:
+TOP-LEFT: "OIL LAMP (HANGING)"
+- Hanging oil lamp on chain
+- Golden brass (0xFFD700)
+- 15x15px lamp size + chain above
+- Glowing flame inside
+- Ceiling-mounted hazard
+
+TOP-CENTER: "OIL LAMP (TABLE)"
+- Oil lamp sitting on flat base
+- Golden brass (0xFFD700)
+- 15x15px approximate size
+- Glowing flame visible
+- Table-mounted light source
+
+TOP-RIGHT: "GAS LANTERN"
+- Gas-powered lantern
+- Light yellow (0xFFFFE0)
+- 20x20px approximate size
+- Brighter glow than oil lamps
+- Pressurized gas visible
+
+ROW 2:
+MIDDLE-LEFT: "WHISKEY BARREL"
+- Wooden barrel with red liquid visible
+- Brown wood (0x8B4513) with red tint
+- 40x40px circular
+- "XXX" or whiskey markings
+- Alcohol barrel, explosive
+
+MIDDLE-CENTER: "DYNAMITE CRATE"
+- Wooden crate with TNT sticks visible
+- Chocolate brown (0xD2691E)
+- 50x50px approximate size
+- Red TNT sticks poking out
+- Warning labels, very dangerous
+
+MIDDLE-RIGHT: "GUNPOWDER KEG"
+- Small powder keg
+- Dark wood with black powder visible
+- 35x35px approximate size
+- Skull & crossbones warning
+- Highly explosive
+
+ROW 3:
+BOTTOM-LEFT: "FIRE BRAZIER"
+- Metal fire bowl with flames
+- Already burning with orange fire
+- 30x30px approximate size
+- Flames visible above bowl
+- Active fire source
+
+BOTTOM-CENTER: "MOLOTOV BOTTLE"
+- Glass bottle with cloth wick
+- Brown bottle, white cloth
+- 15x20px approximate size
+- Liquid visible inside
+- Throwable fire hazard
+
+BOTTOM-RIGHT: "KEROSENE CANISTER"
+- Metal fuel canister
+- Red metal (0xFF4500)
+- 30x35px approximate size
+- Flame symbol on side
+- Warning labels, flammable
+
+COMPOSITION: Each frame equal size. Hazards centered taking 60-70% of space. White or transparent background. Clear separation. All viewed from isometric 45° angle. Bright warning colors throughout.
+```
+
+**Bing Condensed (480 chars):**
+```
+3x3 grid hazardous props: hanging oil lamp, table oil lamp, gas lantern, whiskey barrel, dynamite crate, powder keg, fire brazier, molotov, kerosene can. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, bright warning colors, explosive/flammable, western saloon hazards, game sprites, transparent background
+```
+
+---
+
+### Bundle 4: Tactical Props (3x3 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game environment tactical prop sprite sheet showing 9 utility objects arranged in a 3x3 grid. These are for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above.
+
+PROP CATEGORY: Tactical props - special utility objects that provide strategic advantages like concealment, stunning, or reflection. Interactive saloon features.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Distinctive visual designs to show special properties.
+
+FRAME LAYOUT - 3x3 Grid:
+
+ROW 1:
+TOP-LEFT: "SWINGING DOORS"
+- Classic western saloon swinging doors
+- Brown wood (0x8B4513)
+- 80x100px approximate size
+- Two panels hinged in middle
+- Half-height doors
+
+TOP-CENTER: "BELL ROPE"
+- Rope hanging from ceiling with bell
+- Rope tan (0xCD853F), brass bell
+- 10x60px rope length
+- Bell at bottom, rope extends up
+- Pull-cord design
+
+TOP-RIGHT: "STAGE CURTAIN"
+- Heavy red curtain hanging
+- Dark red (0x8B0000)
+- 100x120px approximate size
+- Fabric folds visible
+- Theater curtain style
+
+ROW 2:
+MIDDLE-LEFT: "MIRROR (ORNATE)"
+- Decorative wall mirror
+- Silver frame (0xC0C0C0)
+- 40x60px approximate size
+- Reflective glass surface
+- Ornate western frame
+
+MIDDLE-CENTER: "CHANDELIER"
+- Hanging crystal chandelier
+- Gold and crystal (0xFFD700)
+- 60x60px with chain
+- Multiple light sources
+- Elaborate ceiling fixture
+
+MIDDLE-RIGHT: "MIRROR (SIMPLE)"
+- Plain rectangular mirror
+- Silver frame (0xC0C0C0)
+- 40x60px approximate size
+- Simple frame design
+- Reflective surface
+
+ROW 3:
+BOTTOM-LEFT: "WANTED POSTER BOARD"
+- Wooden board with wanted posters
+- Brown wood backing
+- 50x70px approximate size
+- Papers tacked to board
+- Bulletin board style
+
+BOTTOM-CENTER: "STAGE LIGHT"
+- Spotlight on stand
+- Black metal, bright bulb
+- 30x40px approximate size
+- Directional light
+- Theater lighting
+
+BOTTOM-RIGHT: "SPITTOON"
+- Brass spittoon
+- Golden brass color
+- 25x25px approximate size
+- Wide mouth, decorated
+- Classic saloon fixture
+
+COMPOSITION: Each frame equal size. Props centered taking 60-80% of space. White or transparent background. Clear separation. Isometric 45° angle consistent across all.
+```
+
+**Bing Condensed (480 chars):**
+```
+3x3 grid tactical saloon props: swinging doors, bell rope, stage curtain, ornate mirror, chandelier, simple mirror, wanted poster board, stage light, spittoon. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, western saloon utilities, interactive objects, game sprites, transparent background
+```
+
+---
+
+### Bundle 5: Special Props & Structural (3x3 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game environment special prop sprite sheet showing 9 structural and special objects arranged in a 3x3 grid. These are for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above.
+
+PROP CATEGORY: Special props - structural elements, boss-interaction objects, and unique environmental features. Mix of permanent structures and special mechanics.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels.
+
+FRAME LAYOUT - 3x3 Grid:
+
+ROW 1:
+TOP-LEFT: "WATER TROUGH"
+- Wooden water trough
+- Steel blue water (0x4682B4)
+- 70x40px approximate size
+- Water visible inside
+- Horse trough style
+
+TOP-CENTER: "SUPPORT BEAM"
+- Vertical wooden support column
+- Brown wood (0x8B4513)
+- 30x150px tall vertical
+- Load-bearing pillar
+- Aged and weathered
+
+TOP-RIGHT: "TRAPDOOR (CLOSED)"
+- Wooden trapdoor in floor
+- Blends with floor (0x654321)
+- 60x60px square
+- Hinges and handle visible
+- Flush with ground
+
+ROW 2:
+MIDDLE-LEFT: "TRAPDOOR (OPEN)"
+- Same trapdoor but open
+- Dark pit visible below
+- Door angled open to side
+- 60x60px approximate area
+- Dangerous opening
+
+MIDDLE-CENTER: "STAGE PLATFORM"
+- Raised wooden stage section
+- Brown wood with edge visible
+- 80x60px approximate size
+- Platform with steps
+- Performance area
+
+MIDDLE-RIGHT: "HITCHING POST"
+- Wooden post with crossbar
+- Brown weathered wood
+- 20x50px approximate size
+- Rope hanging from bar
+- Exterior fixture with sand
+
+ROW 3:
+BOTTOM-LEFT: "BALCONY RAILING"
+- Wooden railing section
+- Brown wood balusters
+- 100x30px horizontal section
+- Western style spindles
+- Upper level barrier
+
+BOTTOM-CENTER: "WINDOW (INTACT)"
+- Saloon window with frame
+- Brown frame, glass visible
+- 50x60px approximate size
+- Four-pane window
+- Breakable glass
+
+BOTTOM-RIGHT: "WINDOW (BROKEN)"
+- Same window but shattered
+- Brown frame intact
+- Broken glass pieces
+- 50x60px approximate size
+- Battle damage visible
+
+COMPOSITION: Each frame equal size. Props centered. White or transparent background. Clear separation. Isometric 45° angle. Mix of ground-level and structural props.
+```
+
+**Bing Condensed (480 chars):**
+```
+3x3 grid special saloon props: water trough, support beam, trapdoor closed, trapdoor open, stage platform, hitching post, balcony railing, intact window, broken window. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, structural elements, western saloon, game sprites, transparent background
+```
+
+---
+
+### Bundle 6: Debris & Destruction Effects (3x3 Grid)
+
+**ChatGPT Optimized:**
+```
+Create a video game destruction debris sprite sheet showing 9 different debris and destruction effects arranged in a 3x3 grid. These are for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above.
+
+PROP CATEGORY: Debris and effects - pieces that appear when props are destroyed. Small environmental clutter and destruction remnants. Temporary visual effects.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Smaller scale than full props.
+
+FRAME LAYOUT - 3x3 Grid:
+
+ROW 1:
+TOP-LEFT: "WOOD SPLINTERS"
+- Scattered wood pieces
+- Brown wood shards
+- 3-5 pieces in frame
+- Various angles
+- Broken furniture debris
+
+TOP-CENTER: "GLASS SHARDS"
+- Broken glass pieces
+- Clear/cyan tinted
+- Sharp angular pieces
+- 4-6 shards
+- Mirror/window debris
+
+TOP-RIGHT: "BOTTLE DEBRIS"
+- Broken bottles
+- Brown and green glass
+- 2-3 broken bottles
+- Liquid puddle
+- Bar destruction
+
+ROW 2:
+MIDDLE-LEFT: "SCATTERED BOOKS"
+- 3-4 books fallen on ground
+- Various brown tones
+- Open and closed books
+- Pages visible
+- Bookshelf debris
+
+MIDDLE-CENTER: "PLAYING CARDS"
+- Scattered playing cards
+- Various card faces visible
+- 6-8 cards spread out
+- Different angles
+- Table debris
+
+MIDDLE-RIGHT: "POKER CHIPS"
+- Scattered gambling chips
+- Red, blue, white colors
+- 5-7 chips
+- Various denominations
+- Table debris
+
+ROW 3:
+BOTTOM-LEFT: "BARREL STAVES"
+- Broken barrel pieces
+- Curved wood slats
+- Metal bands
+- 3-4 pieces
+- Barrel destruction
+
+BOTTOM-CENTER: "ROPE COIL"
+- Coiled rope on ground
+- Tan rope (0xCD853F)
+- Loose coil
+- Frayed end visible
+- Cut rope debris
+
+BOTTOM-RIGHT: "COINS SCATTERED"
+- Gold coins on ground
+- Golden color (0xFFD700)
+- 6-8 coins
+- Various angles
+- Safe/chest debris
+
+COMPOSITION: Each frame equal size. Debris centered but scattered naturally. White or transparent background. Clear separation. Smaller scale objects (15-40px total spread). All viewed from isometric 45° angle.
+```
+
+**Bing Condensed (480 chars):**
+```
+3x3 grid destruction debris: wood splinters, glass shards, broken bottles, scattered books, playing cards, poker chips, barrel staves, rope coil, scattered coins. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, small debris pieces, saloon destruction effects, game sprites, transparent background
+```
+
+---
+
 ### UI Elements
 
 **Will need:**
