@@ -142,6 +142,13 @@ export class PreloadScene extends Phaser.Scene {
         // === ENVIRONMENT ===
 
         this.load.image('environment', 'assets/sprites/environment/environment.png');
+
+        // Load environment props sprite sheet - 3x3 grid of heavy cover furniture
+        this.load.spritesheet('interior1', 'assets/sprites/environment/interior1.png', {
+            frameWidth: 128,  // Each sprite in the 3x3 grid
+            frameHeight: 128
+        });
+
         // this.load.image('barrel', 'assets/sprites/environment/barrel.png');
         // this.load.image('saloon-doors', 'assets/sprites/environment/saloon-doors.png');
 

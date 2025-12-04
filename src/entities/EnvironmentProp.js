@@ -43,6 +43,10 @@ export class EnvironmentProp {
         this.blocksBullets = config.blocksBullets !== undefined ? config.blocksBullets : true;
         this.layer = config.layer || 'ground';
 
+        // Sprite properties
+        this.spriteKey = config.spriteKey || null;
+        this.spriteFrame = config.spriteFrame !== undefined ? config.spriteFrame : null;
+
         // Special properties
         this.onDestroy = config.onDestroy || null;
 
@@ -97,20 +101,38 @@ export class EnvironmentProp {
      * Create the visual sprite representation
      */
     createSprite() {
-        // Create rectangle sprite
-        this.sprite = this.scene.add.rectangle(
-            this.x,
-            this.y,
-            this.width,
-            this.height,
-            this.color
-        );
+        // Check if we should use a sprite from a spritesheet
+        if (this.spriteKey && this.spriteFrame !== null) {
+            // Create sprite from spritesheet
+            this.sprite = this.scene.add.sprite(
+                this.x,
+                this.y,
+                this.spriteKey,
+                this.spriteFrame
+            );
 
-        // Explosive barrels get red border for visibility
-        if (this.explosionRadius > 0) {
-            this.sprite.setStrokeStyle(5, 0xFF0000); // Thick red border
+            // Scale sprite to match desired dimensions with a multiplier for better visibility
+            // Assuming sprite frames are 128x128, we scale based on desired width
+            const spriteScaleMultiplier = 1.5; // Make sprites 50% larger
+            const scaleX = (this.width / 128) * spriteScaleMultiplier;
+            const scaleY = (this.height / 128) * spriteScaleMultiplier;
+            this.sprite.setScale(scaleX, scaleY);
         } else {
-            this.sprite.setStrokeStyle(3, 0x000000);
+            // Fallback to rectangle sprite for props without sprites
+            this.sprite = this.scene.add.rectangle(
+                this.x,
+                this.y,
+                this.width,
+                this.height,
+                this.color
+            );
+
+            // Explosive barrels get red border for visibility
+            if (this.explosionRadius > 0) {
+                this.sprite.setStrokeStyle(5, 0xFF0000); // Thick red border
+            } else {
+                this.sprite.setStrokeStyle(3, 0x000000);
+            }
         }
 
         // Set depth based on layer
@@ -242,8 +264,8 @@ export class EnvironmentProp {
                 this.healthBarFill.setVisible(true);
             }
 
-            // Add damage cracks visual effect (darker border)
-            if (this.sprite.strokeAlpha !== 1.0) {
+            // Add damage cracks visual effect (darker border) - only for rectangles
+            if (this.sprite.setStrokeStyle && this.sprite.strokeAlpha !== 1.0) {
                 this.sprite.setStrokeStyle(3, 0x000000, 1.0);
             }
         } else {
@@ -262,10 +284,15 @@ export class EnvironmentProp {
                 }
             }
 
-            // Heavy damage visual (red tint) - use blended color for rectangles
-            // Mix the original color with red for damage effect
-            const redTinted = Phaser.Display.Color.GetColor(255, 136, 136);
-            this.sprite.setFillStyle(redTinted, 0.8);
+            // Heavy damage visual (red tint) - only for rectangles
+            if (this.sprite.setFillStyle) {
+                // Mix the original color with red for damage effect
+                const redTinted = Phaser.Display.Color.GetColor(255, 136, 136);
+                this.sprite.setFillStyle(redTinted, 0.8);
+            } else if (this.sprite.setTint) {
+                // For sprites, use red tint
+                this.sprite.setTint(0xff8888);
+            }
         }
 
         // Update health bar width and color
@@ -1411,7 +1438,9 @@ export const PROP_TYPES = {
         color: 0x654321,
         blocksBullets: true,
         onDestroy: 'spawnBottleDebris',
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 0  // Top-left in 3x3 grid
     },
 
     piano: {
@@ -1424,7 +1453,9 @@ export const PROP_TYPES = {
         color: 0x2F4F4F, // dark slate gray
         blocksBullets: true,
         onDestroy: 'playDiscordantNotes',
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 1  // Top-center in 3x3 grid
     },
 
     heavyBookshelf: {
@@ -1437,7 +1468,9 @@ export const PROP_TYPES = {
         color: 0x8B4513, // saddle brown
         blocksBullets: true,
         onDestroy: 'dropBooks',
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 2  // Top-right in 3x3 grid
     },
 
     flippedPokerTable: {
@@ -1452,7 +1485,9 @@ export const PROP_TYPES = {
         interactive: true,
         activationRadius: 50,
         onActivate: 'flipTable',
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 3  // Middle-left in 3x3 grid
     },
 
     safe: {
@@ -1465,7 +1500,9 @@ export const PROP_TYPES = {
         color: 0x708090, // slate gray
         blocksBullets: true,
         onDestroy: 'dropCoins',
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 4  // Middle-center in 3x3 grid
     },
 
     // Light Cover
@@ -1478,7 +1515,9 @@ export const PROP_TYPES = {
         weightClass: 'light',
         color: 0x006400,
         blocksBullets: true,
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 5  // Middle-right in 3x3 grid (upright poker table)
     },
 
     woodenChair: {
@@ -1508,7 +1547,9 @@ export const PROP_TYPES = {
         impactDamage: 10,
         impactSpeed: 80,
         friction: 0.88,
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 7  // Bottom-center in 3x3 grid
     },
 
     barStool: {
@@ -1769,5 +1810,36 @@ export const PROP_TYPES = {
         wetZoneDuration: 20000,
         electricalMultiplier: 1.5,
         layer: 'ground'
+    },
+
+    // Additional props from interior1 sprite bundle
+    woodenChest: {
+        name: 'Wooden Chest',
+        class: 'DestructibleCover',
+        maxHealth: 160,
+        width: 80,
+        height: 60,
+        weightClass: 'heavy',
+        color: 0x8B4513, // saddle brown
+        blocksBullets: true,
+        onDestroy: 'dropCoins',
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 6  // Bottom-left in 3x3 grid
+    },
+
+    cabinet: {
+        name: 'Cabinet',
+        class: 'DestructibleCover',
+        maxHealth: 140,
+        width: 70,
+        height: 80,
+        weightClass: 'heavy',
+        color: 0x8B4513, // saddle brown
+        blocksBullets: true,
+        onDestroy: 'spawnBottleDebris',
+        layer: 'ground',
+        spriteKey: 'interior1',
+        spriteFrame: 8  // Bottom-right in 3x3 grid
     }
 };
