@@ -48,28 +48,43 @@ export class EnvironmentManager {
         // Fixed layout matching old CoverManager positions
         // Using new prop types from EnvironmentProp
         const propLayout = [
-            { type: 'cardTable', x: 700, y: 750 },
+            // Phase 7: Heavy Cover props
             { type: 'barCounter', x: 1220, y: 750 },
-            // Move explosive barrels CLOSE to other props for physics demo
-            { type: 'explosiveBarrel', x: 820, y: 600 }, // Near chairs
-            { type: 'explosiveBarrel', x: 1080, y: 600 }, // Near chairs
+            { type: 'piano', x: 500, y: 700 },
+            { type: 'heavyBookshelf', x: 1420, y: 700 },
+            { type: 'safe', x: 960, y: 450 },
+
+            // Phase 7: Light Cover props
+            { type: 'cardTable', x: 700, y: 750 },
             { type: 'cardTable', x: 650, y: 350 },
-            { type: 'barCounter', x: 960, y: 300 },
             { type: 'cardTable', x: 1270, y: 350 },
-            // Add some new props to showcase the system
             { type: 'woodenChair', x: 800, y: 600 },
             { type: 'woodenChair', x: 1100, y: 600 },
-            { type: 'barrel', x: 750, y: 550 }, // Closer to explosive barrel
-            { type: 'barrel', x: 1150, y: 550 }, // Closer to explosive barrel
-            // Phase 3: Add oil lamps for fire system testing
+            { type: 'barStool', x: 1160, y: 750 },
+            { type: 'barStool', x: 1280, y: 750 },
+            { type: 'smallCrate', x: 550, y: 500 },
+            { type: 'smallCrate', x: 1370, y: 500 },
+            { type: 'barrel', x: 750, y: 550 },
+            { type: 'barrel', x: 1150, y: 550 },
+
+            // Phase 7: Hazard Props
             { type: 'oilLamp', x: 700, y: 700 }, // On card table
             { type: 'oilLamp', x: 1220, y: 700 }, // On bar counter
-            { type: 'oilLamp', x: 650, y: 300 }, // On another table
-            { type: 'oilLamp', x: 1270, y: 300 }, // On another table
-            // Phase 4: Add tactical props
+            { type: 'whiskeyBarrel', x: 820, y: 600 },
+            { type: 'dynamiteCrate', x: 1080, y: 600 },
+            { type: 'gasLantern', x: 650, y: 300 },
+            { type: 'gasLantern', x: 1270, y: 300 },
+
+            // Phase 7: Tactical Props
             { type: 'bellRope', x: 960, y: 150 }, // Center ceiling
             { type: 'stageLights', x: 600, y: 200 }, // Left stage light
-            { type: 'stageLights', x: 1320, y: 200 } // Right stage light
+            { type: 'stageLights', x: 1320, y: 200 }, // Right stage light
+            { type: 'mirror', x: 400, y: 400 }, // Left wall
+            { type: 'mirror', x: 1520, y: 400 }, // Right wall
+            { type: 'stageCurtain', x: 960, y: 100 }, // Center stage
+
+            // Phase 7: Special Props
+            { type: 'waterTrough', x: 960, y: 800 } // Center bottom
         ];
 
         // Phase 5: Add chandeliers only on first wave

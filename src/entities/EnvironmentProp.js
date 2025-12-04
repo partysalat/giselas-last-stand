@@ -78,6 +78,19 @@ export class EnvironmentProp {
         // Chandelier state tracking (Phase 5)
         this.chandelierState = 'stable'; // stable, swaying, falling
         this.darkenRadius = config.darkenRadius || 0;
+
+        // Phase 7: Additional special properties
+        this.flashRadius = config.flashRadius || 0;
+        this.flashDuration = config.flashDuration || 0;
+        this.glassShardRadius = config.glassShardRadius || 0;
+        this.glassShardDamage = config.glassShardDamage || 0;
+        this.glassShardDuration = config.glassShardDuration || 0;
+        this.wetZoneRadius = config.wetZoneRadius || 0;
+        this.wetZoneDuration = config.wetZoneDuration || 0;
+        this.electricalMultiplier = config.electricalMultiplier || 1.0;
+        this.flammable = config.flammable || false;
+        this.fireSpreadMultiplier = config.fireSpreadMultiplier || 1.0;
+        this.knockbackForce = config.knockbackForce || 0;
     }
 
     /**
@@ -146,20 +159,33 @@ export class EnvironmentProp {
      * Setup physics body
      */
     setupPhysics() {
-        // Don't create physics body for explosive props - they need to be selectable/targetable
-        // Explosive props should not block movement
-        if (this.explosionRadius > 0 || this.className === 'HazardProp') {
-            // No physics body for hazard props
+        // Don't create physics body for:
+        // - Explosive props (need to be selectable/targetable, shouldn't block movement)
+        // - Hazard props (shouldn't block movement)
+        // - Ceiling-mounted props (chandeliers, hanging lamps)
+        if (this.explosionRadius > 0 ||
+            this.className === 'HazardProp' ||
+            this.layer === 'ceiling') {
+            // No physics body
             return;
         }
 
-        // Phase 1: ALL props are static (immovable)
-        // Phase 2 will implement dynamic physics for light/medium props
-        this.scene.physics.add.existing(this.sprite, true); // true = static
+        // Determine if prop should be static or dynamic based on weight class
+        const isStatic = this.weightClass === 'heavy' || this.weightClass === null;
+
+        this.scene.physics.add.existing(this.sprite, isStatic);
 
         // Configure collision body
         this.sprite.body.setSize(this.width, this.height);
         this.sprite.body.setOffset(-this.width / 2, -this.height / 2);
+
+        // For dynamic (light) props, enable physics interactions
+        if (!isStatic) {
+            this.sprite.body.setMass(this.weightClass === 'light' ? 1 : 3);
+            this.sprite.body.setCollideWorldBounds(true);
+            this.sprite.body.setBounce(0.3);
+            this.sprite.body.setDrag(200); // Friction
+        }
     }
 
     /**
@@ -361,6 +387,40 @@ export class EnvironmentProp {
         // Phase 4: Handle stage light falling
         if (this.onDestroy === 'fallAndDealDamage') {
             this.fallAndDealDamage();
+        }
+
+        // Phase 7: Handle new special destruction effects
+        switch (this.onDestroy) {
+            case 'spawnBottleDebris':
+                this.spawnBottleDebris();
+                break;
+            case 'playDiscordantNotes':
+                this.playDiscordantNotes();
+                break;
+            case 'dropBooks':
+                this.dropBooks();
+                break;
+            case 'dropCoins':
+                this.dropCoins();
+                break;
+            case 'spawnSplinters':
+                this.spawnSplinters();
+                break;
+            case 'createLiquidTrailFire':
+                this.createLiquidTrailFire();
+                break;
+            case 'triggerChainExplosions':
+                this.triggerChainExplosions();
+                break;
+            case 'createBlindingFlash':
+                this.createBlindingFlash();
+                break;
+            case 'createGlassShardHazard':
+                this.createGlassShardHazard();
+                break;
+            case 'spillWater':
+                this.spillWater();
+                break;
         }
     }
 
@@ -883,6 +943,434 @@ export class EnvironmentProp {
     }
 
     /**
+     * Phase 7: Special destruction effect methods
+     */
+
+    /**
+     * Spawn bottle debris when bar counter is destroyed
+     */
+    spawnBottleDebris() {
+        const numBottles = 3 + Math.floor(Math.random() * 3);
+
+        for (let i = 0; i < numBottles; i++) {
+            const angle = (Math.PI * 2 * i) / numBottles + Math.random() * 0.5;
+            const speed = 80 + Math.random() * 80;
+
+            const bottle = this.scene.add.rectangle(
+                this.x,
+                this.y,
+                8,
+                12,
+                0x228B22, // green bottle
+                0.9
+            );
+            bottle.setDepth(25);
+
+            this.scene.tweens.add({
+                targets: bottle,
+                x: this.x + Math.cos(angle) * speed,
+                y: this.y + Math.sin(angle) * speed,
+                rotation: Math.PI * 2,
+                alpha: 0,
+                duration: 600 + Math.random() * 300,
+                onComplete: () => bottle.destroy()
+            });
+        }
+    }
+
+    /**
+     * Play discordant piano notes when destroyed
+     */
+    playDiscordantNotes() {
+        console.log(`${this.name} destroyed - playing discordant notes!`);
+        // Create visual string snap effect
+        const numStrings = 3 + Math.floor(Math.random() * 3);
+
+        for (let i = 0; i < numStrings; i++) {
+            const offsetX = (Math.random() - 0.5) * this.width;
+            const offsetY = (Math.random() - 0.5) * this.height;
+
+            const string = this.scene.add.line(
+                this.x + offsetX,
+                this.y + offsetY,
+                0, 0,
+                20 + Math.random() * 30,
+                0,
+                0xFFD700
+            );
+            string.setLineWidth(2);
+            string.setDepth(25);
+
+            this.scene.tweens.add({
+                targets: string,
+                alpha: 0,
+                duration: 400,
+                onComplete: () => string.destroy()
+            });
+        }
+    }
+
+    /**
+     * Drop books that create slow zones
+     */
+    dropBooks() {
+        console.log(`${this.name} destroyed - dropping books!`);
+        const numBooks = 4 + Math.floor(Math.random() * 4);
+
+        for (let i = 0; i < numBooks; i++) {
+            const angle = (Math.PI * 2 * i) / numBooks + Math.random() * 0.5;
+            const distance = 30 + Math.random() * 40;
+            const bookX = this.x + Math.cos(angle) * distance;
+            const bookY = this.y + Math.sin(angle) * distance;
+
+            // Create book sprite
+            const book = this.scene.add.rectangle(
+                this.x,
+                this.y,
+                10,
+                15,
+                0x8B4513, // brown book
+                0.8
+            );
+            book.setDepth(3);
+
+            // Animate book falling
+            this.scene.tweens.add({
+                targets: book,
+                x: bookX,
+                y: bookY,
+                rotation: Math.random() * Math.PI,
+                duration: 300,
+                onComplete: () => {
+                    // Create slow zone effect (visual only for now)
+                    const slowZone = this.scene.add.circle(
+                        bookX,
+                        bookY,
+                        20,
+                        0x0000FF,
+                        0.2
+                    );
+                    slowZone.setDepth(2);
+
+                    // Slow zone lasts 5 seconds
+                    this.scene.time.delayedCall(5000, () => {
+                        this.scene.tweens.add({
+                            targets: [book, slowZone],
+                            alpha: 0,
+                            duration: 500,
+                            onComplete: () => {
+                                book.destroy();
+                                slowZone.destroy();
+                            }
+                        });
+                    });
+                }
+            });
+        }
+    }
+
+    /**
+     * Drop coins that distract enemies
+     */
+    dropCoins() {
+        console.log(`${this.name} destroyed - dropping coins!`);
+        const numCoins = 5 + Math.floor(Math.random() * 5);
+
+        for (let i = 0; i < numCoins; i++) {
+            const angle = (Math.PI * 2 * i) / numCoins + Math.random() * 0.5;
+            const speed = 60 + Math.random() * 60;
+
+            const coin = this.scene.add.circle(
+                this.x,
+                this.y,
+                4,
+                0xFFD700, // gold
+                1.0
+            );
+            coin.setDepth(25);
+
+            this.scene.tweens.add({
+                targets: coin,
+                x: this.x + Math.cos(angle) * speed,
+                y: this.y + Math.sin(angle) * speed,
+                alpha: 0,
+                duration: 800 + Math.random() * 400,
+                onComplete: () => coin.destroy()
+            });
+        }
+    }
+
+    /**
+     * Spawn splinter projectiles on crate destruction
+     */
+    spawnSplinters() {
+        console.log(`${this.name} destroyed - spawning splinters!`);
+        const numSplinters = 5 + Math.floor(Math.random() * 5);
+
+        for (let i = 0; i < numSplinters; i++) {
+            const angle = (Math.PI * 2 * i) / numSplinters + Math.random() * 0.5;
+            const speed = 100 + Math.random() * 100;
+
+            const splinter = this.scene.add.line(
+                this.x,
+                this.y,
+                0, 0,
+                15 + Math.random() * 10,
+                0,
+                0x8B4513
+            );
+            splinter.setLineWidth(3);
+            splinter.setDepth(25);
+            splinter.setRotation(angle);
+
+            this.scene.tweens.add({
+                targets: splinter,
+                x: this.x + Math.cos(angle) * speed,
+                y: this.y + Math.sin(angle) * speed,
+                alpha: 0,
+                duration: 400 + Math.random() * 200,
+                onComplete: () => splinter.destroy()
+            });
+        }
+    }
+
+    /**
+     * Create liquid trail fire (whiskey barrel)
+     */
+    createLiquidTrailFire() {
+        console.log(`${this.name} destroyed - creating liquid trail fire!`);
+
+        // First create the explosion
+        if (this.explosionRadius > 0) {
+            // Explosion is already handled, just add fire trail
+        }
+
+        // Create fire zone at destruction point
+        if (this.scene.environmentManager && this.scene.environmentManager.fireSystem) {
+            this.scene.environmentManager.fireSystem.createFireZone(
+                this.x,
+                this.y,
+                this.fireRadius,
+                this.fireDuration,
+                this.fireDamage
+            );
+
+            // Create additional fire zones in a trail pattern
+            const numTrailZones = 3;
+            for (let i = 1; i <= numTrailZones; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 40 * i;
+                const trailX = this.x + Math.cos(angle) * distance;
+                const trailY = this.y + Math.sin(angle) * distance;
+
+                this.scene.time.delayedCall(i * 200, () => {
+                    if (this.scene.environmentManager && this.scene.environmentManager.fireSystem) {
+                        this.scene.environmentManager.fireSystem.createFireZone(
+                            trailX,
+                            trailY,
+                            this.fireRadius * 0.7,
+                            this.fireDuration,
+                            this.fireDamage
+                        );
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Trigger chain explosions (dynamite crate)
+     */
+    triggerChainExplosions() {
+        console.log(`${this.name} destroyed - triggering chain explosions!`);
+
+        // Main explosion already handled by explode()
+        // Find nearby explosive props and trigger them with delay
+        if (this.scene.environmentManager) {
+            const nearbyProps = this.scene.environmentManager.getPropsInRadius(
+                this.x,
+                this.y,
+                this.explosionRadius + 50
+            );
+
+            nearbyProps.forEach((prop, index) => {
+                if (prop === this) return;
+                if (prop.explosionRadius > 0 && prop.isAlive()) {
+                    // Trigger explosion with delay for dramatic effect
+                    this.scene.time.delayedCall((index + 1) * 300, () => {
+                        if (prop.isAlive()) {
+                            prop.takeDamage(prop.health); // Destroy it
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    /**
+     * Create blinding flash effect (gas lantern)
+     */
+    createBlindingFlash() {
+        console.log(`${this.name} destroyed - creating blinding flash!`);
+
+        // Create bright flash visual
+        const flash = this.scene.add.circle(
+            this.x,
+            this.y,
+            this.flashRadius,
+            0xFFFFFF,
+            0.9
+        );
+        flash.setDepth(30);
+
+        this.scene.tweens.add({
+            targets: flash,
+            alpha: 0,
+            scale: 1.5,
+            duration: this.flashDuration,
+            onComplete: () => flash.destroy()
+        });
+
+        // Create small fire zone
+        if (this.scene.environmentManager && this.scene.environmentManager.fireSystem) {
+            this.scene.environmentManager.fireSystem.createFireZone(
+                this.x,
+                this.y,
+                this.fireRadius,
+                this.fireDuration,
+                this.fireDamage
+            );
+        }
+
+        // TODO: Implement actual blinding effect on enemies (would need enemy system support)
+        console.log(`Flash effect would blind enemies in ${this.flashRadius}px radius for ${this.flashDuration}ms`);
+    }
+
+    /**
+     * Create glass shard hazard zone (mirror)
+     */
+    createGlassShardHazard() {
+        console.log(`${this.name} destroyed - creating glass shard hazard!`);
+
+        // Create glass shard visual effect
+        const numShards = 8 + Math.floor(Math.random() * 8);
+
+        for (let i = 0; i < numShards; i++) {
+            const angle = (Math.PI * 2 * i) / numShards + Math.random() * 0.3;
+            const distance = Math.random() * this.glassShardRadius;
+            const shardX = this.x + Math.cos(angle) * distance;
+            const shardY = this.y + Math.sin(angle) * distance;
+
+            const shard = this.scene.add.rectangle(
+                this.x,
+                this.y,
+                4 + Math.random() * 6,
+                4 + Math.random() * 6,
+                0xE0FFFF, // light cyan
+                0.8
+            );
+            shard.setDepth(3);
+            shard.setRotation(Math.random() * Math.PI * 2);
+
+            this.scene.tweens.add({
+                targets: shard,
+                x: shardX,
+                y: shardY,
+                duration: 200,
+                onComplete: () => {
+                    // Shard stays on ground as hazard
+                    this.scene.time.delayedCall(this.glassShardDuration, () => {
+                        this.scene.tweens.add({
+                            targets: shard,
+                            alpha: 0,
+                            duration: 500,
+                            onComplete: () => shard.destroy()
+                        });
+                    });
+                }
+            });
+        }
+
+        // Create hazard zone indicator
+        const hazardZone = this.scene.add.circle(
+            this.x,
+            this.y,
+            this.glassShardRadius,
+            0x00FFFF,
+            0.15
+        );
+        hazardZone.setDepth(2);
+
+        this.scene.time.delayedCall(this.glassShardDuration, () => {
+            this.scene.tweens.add({
+                targets: hazardZone,
+                alpha: 0,
+                duration: 500,
+                onComplete: () => hazardZone.destroy()
+            });
+        });
+
+        // TODO: Implement actual damage to entities in hazard zone
+        console.log(`Glass shard hazard zone created: ${this.glassShardDamage} DPS for ${this.glassShardDuration}ms`);
+    }
+
+    /**
+     * Spill water creating wet zone (water trough)
+     */
+    spillWater() {
+        console.log(`${this.name} destroyed - spilling water!`);
+
+        // Create water spill visual
+        const wetZone = this.scene.add.circle(
+            this.x,
+            this.y,
+            this.wetZoneRadius,
+            0x4682B4, // steel blue
+            0.3
+        );
+        wetZone.setDepth(2);
+
+        // Create water particle effect
+        const numDroplets = 10 + Math.floor(Math.random() * 10);
+
+        for (let i = 0; i < numDroplets; i++) {
+            const angle = (Math.PI * 2 * i) / numDroplets + Math.random() * 0.5;
+            const distance = Math.random() * this.wetZoneRadius;
+
+            const droplet = this.scene.add.circle(
+                this.x,
+                this.y,
+                3 + Math.random() * 4,
+                0x87CEEB, // light blue
+                0.6
+            );
+            droplet.setDepth(25);
+
+            this.scene.tweens.add({
+                targets: droplet,
+                x: this.x + Math.cos(angle) * distance,
+                y: this.y + Math.sin(angle) * distance,
+                alpha: 0,
+                duration: 600,
+                onComplete: () => droplet.destroy()
+            });
+        }
+
+        // Wet zone persists for duration
+        this.scene.time.delayedCall(this.wetZoneDuration, () => {
+            this.scene.tweens.add({
+                targets: wetZone,
+                alpha: 0,
+                duration: 2000,
+                onComplete: () => wetZone.destroy()
+            });
+        });
+
+        // TODO: Implement electrical conductor mechanic for Leviathan boss
+        console.log(`Wet zone created: ${this.electricalMultiplier}x electrical damage for ${this.wetZoneDuration}ms`);
+    }
+
+    /**
      * Accessors
      */
     isAlive() {
@@ -922,6 +1410,61 @@ export const PROP_TYPES = {
         weightClass: 'heavy',
         color: 0x654321,
         blocksBullets: true,
+        onDestroy: 'spawnBottleDebris',
+        layer: 'ground'
+    },
+
+    piano: {
+        name: 'Piano',
+        class: 'DestructibleCover',
+        maxHealth: 150,
+        width: 90,
+        height: 60,
+        weightClass: 'heavy',
+        color: 0x2F4F4F, // dark slate gray
+        blocksBullets: true,
+        onDestroy: 'playDiscordantNotes',
+        layer: 'ground'
+    },
+
+    heavyBookshelf: {
+        name: 'Heavy Bookshelf',
+        class: 'DestructibleCover',
+        maxHealth: 180,
+        width: 100,
+        height: 40,
+        weightClass: 'heavy',
+        color: 0x8B4513, // saddle brown
+        blocksBullets: true,
+        onDestroy: 'dropBooks',
+        layer: 'ground'
+    },
+
+    flippedPokerTable: {
+        name: 'Flipped Poker Table',
+        class: 'DestructibleCover',
+        maxHealth: 120,
+        width: 100,
+        height: 60,
+        weightClass: 'heavy',
+        color: 0x228B22, // forest green felt
+        blocksBullets: true,
+        interactive: true,
+        activationRadius: 50,
+        onActivate: 'flipTable',
+        layer: 'ground'
+    },
+
+    safe: {
+        name: 'Safe',
+        class: 'DestructibleCover',
+        maxHealth: 250,
+        width: 50,
+        height: 50,
+        weightClass: 'heavy',
+        color: 0x708090, // slate gray
+        blocksBullets: true,
+        onDestroy: 'dropCoins',
         layer: 'ground'
     },
 
@@ -968,6 +1511,37 @@ export const PROP_TYPES = {
         layer: 'ground'
     },
 
+    barStool: {
+        name: 'Bar Stool',
+        class: 'PhysicsProp',
+        maxHealth: 25,
+        width: 20,
+        height: 20,
+        weightClass: 'light',
+        color: 0xA0522D, // sienna
+        blocksBullets: true,
+        impactDamage: 3,
+        impactSpeed: 120,
+        friction: 0.98, // Rolls continuously when hit
+        layer: 'ground'
+    },
+
+    smallCrate: {
+        name: 'Small Crate',
+        class: 'PhysicsProp',
+        maxHealth: 40,
+        width: 35,
+        height: 35,
+        weightClass: 'light',
+        color: 0xDEB887, // burlwood
+        blocksBullets: true,
+        impactDamage: 3,
+        impactSpeed: 100,
+        friction: 0.90,
+        onDestroy: 'spawnSplinters',
+        layer: 'ground'
+    },
+
     // Hazard Prop
     oilLamp: {
         name: 'Oil Lamp',
@@ -998,6 +1572,57 @@ export const PROP_TYPES = {
         explosionRadius: 200, // Increased from 60 for better physics visibility
         explosionDamage: 20,
         layer: 'ground'
+    },
+
+    whiskeyBarrel: {
+        name: 'Whiskey Barrel',
+        class: 'HazardProp',
+        maxHealth: 50,
+        width: 40,
+        height: 40,
+        weightClass: 'medium',
+        color: 0x8B2500, // brown with red tint
+        blocksBullets: true,
+        explosionRadius: 60,
+        explosionDamage: 20,
+        onDestroy: 'createLiquidTrailFire',
+        fireRadius: 60,
+        fireDuration: 10000,
+        fireDamage: 5,
+        layer: 'ground'
+    },
+
+    dynamiteCrate: {
+        name: 'Dynamite Crate',
+        class: 'HazardProp',
+        maxHealth: 80,
+        width: 50,
+        height: 50,
+        weightClass: 'medium',
+        color: 0xD2691E, // chocolate, with red TNT labels
+        blocksBullets: true,
+        explosionRadius: 100,
+        explosionDamage: 30,
+        onDestroy: 'triggerChainExplosions',
+        layer: 'ground'
+    },
+
+    gasLantern: {
+        name: 'Gas Lantern',
+        class: 'HazardProp',
+        maxHealth: 30,
+        width: 20,
+        height: 20,
+        weightClass: 'light',
+        color: 0xFFFFE0, // light yellow
+        blocksBullets: true,
+        onDestroy: 'createBlindingFlash',
+        fireRadius: 30,
+        fireDuration: 2000,
+        fireDamage: 5,
+        flashRadius: 150,
+        flashDuration: 1000,
+        layer: 'table'
     },
 
     // Phase 4: Tactical Props
@@ -1036,6 +1661,50 @@ export const PROP_TYPES = {
         maxUses: 3,
         cooldown: 2000,
         layer: 'ceiling'
+    },
+
+    swingingDoors: {
+        name: 'Swinging Doors',
+        class: 'TacticalProp',
+        maxHealth: 60,
+        width: 80,
+        height: 100,
+        weightClass: null,
+        color: 0x8B4513, // brown
+        blocksBullets: true,
+        onDestroy: 'autoSwingClosed',
+        knockbackForce: 20,
+        layer: 'ground'
+    },
+
+    stageCurtain: {
+        name: 'Stage Curtain',
+        class: 'TacticalProp',
+        maxHealth: 40,
+        width: 100,
+        height: 120,
+        weightClass: null,
+        color: 0x8B0000, // dark red
+        blocksBullets: false, // Provides concealment, not protection
+        flammable: true,
+        fireSpreadMultiplier: 2.0,
+        layer: 'wall'
+    },
+
+    mirror: {
+        name: 'Mirror',
+        class: 'TacticalProp',
+        maxHealth: 50,
+        width: 40,
+        height: 60,
+        weightClass: null,
+        color: 0xC0C0C0, // silver frame
+        blocksBullets: true,
+        onDestroy: 'createGlassShardHazard',
+        glassShardRadius: 25,
+        glassShardDamage: 3,
+        glassShardDuration: 4000,
+        layer: 'wall'
     },
 
     // Phase 5: Chandelier - dynamic prop with falling system
@@ -1082,5 +1751,23 @@ export const PROP_TYPES = {
         blocksBullets: false,
         interactive: false,
         layer: 'floor'
+    },
+
+    // Phase 7: Additional Special Props
+
+    waterTrough: {
+        name: 'Water Trough',
+        class: 'SpecialProp',
+        maxHealth: 100,
+        width: 70,
+        height: 40,
+        weightClass: 'heavy',
+        color: 0x4682B4, // steel blue
+        blocksBullets: true,
+        onDestroy: 'spillWater',
+        wetZoneRadius: 80,
+        wetZoneDuration: 20000,
+        electricalMultiplier: 1.5,
+        layer: 'ground'
     }
 };
