@@ -331,20 +331,21 @@ export class GameScene extends Phaser.Scene {
             );
 
             // Handle target cycling
-            if (inputManager.shouldCycleTargetNext()) {
-                targetSelector.cycleToBountyTarget(
+            // E key = cycle enemies (including tentacles)
+            if (inputManager.shouldCycleEnemyTarget()) {
+                targetSelector.cycleToEnemyTarget(
                     player.getX(),
                     player.getY(),
                     this.enemies,
                     'next'
                 );
             }
-            if (inputManager.shouldCycleTargetPrev()) {
-                targetSelector.cycleToBountyTarget(
+            // Q key = cycle props (barrels, lamps, chandeliers, etc.)
+            if (inputManager.shouldCyclePropTarget()) {
+                targetSelector.cycleToPropTarget(
                     player.getX(),
                     player.getY(),
-                    this.enemies,
-                    'prev'
+                    'next'
                 );
             }
 

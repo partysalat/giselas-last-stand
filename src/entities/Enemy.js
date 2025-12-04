@@ -279,6 +279,13 @@ export class Enemy {
         this.inkTriggered1 = false;
         this.inkTriggered2 = false;
         this.lastSweepTime = 0;
+        this.beamCrushTriggered = false; // Phase 6: Support beam destruction
+
+        // Leviathan environmental effects (Phase 6)
+        this.lastTailSweep = 0;
+        this.lastLightningStrike = 0;
+        this.lastLightningChain = 0;
+        this.stageLightsExploded = false;
 
         // Formation system properties
         this.role = null; // 'tank', 'shooter', or null
@@ -1281,6 +1288,23 @@ export class Enemy {
         const currentTime = Date.now();
         const healthPercent = this.health / this.maxHealth;
 
+        // Phase 6: Support beam crush at 50% health (only once)
+        if (healthPercent <= 0.5 && !this.beamCrushTriggered) {
+            this.beamCrushTriggered = true;
+
+            console.log('Kraken at 50% HP - crushing support beam!');
+
+            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+                // Crush a random support beam
+                const beamIndex = Math.floor(Math.random() * 3); // 0, 1, or 2
+                this.scene.environmentManager.destructionManager.handleBossEvent(
+                    'boss_kraken_arm',
+                    'beamCrush',
+                    { beamIndex }
+                );
+            }
+        }
+
         // Update tentacle positions (writhing animation)
         this.tentacles.forEach((tentacle, i) => {
             if (tentacle.alive && this.tentacleSprites[i]) {
@@ -1422,6 +1446,15 @@ export class Enemy {
                 duration: 300,
                 onComplete: () => impact.destroy()
             });
+
+            // Phase 6: Trigger environmental destruction from tentacle slam
+            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+                this.scene.environmentManager.destructionManager.handleBossEvent(
+                    'boss_kraken_arm',
+                    'tentacleSlam',
+                    { x: targetX, y: targetY }
+                );
+            }
 
             tentacle.slamming = false;
             tentacle.lastSlamTime = Date.now();
@@ -1591,6 +1624,27 @@ export class Enemy {
             this.lastCharge = currentTime;
             return;
         }
+
+        // Phase 6: Tail Sweep attack (environmental effect)
+        const tailSweepReady = (currentTime - (this.lastTailSweep || 0)) >= 9000; // Every 9 seconds
+        if (tailSweepReady) {
+            this.tailSweepAttack(playerX, playerY);
+            this.lastTailSweep = currentTime;
+            return;
+        }
+
+        // Phase 6: Lightning Strike (periodic environmental hazard)
+        const lightningReady = (currentTime - (this.lastLightningStrike || 0)) >= 10000; // Every 10 seconds
+        if (lightningReady) {
+            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+                this.scene.environmentManager.destructionManager.handleBossEvent(
+                    'boss_leviathan',
+                    'lightningStrike',
+                    { propIndex: 0 } // Random prop
+                );
+            }
+            this.lastLightningStrike = currentTime;
+        }
     }
 
     leviathanPhase2Attacks(currentTime, playerX, playerY, distance) {
@@ -1616,6 +1670,33 @@ export class Enemy {
             this.bulletStormAttack();
             this.lastBulletStorm = currentTime;
             return;
+        }
+
+        // Phase 6: Lightning Chain (Phase 2 only)
+        const chainReady = (currentTime - (this.lastLightningChain || 0)) >= 8000; // Every 8 seconds
+        if (chainReady) {
+            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+                this.scene.environmentManager.destructionManager.handleBossEvent(
+                    'boss_leviathan',
+                    'lightningChain',
+                    { x: this.sprite.x, y: this.sprite.y }
+                );
+            }
+            this.lastLightningChain = currentTime;
+        }
+
+        // Phase 6: Explode Stage Lights (one-time at 70% health in Phase 2)
+        const phase2Health = this.health / this.maxHealth;
+        if (phase2Health <= 0.7 && !this.stageLightsExploded) {
+            this.stageLightsExploded = true;
+
+            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+                this.scene.environmentManager.destructionManager.handleBossEvent(
+                    'boss_leviathan',
+                    'explodeLights',
+                    {}
+                );
+            }
         }
     }
 
@@ -1890,6 +1971,50 @@ export class Enemy {
         });
     }
 
+    tailSweepAttack(playerX, playerY) {
+        console.log('Leviathan: Tail Sweep!');
+        this.attackingInProgress = true;
+
+        // Calculate sweep angle toward player
+        const dx = playerX - this.sprite.x;
+        const dy = playerY - this.sprite.y;
+        const angle = Math.atan2(dy, dx);
+
+        // Visual telegraph
+        const arc = this.scene.add.arc(this.sprite.x, this.sprite.y, 300, angle - 90, angle + 90, false, 0xFF0000, 0.3);
+        arc.setDepth(15);
+
+        this.scene.time.delayedCall(800, () => {
+            arc.destroy();
+
+            // Phase 6: Trigger environmental effect to knock back light props
+            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+                this.scene.environmentManager.destructionManager.handleBossEvent(
+                    'boss_leviathan',
+                    'tailSweep',
+                    { x: this.sprite.x, y: this.sprite.y, angle }
+                );
+            }
+
+            // Damage players in sweep arc
+            if (this.scene.playerManager) {
+                this.scene.playerManager.getLivingPlayers().forEach(player => {
+                    const pdx = player.getX() - this.sprite.x;
+                    const pdy = player.getY() - this.sprite.y;
+                    const dist = Math.sqrt(pdx * pdx + pdy * pdy);
+                    const pAngle = Math.atan2(pdy, pdx);
+                    const angleDiff = Math.abs(pAngle - angle);
+
+                    if (dist < 300 && angleDiff < Math.PI / 2) {
+                        player.takeDamage(20);
+                    }
+                });
+            }
+
+            this.attackingInProgress = false;
+        });
+    }
+
     transitionToPhase2Leviathan() {
         console.log('Leviathan: PHASE 2!');
         this.bossPhase = 2;
@@ -1907,6 +2032,26 @@ export class Enemy {
         // Visual effects
         this.scene.cameras.main.shake(500, 0.03);
         this.scene.cameras.main.flash(500, 100, 150, 255);
+
+        // Phase 6: Electrical surge on phase transition
+        if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+            this.scene.environmentManager.destructionManager.handleBossEvent(
+                'boss_leviathan',
+                'electricalSurge',
+                {}
+            );
+
+            // Electrify metal props in Phase 2
+            this.scene.time.delayedCall(1000, () => {
+                if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+                    this.scene.environmentManager.destructionManager.handleBossEvent(
+                        'boss_leviathan',
+                        'electrifyMetal',
+                        {}
+                    );
+                }
+            });
+        }
 
         // Announcement
         const announcement = this.scene.add.text(960, 400, 'THE LEVIATHAN EVOLVES', {

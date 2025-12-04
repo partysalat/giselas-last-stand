@@ -406,6 +406,11 @@ export class WaveManager {
             this.scene.coverManager.spawnCoverForWave();
         }
 
+        // Phase 5: Trigger environmental changes based on wave
+        if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+            this.scene.environmentManager.destructionManager.initializeForWave(this.currentWave);
+        }
+
         // Check if this is a boss wave
         if (this.isBossWave(this.currentWave)) {
             const bossType = composition[0].type;

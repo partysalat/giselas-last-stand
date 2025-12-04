@@ -7,8 +7,8 @@ export class InputManager {
         this.movement = { x: 0, y: 0 };
         this.aimInfluence = { x: 0, y: 0 };
         this.isFiring = false;
-        this.cycleTargetNext = false;
-        this.cycleTargetPrev = false;
+        this.cycleEnemyTarget = false;  // E key - cycle enemies
+        this.cyclePropTarget = false;   // Q key - cycle props
         this.activateCocktail = false;  // New flag
 
         // Input mode (auto-detected)
@@ -61,8 +61,8 @@ export class InputManager {
         }
 
         // Reset cycle flags each frame
-        this.cycleTargetNext = false;
-        this.cycleTargetPrev = false;
+        this.cycleEnemyTarget = false;
+        this.cyclePropTarget = false;
         this.activateCocktail = false;  // Reset activation flag
 
         if (this.gamepad && this.gamepad.connected) {
@@ -100,12 +100,14 @@ export class InputManager {
         this.aimInfluence.y = pointer.worldY;
 
         // Target cycling with Q/E
+        // Q = cycle props (barrels, lamps, chandeliers, etc.)
+        // E = cycle enemies (including tentacles)
         if (Phaser.Input.Keyboard.JustDown(this.keys.Q)) {
-            this.cycleTargetPrev = true;
+            this.cyclePropTarget = true;
             this.inputMode = 'keyboard';
         }
         if (Phaser.Input.Keyboard.JustDown(this.keys.E)) {
-            this.cycleTargetNext = true;
+            this.cycleEnemyTarget = true;
             this.inputMode = 'keyboard';
         }
 
@@ -135,14 +137,15 @@ export class InputManager {
         this.isFiring = this.gamepad.buttons[2] ? this.gamepad.buttons[2].pressed : false;
 
         // L1 (button 4) and R1 (button 5) for target cycling
+        // L1 = cycle props, R1 = cycle enemies (matches Q/E on keyboard)
         const L1 = this.gamepad.buttons[4] ? this.gamepad.buttons[4].pressed : false;
         const R1 = this.gamepad.buttons[5] ? this.gamepad.buttons[5].pressed : false;
 
         if (L1 && !this.lastL1) {
-            this.cycleTargetPrev = true;
+            this.cyclePropTarget = true;
         }
         if (R1 && !this.lastR1) {
-            this.cycleTargetNext = true;
+            this.cycleEnemyTarget = true;
         }
 
         // X button (button 2) for cocktail activation
@@ -172,12 +175,12 @@ export class InputManager {
         return this.isFiring;
     }
 
-    shouldCycleTargetNext() {
-        return this.cycleTargetNext;
+    shouldCycleEnemyTarget() {
+        return this.cycleEnemyTarget;
     }
 
-    shouldCycleTargetPrev() {
-        return this.cycleTargetPrev;
+    shouldCyclePropTarget() {
+        return this.cyclePropTarget;
     }
 
     shouldActivateCocktail() {

@@ -144,8 +144,8 @@ export class TargetSelector {
         this.lockedTarget = null;
     }
 
-    cycleToBountyTarget(playerX, playerY, enemies, direction) {
-        // Build list of all targetable objects (enemies + Kraken tentacles + explosive props)
+    cycleToEnemyTarget(playerX, playerY, enemies, direction) {
+        // Build list of enemy targets only (E key)
         const targets = [];
 
         enemies.forEach(enemy => {
@@ -177,14 +177,20 @@ export class TargetSelector {
             }
         });
 
-        // Add explosive props (barrels, oil lamps, etc.)
+        this.cycleTargets(targets, playerX, playerY, direction);
+    }
+
+    cycleToPropTarget(playerX, playerY, direction) {
+        // Build list of prop targets only (Q key)
+        const targets = [];
+
         if (this.scene.environmentManager) {
             const props = this.scene.environmentManager.getProps();
             props.forEach(prop => {
                 if (!prop.isAlive()) return;
 
                 // Only add targetable props (explosives, hazards, and stage lights)
-                // Note: Bell rope is NOT targetable (interactive only, not shootable)
+                // Chandeliers are NOT targetable (they fall automatically via wave system)
                 const isTargetable = prop.explosionRadius > 0 ||
                                     prop.className === 'HazardProp' ||
                                     (prop.className === 'TacticalProp' && prop.type === 'stageLights');
@@ -200,6 +206,12 @@ export class TargetSelector {
                 }
             });
         }
+
+        this.cycleTargets(targets, playerX, playerY, direction);
+    }
+
+    cycleTargets(targets, playerX, playerY, direction) {
+        // Common cycling logic for both enemy and prop targets
 
         if (targets.length === 0) {
             this.clearLock();

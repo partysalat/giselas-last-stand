@@ -74,6 +74,10 @@ export class EnvironmentProp {
         this.usesRemaining = this.maxUses;
         this.lastActivationTime = 0;
         this.isOnCooldown = false;
+
+        // Chandelier state tracking (Phase 5)
+        this.chandelierState = 'stable'; // stable, swaying, falling
+        this.darkenRadius = config.darkenRadius || 0;
     }
 
     /**
@@ -182,23 +186,63 @@ export class EnvironmentProp {
 
     /**
      * Update visual appearance based on damage state
+     * Phase 5: Enhanced multi-stage degradation
      */
     updateVisuals() {
         const healthPercent = this.health / this.maxHealth;
 
-        // Multi-stage visual degradation
-        if (healthPercent <= 0.33) {
-            // Breaking stage - very transparent
-            this.sprite.setAlpha(0.4);
-        } else if (healthPercent <= 0.66) {
-            // Damaged stage - semi-transparent
-            this.sprite.setAlpha(0.7);
-        } else {
-            // Pristine stage - full opacity
+        // Multi-stage visual degradation (Phase 5 enhanced)
+        // Pristine (100-66% HP): Full visual, no health bar initially
+        // Damaged (65-33% HP): Cracks visible, health bar appears, alpha to 0.8
+        // Breaking (32-1% HP): Barely holding, flashing health bar, alpha to 0.6
+        // Destroyed (0% HP): Special effect, debris, alpha to 0.4
+
+        if (healthPercent > 0.66) {
+            // Pristine stage - full opacity, health bar hidden for pristine props
             this.sprite.setAlpha(1.0);
+
+            // Hide health bar for pristine props
+            if (this.healthBarBg && this.healthBarFill && healthPercent > 0.99) {
+                this.healthBarBg.setVisible(false);
+                this.healthBarFill.setVisible(false);
+            }
+        } else if (healthPercent > 0.33) {
+            // Damaged stage - cracks visible, health bar appears, alpha to 0.8
+            this.sprite.setAlpha(0.8);
+
+            // Show health bar when damaged
+            if (this.healthBarBg && this.healthBarFill) {
+                this.healthBarBg.setVisible(true);
+                this.healthBarFill.setVisible(true);
+            }
+
+            // Add damage cracks visual effect (darker border)
+            if (this.sprite.strokeAlpha !== 1.0) {
+                this.sprite.setStrokeStyle(3, 0x000000, 1.0);
+            }
+        } else {
+            // Breaking stage - barely holding, flashing health bar, alpha to 0.6
+            this.sprite.setAlpha(0.6);
+
+            // Show health bar
+            if (this.healthBarBg && this.healthBarFill) {
+                this.healthBarBg.setVisible(true);
+                this.healthBarFill.setVisible(true);
+
+                // Start flashing effect for critical health
+                if (!this.isFlashing) {
+                    this.isFlashing = true;
+                    this.startHealthBarFlashing();
+                }
+            }
+
+            // Heavy damage visual (red tint) - use blended color for rectangles
+            // Mix the original color with red for damage effect
+            const redTinted = Phaser.Display.Color.GetColor(255, 136, 136);
+            this.sprite.setFillStyle(redTinted, 0.8);
         }
 
-        // Update health bar
+        // Update health bar width and color
         if (this.healthBarFill) {
             this.healthBarFill.width = this.width * healthPercent;
             this.healthBarFill.x = this.x - this.width / 2 + (this.width * healthPercent) / 2;
@@ -212,6 +256,23 @@ export class EnvironmentProp {
                 this.healthBarFill.setFillStyle(0xff0000, 0.8); // Red
             }
         }
+    }
+
+    /**
+     * Start flashing effect for health bar when critically damaged
+     */
+    startHealthBarFlashing() {
+        if (!this.healthBarFill) return;
+
+        // Create pulsing animation
+        this.scene.tweens.add({
+            targets: this.healthBarFill,
+            alpha: { from: 0.8, to: 0.3 },
+            duration: 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
     }
 
     /**
@@ -445,6 +506,229 @@ export class EnvironmentProp {
             if (timeSinceActivation >= this.cooldown) {
                 this.isOnCooldown = false;
             }
+        }
+
+        // Update chandelier swaying animation (Phase 5)
+        if (this.type === 'chandelier' && this.chandelierState === 'swaying') {
+            this.updateChandelierSwaying();
+        }
+    }
+
+    /**
+     * Set chandelier state (Phase 5)
+     * @param {string} state - 'stable', 'swaying', or 'falling'
+     */
+    setState(state) {
+        if (this.type !== 'chandelier') return;
+
+        this.chandelierState = state;
+        console.log(`Chandelier state changed to: ${state}`);
+
+        // Visual feedback for state changes
+        if (state === 'swaying') {
+            this.startSwayingAnimation();
+        } else if (state === 'falling') {
+            // Falling is handled by fall() method
+        }
+    }
+
+    /**
+     * Start swaying animation for chandelier
+     */
+    startSwayingAnimation() {
+        // Create a gentle swaying motion
+        this.scene.tweens.add({
+            targets: this.sprite,
+            rotation: 0.1,
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        // Visual warning effect
+        const warning = this.scene.add.circle(this.x, this.y, this.width / 2, 0xFF0000, 0);
+        warning.setStrokeStyle(2, 0xFF0000);
+        warning.setDepth(36);
+
+        this.scene.tweens.add({
+            targets: warning,
+            alpha: { from: 0.6, to: 0 },
+            duration: 800,
+            repeat: 2,
+            onComplete: () => warning.destroy()
+        });
+    }
+
+    /**
+     * Update chandelier swaying (per-frame)
+     */
+    updateChandelierSwaying() {
+        // Swaying is handled by tween, this is just for additional effects if needed
+        // Could add particle effects, sound, etc.
+    }
+
+    /**
+     * Trigger chandelier fall (Phase 5)
+     */
+    fall() {
+        if (this.type !== 'chandelier') return;
+        if (!this.alive) return;
+
+        console.log(`Chandelier falling at (${this.x}, ${this.y})`);
+
+        this.chandelierState = 'falling';
+
+        // Stop any existing tweens
+        this.scene.tweens.killTweensOf(this.sprite);
+
+        // Falling animation
+        this.scene.tweens.add({
+            targets: this.sprite,
+            y: this.y + 150, // Fall down
+            rotation: Math.PI * 2, // Spin while falling
+            alpha: { from: 1, to: 0.6 },
+            duration: 600,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                // Deal fall damage on impact
+                this.dealChandelierImpact();
+
+                // Create dark zone
+                this.createDarkZone();
+
+                // Destroy chandelier
+                this.destroy();
+            }
+        });
+
+        // Create falling particle trail
+        const particleTimer = this.scene.time.addEvent({
+            delay: 50,
+            repeat: 10,
+            callback: () => {
+                if (this.sprite) {
+                    const particle = this.scene.add.circle(
+                        this.sprite.x + (Math.random() - 0.5) * 20,
+                        this.sprite.y,
+                        2 + Math.random() * 3,
+                        this.color,
+                        0.6
+                    );
+                    particle.setDepth(35);
+
+                    this.scene.tweens.add({
+                        targets: particle,
+                        alpha: 0,
+                        duration: 300,
+                        onComplete: () => particle.destroy()
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * Deal impact damage when chandelier hits the ground
+     */
+    dealChandelierImpact() {
+        const impactX = this.sprite ? this.sprite.x : this.x;
+        const impactY = this.sprite ? this.sprite.y : this.y;
+
+        console.log(`Chandelier impact at (${impactX}, ${impactY})`);
+
+        // Visual impact effect
+        const impact = this.scene.add.circle(
+            impactX,
+            impactY,
+            this.fallRadius || 50,
+            0xFFFF00,
+            0.5
+        );
+        impact.setDepth(25);
+
+        this.scene.tweens.add({
+            targets: impact,
+            scale: { from: 0.5, to: 2 },
+            alpha: { from: 0.8, to: 0 },
+            duration: 500,
+            onComplete: () => impact.destroy()
+        });
+
+        // Deal damage in radius
+        const damage = this.fallDamage || 25;
+        const radius = this.fallRadius || 50;
+        this.damageInRadius(impactX, impactY, radius, damage);
+
+        // Camera shake for impact
+        if (this.scene.cameras && this.scene.cameras.main) {
+            this.scene.cameras.main.shake(200, 0.01);
+        }
+    }
+
+    /**
+     * Create permanent dark zone where chandelier fell
+     */
+    createDarkZone() {
+        const impactX = this.sprite ? this.sprite.x : this.x;
+        const impactY = this.sprite ? this.sprite.y : this.y;
+        const radius = this.darkenRadius || 150;
+
+        console.log(`Creating dark zone at (${impactX}, ${impactY}), radius: ${radius}`);
+
+        // Create semi-transparent dark circle
+        const darkZone = this.scene.add.circle(
+            impactX,
+            impactY,
+            radius,
+            0x000000,
+            0.3 // 30% darker (20% as specified in design)
+        );
+        darkZone.setDepth(2); // Below props but above floor
+
+        // Store reference for potential cleanup later
+        if (!this.scene.darkZones) {
+            this.scene.darkZones = [];
+        }
+        this.scene.darkZones.push(darkZone);
+
+        // Optional: Add some broken chandelier debris
+        this.createChandelierDebris(impactX, impactY);
+    }
+
+    /**
+     * Create debris sprites for fallen chandelier
+     */
+    createChandelierDebris(x, y) {
+        // Create 3-5 debris pieces
+        const debrisCount = 3 + Math.floor(Math.random() * 3);
+
+        for (let i = 0; i < debrisCount; i++) {
+            const offsetX = (Math.random() - 0.5) * 80;
+            const offsetY = (Math.random() - 0.5) * 80;
+
+            const debris = this.scene.add.rectangle(
+                x + offsetX,
+                y + offsetY,
+                10 + Math.random() * 10,
+                10 + Math.random() * 10,
+                this.color,
+                0.6
+            );
+            debris.setDepth(3);
+            debris.setRotation(Math.random() * Math.PI * 2);
+
+            // Debris fades out after 10 seconds
+            this.scene.time.delayedCall(10000, () => {
+                if (debris) {
+                    this.scene.tweens.add({
+                        targets: debris,
+                        alpha: 0,
+                        duration: 2000,
+                        onComplete: () => debris.destroy()
+                    });
+                }
+            });
         }
     }
 
@@ -752,5 +1036,51 @@ export const PROP_TYPES = {
         maxUses: 3,
         cooldown: 2000,
         layer: 'ceiling'
+    },
+
+    // Phase 5: Chandelier - dynamic prop with falling system
+    chandelier: {
+        name: 'Chandelier',
+        class: 'DynamicProp',
+        maxHealth: 100,
+        width: 60,
+        height: 60,
+        weightClass: 'heavy',
+        color: 0xFFD700, // Gold
+        blocksBullets: false, // Chandeliers don't block bullets (ceiling-mounted)
+        fallDamage: 25,
+        fallRadius: 50,
+        darkenRadius: 150,
+        layer: 'ceiling'
+    },
+
+    // Phase 6: Boss Integration Props
+
+    // Support Beam - structural prop that can be destroyed by bosses
+    supportBeam: {
+        name: 'Support Beam',
+        class: 'StructuralProp',
+        maxHealth: 300,
+        width: 30,
+        height: 150,
+        weightClass: null,
+        color: 0x8B4513,
+        blocksBullets: true,
+        onDestroy: 'stageTilt',
+        layer: 'structure'
+    },
+
+    // Trapdoor - opens from explosions/boss attacks
+    trapdoor: {
+        name: 'Trapdoor',
+        class: 'SpecialProp',
+        maxHealth: Infinity,
+        width: 60,
+        height: 60,
+        weightClass: null,
+        color: 0x654321,
+        blocksBullets: false,
+        interactive: false,
+        layer: 'floor'
     }
 };

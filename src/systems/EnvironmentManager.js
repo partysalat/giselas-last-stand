@@ -1,6 +1,7 @@
 import { EnvironmentProp, PROP_TYPES } from '../entities/EnvironmentProp.js';
 import { PhysicsManager } from './PhysicsManager.js';
 import { FireSystem } from './FireSystem.js';
+import { DestructionManager } from './DestructionManager.js';
 
 /**
  * EnvironmentManager
@@ -19,6 +20,9 @@ export class EnvironmentManager {
 
         // Initialize FireSystem (Phase 3)
         this.fireSystem = new FireSystem(scene);
+
+        // Initialize DestructionManager (Phase 5)
+        this.destructionManager = new DestructionManager(scene);
     }
 
     /**
@@ -32,10 +36,14 @@ export class EnvironmentManager {
     /**
      * Spawn props for the current wave
      * Phase 1: Use fixed layout compatible with existing system
+     * Phase 5: Add chandeliers (only once at wave 1)
      */
     spawnPropsForWave(waveNumber) {
-        // Clear existing props
-        this.clearAllProps();
+        // Clear existing props (but preserve chandeliers)
+        this.clearAllPropsExceptPersistent();
+
+        // Initialize destruction manager for this wave
+        this.destructionManager.initializeForWave(waveNumber);
 
         // Fixed layout matching old CoverManager positions
         // Using new prop types from EnvironmentProp
@@ -64,6 +72,33 @@ export class EnvironmentManager {
             { type: 'stageLights', x: 1320, y: 200 } // Right stage light
         ];
 
+        // Phase 5: Add chandeliers only on first wave
+        if (waveNumber === 1) {
+            propLayout.push(
+                { type: 'chandelier', x: 500, y: 200 }, // Left chandelier
+                { type: 'chandelier', x: 960, y: 250 }, // Center chandelier
+                { type: 'chandelier', x: 1420, y: 200 } // Right chandelier
+            );
+        }
+
+        // Phase 6: Add support beams (spawn once at wave 1, persist through game)
+        if (waveNumber === 1) {
+            propLayout.push(
+                { type: 'supportBeam', x: 400, y: 400 }, // Left support beam
+                { type: 'supportBeam', x: 960, y: 450 }, // Center support beam
+                { type: 'supportBeam', x: 1520, y: 400 } // Right support beam
+            );
+        }
+
+        // Phase 6: Add trapdoors (closed initially, can be opened by boss attacks/explosions)
+        // Trapdoors spawn at wave 1 but start closed/inactive
+        if (waveNumber === 1) {
+            propLayout.push(
+                { type: 'trapdoor', x: 600, y: 650 }, // Left trapdoor
+                { type: 'trapdoor', x: 1320, y: 650 } // Right trapdoor
+            );
+        }
+
         this.spawnProps(propLayout);
     }
 
@@ -79,6 +114,11 @@ export class EnvironmentManager {
                 propData.type
             );
             this.props.push(prop);
+
+            // Phase 5: Register chandeliers with destruction manager
+            if (propData.type === 'chandelier' && this.destructionManager) {
+                this.destructionManager.registerChandelier(prop);
+            }
 
             // Only add collision for props with physics bodies (non-hazard props)
             const sprite = prop.getSprite();
@@ -171,7 +211,37 @@ export class EnvironmentManager {
     }
 
     /**
-     * Clear all props from the scene
+     * Clear all props except persistent ones (chandeliers)
+     * Phase 5: Keep chandeliers across waves
+     */
+    clearAllPropsExceptPersistent() {
+        const persistentTypes = ['chandelier'];
+
+        // Separate persistent props from regular props
+        const persistentProps = [];
+        const propsToRemove = [];
+
+        this.props.forEach(prop => {
+            if (persistentTypes.includes(prop.type)) {
+                persistentProps.push(prop);
+            } else {
+                propsToRemove.push(prop);
+            }
+        });
+
+        // Destroy non-persistent props
+        propsToRemove.forEach(prop => {
+            if (prop.isAlive()) {
+                prop.destroy();
+            }
+        });
+
+        // Keep only persistent props
+        this.props = persistentProps;
+    }
+
+    /**
+     * Clear all props from the scene (including persistent ones)
      */
     clearAllProps() {
         this.props.forEach(prop => {
@@ -195,6 +265,12 @@ export class EnvironmentManager {
             if (prop.checkBulletCollision(bulletX, bulletY)) {
                 // Bullet hit this prop
                 prop.takeDamage(bulletDamage);
+
+                // Phase 5: Track damage with destruction manager
+                if (this.destructionManager) {
+                    this.destructionManager.trackDamage(prop, bulletDamage);
+                }
+
                 return true; // Bullet was blocked
             }
         }
@@ -216,6 +292,11 @@ export class EnvironmentManager {
 
             if (dist < radius) {
                 prop.takeDamage(damage);
+
+                // Phase 5: Track damage with destruction manager
+                if (this.destructionManager) {
+                    this.destructionManager.trackDamage(prop, damage);
+                }
             }
         });
     }
