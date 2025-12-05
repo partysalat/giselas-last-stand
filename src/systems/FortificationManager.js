@@ -240,6 +240,17 @@ export class FortificationManager {
         if (sprite) {
             sprite.setAlpha(0.7);
             sprite.setDepth(200); // Bring to front while dragging
+
+            // Add drag shadow
+            this.dragShadow = this.scene.add.rectangle(
+                prop.x,
+                prop.y,
+                prop.width,
+                prop.height,
+                0x000000,
+                0.3
+            );
+            this.dragShadow.setDepth(199);
         }
 
         // Remove spawn glow if present
@@ -265,6 +276,12 @@ export class FortificationManager {
         // Update prop position
         prop.x = pointer.x;
         prop.y = pointer.y;
+
+        // Update shadow position
+        if (this.dragShadow) {
+            this.dragShadow.x = pointer.x;
+            this.dragShadow.y = pointer.y + 10; // Offset slightly below
+        }
 
         // Update physics body if exists
         if (sprite.body) {
@@ -306,6 +323,12 @@ export class FortificationManager {
             const spriteBottom = sprite.y + (sprite.displayHeight / 2);
             const depthOffset = spriteBottom / 10;
             sprite.setDepth(baseDepth + depthOffset);
+        }
+
+        // Remove shadow
+        if (this.dragShadow) {
+            this.dragShadow.destroy();
+            this.dragShadow = null;
         }
 
         this.draggedProp = null;
