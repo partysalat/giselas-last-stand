@@ -114,7 +114,7 @@ export class GameScene extends Phaser.Scene {
         // Initialize fortification manager
         this.fortificationManager = new FortificationManager(this);
         this.fortificationManager.initializeSpawnPoints();
-        // Note: Initial furniture will be spawned after first wave completion
+        this.fortificationManager.spawnInitialFurniture();
 
         // Initialize boss announcer
         this.bossAnnouncer = new BossAnnouncer(this);
@@ -1765,12 +1765,8 @@ export class GameScene extends Phaser.Scene {
             this.betweenWavesUI.show(completedWave, nextWave);
         }
 
-        // Spawn initial furniture after first wave completion
-        if (this.fortificationManager && completedWave === 1 && this.fortificationManager.fortificationProps.length === 0) {
-            this.fortificationManager.spawnInitialFurniture();
-        }
-
         // Spawn fortification items for next wave
+        // Note: Initial furniture already spawned at game start
         if (this.fortificationManager) {
             this.fortificationManager.spawnItemsForWave(nextWave);
         }
