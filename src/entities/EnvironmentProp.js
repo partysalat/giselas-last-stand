@@ -188,7 +188,7 @@ export class EnvironmentProp {
             0x000000,
             0.5
         );
-        this.healthBarBg.setDepth(100);
+        this.healthBarBg.setDepth(50);
 
         this.healthBarFill = this.scene.add.rectangle(
             this.x,
@@ -198,7 +198,7 @@ export class EnvironmentProp {
             0x00ff00,
             0.8
         );
-        this.healthBarFill.setDepth(100);
+        this.healthBarFill.setDepth(50);
 
         // Hide health bar initially
         this.healthBarBg.setVisible(false);

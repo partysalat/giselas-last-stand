@@ -1794,7 +1794,10 @@ export class GameScene extends Phaser.Scene {
     onWaveComplete() {
         console.log('Wave completed - entering BETWEEN_WAVES state');
 
-        // Transition to BETWEEN_WAVES state
-        this.setGameState(GAME_STATE.BETWEEN_WAVES);
+        // Only enter BETWEEN_WAVES state if a wave was actually completed (not before wave 1)
+        if (this.waveManager && this.waveManager.currentWave >= 1) {
+            // Transition to BETWEEN_WAVES state
+            this.setGameState(GAME_STATE.BETWEEN_WAVES);
+        }
     }
 }
