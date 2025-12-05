@@ -1742,4 +1742,14 @@ export class GameScene extends Phaser.Scene {
             this.betweenWavesUI.hide();
         }
     }
+
+    /**
+     * Called when a wave is completed
+     */
+    onWaveComplete() {
+        console.log('Wave completed - entering BETWEEN_WAVES state');
+
+        // Transition to BETWEEN_WAVES state
+        this.setGameState(GAME_STATE.BETWEEN_WAVES);
+    }
 }

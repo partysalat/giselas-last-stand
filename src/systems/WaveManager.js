@@ -890,6 +890,11 @@ export class WaveManager {
         console.log('Wave', this.currentWave, 'complete!');
         this.waveActive = false;
 
+        // Notify scene of wave completion
+        if (this.scene.onWaveComplete) {
+            this.scene.onWaveComplete();
+        }
+
         // Award survival bonus
         if (this.scene.scoreManager) {
             this.scene.scoreManager.addWaveSurvivalBonus();
