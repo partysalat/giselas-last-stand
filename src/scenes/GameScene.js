@@ -14,6 +14,7 @@ import { BetweenWavesUI } from '../ui/BetweenWavesUI.js';
 import { CoverManager } from '../systems/CoverManager.js';
 import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { WallManager } from '../systems/WallManager.js';
+import { FortificationManager } from '../systems/FortificationManager.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
 
 // Game states
@@ -109,6 +110,10 @@ export class GameScene extends Phaser.Scene {
 
         // Initialize score manager
         this.scoreManager = new ScoreManager(this);
+
+        // Initialize fortification manager
+        this.fortificationManager = new FortificationManager(this);
+        this.fortificationManager.initializeSpawnPoints();
 
         // Initialize boss announcer
         this.bossAnnouncer = new BossAnnouncer(this);
@@ -357,6 +362,11 @@ export class GameScene extends Phaser.Scene {
         // Update cover manager (environmentManager)
         if (this.coverManager) {
             this.coverManager.update(delta);
+        }
+
+        // Update fortification manager
+        if (this.fortificationManager) {
+            this.fortificationManager.update(delta);
         }
 
         // Update PlayerManager (handles all players and input)
@@ -1723,6 +1733,12 @@ export class GameScene extends Phaser.Scene {
         // Show UI overlay
         if (this.betweenWavesUI) {
             this.betweenWavesUI.show();
+        }
+
+        // Spawn fortification items
+        if (this.fortificationManager) {
+            const currentWave = this.waveManager ? this.waveManager.currentWave : 1;
+            this.fortificationManager.spawnItemsForWave(currentWave);
         }
 
         // Pause enemy spawning
