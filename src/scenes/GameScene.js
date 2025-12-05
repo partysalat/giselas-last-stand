@@ -844,6 +844,32 @@ export class GameScene extends Phaser.Scene {
                 }
             }
 
+            // Check fortification collision (after cover, before enemies)
+            if (this.fortificationManager) {
+                let hitFortification = false;
+                for (const prop of this.fortificationManager.fortificationProps) {
+                    if (!prop.isAlive()) continue;
+                    if (!prop.blocksBullets) continue;
+
+                    // Check collision with this bullet
+                    if (prop.checkBulletCollision(bullet.getSprite().x, bullet.getSprite().y)) {
+                        // Damage the prop
+                        prop.takeDamage(bullet.getDamage());
+
+                        console.log(`Bullet hit ${prop.name}`);
+
+                        // Destroy bullet
+                        bullet.destroy();
+                        hitFortification = true;
+                        break;
+                    }
+                }
+
+                if (hitFortification) {
+                    continue; // Skip enemy collision check
+                }
+            }
+
             let hitEnemy = false;
 
             for (let j = this.enemies.length - 1; j >= 0; j--) {
