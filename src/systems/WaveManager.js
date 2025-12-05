@@ -401,10 +401,11 @@ export class WaveManager {
 
         console.log('Wave', this.currentWave, 'has', this.subWavesData.length, 'sub-waves configured');
 
+        // NOTE: Cover/prop spawning disabled - now handled by FortificationManager
         // Spawn cover for this wave
-        if (this.scene.coverManager) {
-            this.scene.coverManager.spawnCoverForWave();
-        }
+        // if (this.scene.coverManager) {
+        //     this.scene.coverManager.spawnCoverForWave();
+        // }
 
         // Phase 5: Trigger environmental changes based on wave
         if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {

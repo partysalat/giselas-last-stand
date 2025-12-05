@@ -1765,10 +1765,14 @@ export class GameScene extends Phaser.Scene {
             this.betweenWavesUI.show(completedWave, nextWave);
         }
 
-        // Spawn fortification items for next wave
-        // Note: Initial furniture already spawned at game start
-        if (this.fortificationManager) {
+        // Spawn fortification items for next wave (but not after wave 1)
+        // After wave 1, players already have initial furniture to work with
+        // Start spawning additional items from wave 2 onwards
+        if (this.fortificationManager && completedWave >= 2) {
+            console.log(`Spawning items for wave ${nextWave}`);
             this.fortificationManager.spawnItemsForWave(nextWave);
+        } else if (completedWave === 1) {
+            console.log('Skipping item spawn after wave 1 - using initial furniture only');
         }
 
         // Pause enemy spawning
@@ -1793,12 +1797,12 @@ export class GameScene extends Phaser.Scene {
      * Called when a wave is completed
      */
     onWaveComplete() {
-        console.log('Wave completed - entering BETWEEN_WAVES state');
+        const completedWave = this.waveManager ? this.waveManager.currentWave : 0;
+        console.log(`Wave ${completedWave} completed`);
 
-        // Only enter BETWEEN_WAVES state if a wave was actually completed (not before wave 1)
-        if (this.waveManager && this.waveManager.currentWave >= 1) {
-            // Transition to BETWEEN_WAVES state
-            this.setGameState(GAME_STATE.BETWEEN_WAVES);
-        }
+        // Always enter between-waves phase after any wave completion
+        // This gives players time to fortify before the next wave
+        console.log('Entering BETWEEN_WAVES state');
+        this.setGameState(GAME_STATE.BETWEEN_WAVES);
     }
 }
