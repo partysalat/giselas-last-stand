@@ -269,6 +269,16 @@ export class FortificationManager {
         const sprite = prop.getSprite();
         if (!sprite) return;
 
+        // Check if current position is valid
+        const isValid = this.isValidPlacement(pointer.x, pointer.y, prop);
+
+        // Tint sprite red if invalid
+        if (!isValid) {
+            sprite.setTint(0xff0000);
+        } else {
+            sprite.clearTint();
+        }
+
         // Update sprite position
         sprite.x = pointer.x;
         sprite.y = pointer.y;
@@ -306,9 +316,42 @@ export class FortificationManager {
     onDragEnd(prop, pointer, dragX, dragY) {
         console.log(`Drag end: ${prop.name} at (${pointer.x}, ${pointer.y})`);
 
+        // Validate placement position
+        const isValidPosition = this.isValidPlacement(pointer.x, pointer.y, prop);
+
+        if (!isValidPosition) {
+            console.log('Invalid placement - returning to start position');
+
+            // Return to drag start position
+            const sprite = prop.getSprite();
+            if (sprite) {
+                sprite.x = this.dragStartX;
+                sprite.y = this.dragStartY;
+            }
+            prop.x = this.dragStartX;
+            prop.y = this.dragStartY;
+
+            // Update physics body
+            if (sprite && sprite.body) {
+                sprite.body.x = this.dragStartX - sprite.body.width / 2;
+                sprite.body.y = this.dragStartY - sprite.body.height / 2;
+            }
+
+            // Update health bar position if exists
+            if (prop.healthBarBg && prop.healthBarFill) {
+                prop.healthBarBg.x = this.dragStartX;
+                prop.healthBarBg.y = this.dragStartY - prop.height / 2 - 10;
+
+                const healthPercent = prop.getHealthPercent();
+                prop.healthBarFill.x = this.dragStartX - prop.width / 2 + (prop.width * healthPercent) / 2;
+                prop.healthBarFill.y = this.dragStartY - prop.height / 2 - 10;
+            }
+        }
+
         const sprite = prop.getSprite();
         if (sprite) {
             sprite.setAlpha(1.0);
+            sprite.clearTint(); // Clear red tint if present
 
             // Restore original depth based on Y position
             const baseDepthMap = {
@@ -372,6 +415,42 @@ export class FortificationManager {
 
             return distance < (radius + Math.max(prop.width, prop.height) / 2);
         });
+    }
+
+    /**
+     * Check if placement position is valid
+     * @param {number} x - X position
+     * @param {number} y - Y position
+     * @param {EnvironmentProp} prop - The prop being placed
+     * @returns {boolean} True if position valid
+     */
+    isValidPlacement(x, y, prop) {
+        // Check world bounds (stay within game area)
+        const margin = Math.max(prop.width, prop.height) / 2;
+        if (x < margin || x > 1920 - margin || y < margin || y > 1080 - margin) {
+            console.log('Out of bounds');
+            return false;
+        }
+
+        // Check overlap with players
+        if (this.scene.playerManager) {
+            const players = this.scene.playerManager.getLivingPlayers();
+            for (const player of players) {
+                const dx = player.getX() - x;
+                const dy = player.getY() - y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 80) {
+                    console.log('Too close to player');
+                    return false;
+                }
+            }
+        }
+
+        // Allow overlaps with other furniture (intentional stacking)
+        // Players can create tight barricades this way
+
+        return true;
     }
 
     /**
