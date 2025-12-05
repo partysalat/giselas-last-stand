@@ -661,6 +661,18 @@ export class Enemy {
     }
 
     updateFastMelee(time, playerX, playerY, skipMovement = false) {
+        // Check for nearby fortifications to attack
+        if (this.scene.fortificationManager) {
+            const nearbyFortification = this.findNearestFortification();
+            if (nearbyFortification) {
+                const fortDistance = this.distanceTo(nearbyFortification);
+                // Attack if fortification is very close (blocking path)
+                if (fortDistance < 60) {
+                    this.attackFortification(nearbyFortification);
+                }
+            }
+        }
+
         // Only handle movement if not in formation
         if (!skipMovement) {
             const dx = playerX - this.sprite.x;
@@ -1063,6 +1075,18 @@ export class Enemy {
         const distance = Math.sqrt(dx * dx + dy * dy);
         const currentTime = Date.now();
 
+        // Check for nearby fortifications to attack
+        if (this.scene.fortificationManager) {
+            const nearbyFortification = this.findNearestFortification();
+            if (nearbyFortification) {
+                const fortDistance = this.distanceTo(nearbyFortification);
+                // Attack if fortification is very close (blocking path)
+                if (fortDistance < 60) {
+                    this.attackFortification(nearbyFortification);
+                }
+            }
+        }
+
         // Shooters maintain optimal distance
         if (!skipMovement && this.role === 'shooter') {
             const optimalDistance = 300;
@@ -1108,7 +1132,24 @@ export class Enemy {
             // Only handle movement if not in formation
             if (distance > 50) {
                 // Move toward player
-                const angle = Math.atan2(dy, dx);
+                let angle = Math.atan2(dy, dx);
+
+                // TODO: Implement proper A* pathfinding for smoother enemy navigation
+                // Current approach uses simple obstacle avoidance which may cause stuck enemies
+
+                // Check for obstacles ahead
+                if (this.scene.fortificationManager) {
+                    const raycastDistance = 50;
+                    const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
+                    const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
+
+                    const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY);
+                    if (hasObstacle) {
+                        // Try perpendicular angles to go around
+                        angle += Math.PI / 2 * (Math.random() > 0.5 ? 1 : -1);
+                    }
+                }
+
                 this.sprite.body.setVelocity(
                     Math.cos(angle) * this.config.speed,
                     Math.sin(angle) * this.config.speed
