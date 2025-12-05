@@ -716,11 +716,11 @@ export class WaveManager {
             }
         }
 
-        // Spawn at different locations
+        // Spawn at different locations near the top wall
         const positions = [
-            { x: 400, y: 540 },
-            { x: 960, y: 540 },
-            { x: 1520, y: 540 }
+            { x: 600, y: 350 },
+            { x: 960, y: 350 },
+            { x: 1320, y: 350 }
         ];
 
         selectedTypes.forEach((type, index) => {

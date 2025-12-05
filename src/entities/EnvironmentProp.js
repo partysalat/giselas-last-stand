@@ -229,33 +229,16 @@ export class EnvironmentProp {
 
         // Configure collision body
         // Sprites are centered at (x,y) by default (origin 0.5, 0.5)
-        // The sprite's scaled size determines the texture bounds
         const spriteWidth = this.sprite.displayWidth;
         const spriteHeight = this.sprite.displayHeight;
 
-        // Scale up the physics body to better match the larger visual sprite
-        // Apply the same visual multiplier that was used for the sprite
-        const maxDimension = Math.max(this.width, this.height);
-        let physicsMultiplier = 1.0;
+        // Physics body should match the visual sprite size closely
+        // Use 70% to account for visual elements like shadows and decorative edges
+        const physicsWidth = spriteWidth * 0.7;
+        const physicsHeight = spriteHeight * 0.7;
 
-        if (maxDimension <= 40) {
-            physicsMultiplier = 3.5;
-        } else if (maxDimension <= 70) {
-            physicsMultiplier = 2.5;
-        } else {
-            physicsMultiplier = 2.0;
-        }
-
-        // Set physics body size to match the scaled visual size
-        const physicsWidth = this.width * physicsMultiplier;
-        const physicsHeight = this.height * physicsMultiplier;
-        this.sprite.body.setSize(physicsWidth, physicsHeight);
-
-        // Calculate offset: physics body should be centered relative to sprite origin
-        // Offset is from top-left of sprite texture to top-left of physics body
-        const offsetX = (spriteWidth - physicsWidth) / 2;
-        const offsetY = (spriteHeight - physicsHeight) / 2;
-        this.sprite.body.setOffset(offsetX, offsetY);
+        // Set the body size and let Phaser center it automatically
+        this.sprite.body.setSize(physicsWidth, physicsHeight, true);
 
         // For dynamic (light) props, enable physics interactions
         if (!isStatic) {
@@ -1731,8 +1714,8 @@ export const PROP_TYPES = {
         name: 'Card Table',
         class: 'DestructibleCover',
         maxHealth: 60,
-        width: 60,
-        height: 40,
+        width: 80,
+        height: 60,
         weightClass: 'light',
         color: 0x006400,
         blocksBullets: true,

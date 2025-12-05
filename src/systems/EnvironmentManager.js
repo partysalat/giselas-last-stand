@@ -49,7 +49,6 @@ export class EnvironmentManager {
         // Using new prop types from EnvironmentProp
         const propLayout = [
             // Phase 7: Heavy Cover props
-            { type: 'barCounter', x: 1220, y: 750 },
             { type: 'piano', x: 500, y: 700 },
             { type: 'heavyBookshelf', x: 1420, y: 700 },
             { type: 'safe', x: 960, y: 450 },
@@ -69,7 +68,6 @@ export class EnvironmentManager {
 
             // Phase 7: Hazard Props
             { type: 'oilLamp', x: 700, y: 700 }, // On card table
-            { type: 'oilLamp', x: 1220, y: 700 }, // On bar counter
             { type: 'whiskeyBarrel', x: 820, y: 600 },
             { type: 'dynamiteCrate', x: 1080, y: 600 },
             { type: 'gasLantern', x: 650, y: 300 },

@@ -60,9 +60,11 @@ export class Cocktail {
         // Create visual representation using sprite image
         this.sprite = scene.add.image(x, y, this.config.sprite);
         this.sprite.setScale(1.2); // Scale up for better visibility
+        this.sprite.setDepth(1000); // Render above everything else
 
         // Add glow effect
         this.glow = scene.add.circle(x, y, 40, this.config.color, 0.3);
+        this.glow.setDepth(999); // Glow just below sprite
 
         // Floating animation
         scene.tweens.add({
