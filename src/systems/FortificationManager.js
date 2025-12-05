@@ -323,7 +323,13 @@ export class FortificationManager {
         });
 
         // Remove destroyed props
+        const beforeCount = this.fortificationProps.length;
         this.fortificationProps = this.fortificationProps.filter(prop => prop.isAlive());
+        const afterCount = this.fortificationProps.length;
+
+        if (beforeCount !== afterCount) {
+            console.log(`Fortifications: ${beforeCount} -> ${afterCount} (${beforeCount - afterCount} destroyed)`);
+        }
     }
 
     /**
