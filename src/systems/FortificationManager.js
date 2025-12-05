@@ -75,17 +75,45 @@ export class FortificationManager {
         // Determine items to spawn based on wave number
         const itemsToSpawn = this.getItemsForWave(waveNumber);
 
+        // Find available spawn points (no props nearby)
+        const availableSpawnPoints = this.getAvailableSpawnPoints();
+
+        if (availableSpawnPoints.length === 0) {
+            console.warn('No available spawn points - all occupied');
+            return;
+        }
+
         // Spawn items at available spawn points
         let spawnIndex = 0;
         itemsToSpawn.forEach(itemType => {
-            if (spawnIndex >= this.spawnPoints.length) {
+            if (spawnIndex >= availableSpawnPoints.length) {
                 console.warn('Not enough spawn points for all items');
                 return;
             }
 
-            const spawnPoint = this.spawnPoints[spawnIndex];
+            const spawnPoint = availableSpawnPoints[spawnIndex];
             this.spawnFortificationProp(itemType, spawnPoint.x, spawnPoint.y, true);
             spawnIndex++;
+        });
+    }
+
+    /**
+     * Get spawn points that don't have props nearby
+     * @returns {Array} Available spawn points
+     */
+    getAvailableSpawnPoints() {
+        const minDistance = 80; // Minimum distance from existing props
+
+        return this.spawnPoints.filter(spawnPoint => {
+            // Check if any fortification prop is too close
+            const hasPropNearby = this.fortificationProps.some(prop => {
+                const dx = prop.x - spawnPoint.x;
+                const dy = prop.y - spawnPoint.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                return distance < minDistance;
+            });
+
+            return !hasPropNearby;
         });
     }
 
