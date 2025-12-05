@@ -10,6 +10,7 @@ import { PlayerManager } from '../systems/PlayerManager.js';
 import { TargetSelector } from '../systems/TargetSelector.js';
 import { BossAnnouncer } from '../systems/BossAnnouncer.js';
 import { BossHealthBar } from '../ui/BossHealthBar.js';
+import { BetweenWavesUI } from '../ui/BetweenWavesUI.js';
 import { CoverManager } from '../systems/CoverManager.js';
 import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { WallManager } from '../systems/WallManager.js';
@@ -110,6 +111,10 @@ export class GameScene extends Phaser.Scene {
 
         // Initialize boss announcer
         this.bossAnnouncer = new BossAnnouncer(this);
+
+        // Initialize between-waves UI
+        this.betweenWavesUI = new BetweenWavesUI(this);
+        this.betweenWavesUI.create();
 
         // Initialize cover manager (legacy - will be replaced)
         // this.coverManager = new CoverManager(this);
@@ -331,6 +336,20 @@ export class GameScene extends Phaser.Scene {
             this.toggleCollisionBoxVisualization();
         }
         this.lastVKeyState = this.keys.V.isDown;
+
+        // SPACE key: Start next wave when in BETWEEN_WAVES state
+        if (this.gameState === GAME_STATE.BETWEEN_WAVES) {
+            const spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+            if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
+                console.log('SPACE pressed - starting next wave');
+                this.setGameState(GAME_STATE.WAVE_ACTIVE);
+
+                // Start next wave
+                if (this.waveManager) {
+                    this.waveManager.startNextWave();
+                }
+            }
+        }
 
         // Update wave manager (for spawn animations)
         if (this.waveManager) {
@@ -1702,7 +1721,16 @@ export class GameScene extends Phaser.Scene {
      */
     onEnterBetweenWaves() {
         console.log('Entering BETWEEN_WAVES state');
-        // Placeholder - will be implemented in Task 2
+
+        // Show UI overlay
+        if (this.betweenWavesUI) {
+            this.betweenWavesUI.show();
+        }
+
+        // Pause enemy spawning
+        if (this.waveManager) {
+            this.waveManager.isSpawning = false;
+        }
     }
 
     /**
@@ -1710,6 +1738,10 @@ export class GameScene extends Phaser.Scene {
      */
     onEnterWaveActive() {
         console.log('Entering WAVE_ACTIVE state');
-        // Placeholder - will be implemented in Task 2
+
+        // Hide UI overlay
+        if (this.betweenWavesUI) {
+            this.betweenWavesUI.hide();
+        }
     }
 }
