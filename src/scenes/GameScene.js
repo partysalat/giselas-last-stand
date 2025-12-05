@@ -114,6 +114,16 @@ export class GameScene extends Phaser.Scene {
         this.wallManager = new WallManager(this);
         this.wallManager.createWalls();
 
+        // Set physics world bounds to prevent players/enemies from going over walls
+        // Top wall area is ~100px thick, so playable area starts at y=100
+        const wallThickness = 100;
+        this.physics.world.setBounds(
+            wallThickness,              // x
+            wallThickness,              // y (prevents going over top wall)
+            1920 - (wallThickness * 2), // width
+            1080 - (wallThickness * 2)  // height
+        );
+
         // Setup wall collisions with players
         this.wallManager.setupPlayerCollisions(this.playerManager);
 

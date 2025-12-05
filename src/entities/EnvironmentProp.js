@@ -112,9 +112,9 @@ export class EnvironmentProp {
             );
 
             // Scale sprite to approximate collision box size while maintaining aspect ratio
-            // Sprites are 128x128, we want them to visually match the collision box
+            // Sprites are 341x341, we want them to visually match the collision box
             // Use the larger dimension (width or height) to determine scale
-            const spriteSize = 128; // Original sprite size
+            const spriteSize = 341; // Original sprite size
             const targetScale = Math.max(this.width, this.height) / spriteSize;
 
             // Apply a multiplier to make sprites larger and more visible
@@ -124,13 +124,13 @@ export class EnvironmentProp {
 
             if (maxDimension <= 40) {
                 // Very small props (chairs, lamps, stools) - make them much larger
-                visualMultiplier = 2.5;
+                visualMultiplier = 3.5;
             } else if (maxDimension <= 70) {
-                // Medium props (barrels, crates, tables) - make them 50% larger
-                visualMultiplier = 1.5;
+                // Medium props (barrels, crates, tables) - make them larger
+                visualMultiplier = 2.5;
             } else {
-                // Large props (counters, pianos) - keep closer to actual size
-                visualMultiplier = 1.2;
+                // Large props (counters, pianos) - make them larger too
+                visualMultiplier = 2.0;
             }
 
             const visualScale = targetScale * visualMultiplier;
@@ -233,13 +233,28 @@ export class EnvironmentProp {
         const spriteWidth = this.sprite.displayWidth;
         const spriteHeight = this.sprite.displayHeight;
 
-        // Set physics body size to match collision box
-        this.sprite.body.setSize(this.width, this.height);
+        // Scale up the physics body to better match the larger visual sprite
+        // Apply the same visual multiplier that was used for the sprite
+        const maxDimension = Math.max(this.width, this.height);
+        let physicsMultiplier = 1.0;
+
+        if (maxDimension <= 40) {
+            physicsMultiplier = 3.5;
+        } else if (maxDimension <= 70) {
+            physicsMultiplier = 2.5;
+        } else {
+            physicsMultiplier = 2.0;
+        }
+
+        // Set physics body size to match the scaled visual size
+        const physicsWidth = this.width * physicsMultiplier;
+        const physicsHeight = this.height * physicsMultiplier;
+        this.sprite.body.setSize(physicsWidth, physicsHeight);
 
         // Calculate offset: physics body should be centered relative to sprite origin
         // Offset is from top-left of sprite texture to top-left of physics body
-        const offsetX = (spriteWidth - this.width) / 2;
-        const offsetY = (spriteHeight - this.height) / 2;
+        const offsetX = (spriteWidth - physicsWidth) / 2;
+        const offsetY = (spriteHeight - physicsHeight) / 2;
         this.sprite.body.setOffset(offsetX, offsetY);
 
         // For dynamic (light) props, enable physics interactions

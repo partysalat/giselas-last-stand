@@ -76,12 +76,9 @@ export class EnvironmentManager {
             { type: 'gasLantern', x: 1270, y: 300 },
 
             // Phase 7: Tactical Props
-            { type: 'bellRope', x: 960, y: 150 }, // Center ceiling
+            { type: 'bellRope', x: 400, y: 200 }, // Left side ceiling
             { type: 'stageLights', x: 600, y: 200 }, // Left stage light
             { type: 'stageLights', x: 1320, y: 200 }, // Right stage light
-            { type: 'mirror', x: 400, y: 400 }, // Left wall
-            { type: 'mirror', x: 1520, y: 400 }, // Right wall
-            { type: 'stageCurtain', x: 960, y: 100 }, // Center stage
 
             // Phase 7: Special Props
             { type: 'waterTrough', x: 960, y: 800 } // Center bottom
@@ -96,14 +93,7 @@ export class EnvironmentManager {
             );
         }
 
-        // Phase 6: Add support beams (spawn once at wave 1, persist through game)
-        if (waveNumber === 1) {
-            propLayout.push(
-                { type: 'supportBeam', x: 400, y: 400 }, // Left support beam
-                { type: 'supportBeam', x: 960, y: 450 }, // Center support beam
-                { type: 'supportBeam', x: 1520, y: 400 } // Right support beam
-            );
-        }
+        // Phase 6: Support beams removed - too cluttered
 
         // Phase 6: Add trapdoors (closed initially, can be opened by boss attacks/explosions)
         // Trapdoors spawn at wave 1 but start closed/inactive
