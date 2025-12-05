@@ -64,9 +64,36 @@ export class BetweenWavesUI {
 
     /**
      * Show the UI overlay
+     * @param {number} completedWave - Wave number just completed
+     * @param {number} nextWave - Next wave number
      */
-    show() {
+    show(completedWave, nextWave) {
         if (this.container) {
+            // Update title with wave numbers
+            const titleText = this.container.list[1]; // Title is second element
+            if (titleText) {
+                titleText.setText(`WAVE ${completedWave} COMPLETE`);
+            }
+
+            // Determine items for next wave
+            let itemsText = 'Basic Furniture Available';
+            if (nextWave >= 3) {
+                itemsText = 'Furniture + Explosive Barrels Available';
+            }
+            if (nextWave >= 5) {
+                itemsText = 'Full Arsenal Available (Barrels, Traps, Hazards)';
+            }
+
+            // Update instructions with next wave number and items
+            if (this.instructionText) {
+                this.instructionText.setText(
+                    `${itemsText}\n\n` +
+                    `Drag furniture to build barricades and set traps\n\n` +
+                    `Wave ${nextWave} incoming...\n\n` +
+                    `Press SPACE when ready`
+                );
+            }
+
             this.container.setVisible(true);
             this.visible = true;
         }

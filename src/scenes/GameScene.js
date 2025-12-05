@@ -1757,15 +1757,17 @@ export class GameScene extends Phaser.Scene {
     onEnterBetweenWaves() {
         console.log('Entering BETWEEN_WAVES state');
 
-        // Show UI overlay
+        const completedWave = this.waveManager ? this.waveManager.currentWave : 0;
+        const nextWave = completedWave + 1;
+
+        // Show UI overlay with wave numbers
         if (this.betweenWavesUI) {
-            this.betweenWavesUI.show();
+            this.betweenWavesUI.show(completedWave, nextWave);
         }
 
         // Spawn fortification items
         if (this.fortificationManager) {
-            const currentWave = this.waveManager ? this.waveManager.currentWave : 1;
-            this.fortificationManager.spawnItemsForWave(currentWave);
+            this.fortificationManager.spawnItemsForWave(nextWave);
         }
 
         // Pause enemy spawning
