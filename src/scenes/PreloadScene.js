@@ -149,6 +149,36 @@ export class PreloadScene extends Phaser.Scene {
             frameHeight: 128
         });
 
+        // Load environment props sprite sheet - 3x3 grid of light furniture
+        this.load.spritesheet('interior2', 'assets/sprites/environment/interior2.png', {
+            frameWidth: 128,  // Each sprite in the 3x3 grid
+            frameHeight: 128
+        });
+
+        // Load environment props sprite sheet - 3x3 grid of hazard props
+        this.load.spritesheet('interior3', 'assets/sprites/environment/interior3.png', {
+            frameWidth: 128,  // Each sprite in the 3x3 grid
+            frameHeight: 128
+        });
+
+        // Load environment props sprite sheet - 3x3 grid of tactical props
+        this.load.spritesheet('interior4', 'assets/sprites/environment/interior4.png', {
+            frameWidth: 128,  // Each sprite in the 3x3 grid
+            frameHeight: 128
+        });
+
+        // Load environment props sprite sheet - 3x3 grid of special props & structural
+        this.load.spritesheet('interior5', 'assets/sprites/environment/interior5.png', {
+            frameWidth: 128,  // Each sprite in the 3x3 grid
+            frameHeight: 128
+        });
+
+        // Load environment props sprite sheet - 3x3 grid of debris & destruction effects
+        this.load.spritesheet('interior6', 'assets/sprites/environment/interior6.png', {
+            frameWidth: 128,  // Each sprite in the 3x3 grid
+            frameHeight: 128
+        });
+
         // this.load.image('barrel', 'assets/sprites/environment/barrel.png');
         // this.load.image('saloon-doors', 'assets/sprites/environment/saloon-doors.png');
 

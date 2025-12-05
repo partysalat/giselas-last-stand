@@ -1516,8 +1516,8 @@ export const PROP_TYPES = {
         color: 0x006400,
         blocksBullets: true,
         layer: 'ground',
-        spriteKey: 'interior1',
-        spriteFrame: 5  // Middle-right in 3x3 grid (upright poker table)
+        spriteKey: 'interior2',
+        spriteFrame: 3  // Middle-left in interior2 3x3 grid
     },
 
     woodenChair: {
@@ -1532,7 +1532,9 @@ export const PROP_TYPES = {
         impactDamage: 5,
         impactSpeed: 100,
         friction: 0.92,
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 0  // Top-left in 3x3 grid
     },
 
     barrel: {
@@ -1564,7 +1566,9 @@ export const PROP_TYPES = {
         impactDamage: 3,
         impactSpeed: 120,
         friction: 0.98, // Rolls continuously when hit
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 1  // Top-center in 3x3 grid
     },
 
     smallCrate: {
@@ -1580,7 +1584,9 @@ export const PROP_TYPES = {
         impactSpeed: 100,
         friction: 0.90,
         onDestroy: 'spawnSplinters',
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 2  // Top-right in 3x3 grid
     },
 
     // Hazard Prop
@@ -1597,7 +1603,9 @@ export const PROP_TYPES = {
         fireRadius: 40,
         fireDuration: 8000,
         fireDamage: 5,
-        layer: 'table'
+        layer: 'table',
+        spriteKey: 'interior3',
+        spriteFrame: 1  // Top-center in 3x3 grid (table lamp)
     },
 
     // Legacy explosive barrel for compatibility
@@ -1630,7 +1638,9 @@ export const PROP_TYPES = {
         fireRadius: 60,
         fireDuration: 10000,
         fireDamage: 5,
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior3',
+        spriteFrame: 3  // Middle-left in 3x3 grid
     },
 
     dynamiteCrate: {
@@ -1645,7 +1655,9 @@ export const PROP_TYPES = {
         explosionRadius: 100,
         explosionDamage: 30,
         onDestroy: 'triggerChainExplosions',
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior3',
+        spriteFrame: 4  // Middle-center in 3x3 grid
     },
 
     gasLantern: {
@@ -1663,7 +1675,9 @@ export const PROP_TYPES = {
         fireDamage: 5,
         flashRadius: 150,
         flashDuration: 1000,
-        layer: 'table'
+        layer: 'table',
+        spriteKey: 'interior3',
+        spriteFrame: 2  // Top-right in 3x3 grid
     },
 
     // Phase 4: Tactical Props
@@ -1674,14 +1688,16 @@ export const PROP_TYPES = {
         class: 'TacticalProp',
         maxHealth: 40,
         width: 30,
-        height: 20,
+        height: 40,
         weightClass: null,
         color: 0xFFFF00,
         blocksBullets: true,
         onDestroy: 'fallAndDealDamage',
         fallDamage: 15,
         fallRadius: 30,
-        layer: 'ceiling'
+        layer: 'ceiling',
+        spriteKey: 'interior4',
+        spriteFrame: 7  // Bottom-center in 3x3 grid
     },
 
     // Bell Rope - activate to stun enemies
@@ -1701,7 +1717,9 @@ export const PROP_TYPES = {
         stunDuration: 5000,
         maxUses: 3,
         cooldown: 2000,
-        layer: 'ceiling'
+        layer: 'ceiling',
+        spriteKey: 'interior4',
+        spriteFrame: 1  // Top-center in 3x3 grid
     },
 
     swingingDoors: {
@@ -1715,7 +1733,9 @@ export const PROP_TYPES = {
         blocksBullets: true,
         onDestroy: 'autoSwingClosed',
         knockbackForce: 20,
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior4',
+        spriteFrame: 0  // Top-left in 3x3 grid
     },
 
     stageCurtain: {
@@ -1729,7 +1749,9 @@ export const PROP_TYPES = {
         blocksBullets: false, // Provides concealment, not protection
         flammable: true,
         fireSpreadMultiplier: 2.0,
-        layer: 'wall'
+        layer: 'wall',
+        spriteKey: 'interior4',
+        spriteFrame: 2  // Top-right in 3x3 grid
     },
 
     mirror: {
@@ -1745,7 +1767,9 @@ export const PROP_TYPES = {
         glassShardRadius: 25,
         glassShardDamage: 3,
         glassShardDuration: 4000,
-        layer: 'wall'
+        layer: 'wall',
+        spriteKey: 'interior4',
+        spriteFrame: 5  // Middle-right in 3x3 grid (simple mirror)
     },
 
     // Phase 5: Chandelier - dynamic prop with falling system
@@ -1761,7 +1785,9 @@ export const PROP_TYPES = {
         fallDamage: 25,
         fallRadius: 50,
         darkenRadius: 150,
-        layer: 'ceiling'
+        layer: 'ceiling',
+        spriteKey: 'interior4',
+        spriteFrame: 4  // Middle-center in 3x3 grid
     },
 
     // Phase 6: Boss Integration Props
@@ -1777,7 +1803,9 @@ export const PROP_TYPES = {
         color: 0x8B4513,
         blocksBullets: true,
         onDestroy: 'stageTilt',
-        layer: 'structure'
+        layer: 'structure',
+        spriteKey: 'interior5',
+        spriteFrame: 1  // Top-center in 3x3 grid
     },
 
     // Trapdoor - opens from explosions/boss attacks
@@ -1791,7 +1819,9 @@ export const PROP_TYPES = {
         color: 0x654321,
         blocksBullets: false,
         interactive: false,
-        layer: 'floor'
+        layer: 'floor',
+        spriteKey: 'interior5',
+        spriteFrame: 2  // Top-right in 3x3 grid (closed state)
     },
 
     // Phase 7: Additional Special Props
@@ -1809,7 +1839,9 @@ export const PROP_TYPES = {
         wetZoneRadius: 80,
         wetZoneDuration: 20000,
         electricalMultiplier: 1.5,
-        layer: 'ground'
+        layer: 'ground',
+        spriteKey: 'interior5',
+        spriteFrame: 0  // Top-left in 3x3 grid
     },
 
     // Additional props from interior1 sprite bundle
@@ -1840,6 +1872,321 @@ export const PROP_TYPES = {
         onDestroy: 'spawnBottleDebris',
         layer: 'ground',
         spriteKey: 'interior1',
+        spriteFrame: 8  // Bottom-right in 3x3 grid
+    },
+
+    // Additional props from interior2 sprite bundle
+    standardBarrel: {
+        name: 'Standard Barrel',
+        class: 'PhysicsProp',
+        maxHealth: 50,
+        width: 40,
+        height: 40,
+        weightClass: 'medium',
+        color: 0xA0522D,
+        blocksBullets: true,
+        impactDamage: 10,
+        impactSpeed: 80,
+        friction: 0.88,
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 4  // Middle-center in 3x3 grid
+    },
+
+    woodenBench: {
+        name: 'Wooden Bench',
+        class: 'PhysicsProp',
+        maxHealth: 50,
+        width: 70,
+        height: 30,
+        weightClass: 'medium',
+        color: 0x8B4513,
+        blocksBullets: true,
+        impactDamage: 8,
+        impactSpeed: 90,
+        friction: 0.90,
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 5  // Middle-right in 3x3 grid
+    },
+
+    smallTable: {
+        name: 'Small Table',
+        class: 'PhysicsProp',
+        maxHealth: 40,
+        width: 40,
+        height: 40,
+        weightClass: 'light',
+        color: 0x8B4513,
+        blocksBullets: true,
+        impactDamage: 5,
+        impactSpeed: 100,
+        friction: 0.92,
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 6  // Bottom-left in 3x3 grid
+    },
+
+    woodenStool: {
+        name: 'Wooden Stool',
+        class: 'PhysicsProp',
+        maxHealth: 20,
+        width: 25,
+        height: 25,
+        weightClass: 'light',
+        color: 0x8B4513,
+        blocksBullets: true,
+        impactDamage: 3,
+        impactSpeed: 120,
+        friction: 0.95,
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 7  // Bottom-center in 3x3 grid
+    },
+
+    ammunitionBox: {
+        name: 'Ammunition Box',
+        class: 'DestructibleCover',
+        maxHealth: 60,
+        width: 35,
+        height: 30,
+        weightClass: 'medium',
+        color: 0x808000, // olive
+        blocksBullets: true,
+        layer: 'ground',
+        spriteKey: 'interior2',
+        spriteFrame: 8  // Bottom-right in 3x3 grid
+    },
+
+    // Additional props from interior3 sprite bundle (hazards)
+    hangingOilLamp: {
+        name: 'Hanging Oil Lamp',
+        class: 'HazardProp',
+        maxHealth: 20,
+        width: 15,
+        height: 30, // Taller due to chain
+        weightClass: null,
+        color: 0xFFD700,
+        blocksBullets: false, // Hanging from ceiling
+        onDestroy: 'createFireZone',
+        fireRadius: 40,
+        fireDuration: 8000,
+        fireDamage: 5,
+        layer: 'ceiling',
+        spriteKey: 'interior3',
+        spriteFrame: 0  // Top-left in 3x3 grid
+    },
+
+    gunpowderKeg: {
+        name: 'Gunpowder Keg',
+        class: 'HazardProp',
+        maxHealth: 40,
+        width: 35,
+        height: 35,
+        weightClass: 'medium',
+        color: 0x2F4F4F, // dark slate gray
+        blocksBullets: true,
+        explosionRadius: 80,
+        explosionDamage: 35,
+        layer: 'ground',
+        spriteKey: 'interior3',
+        spriteFrame: 5  // Middle-right in 3x3 grid
+    },
+
+    fireBrazier: {
+        name: 'Fire Brazier',
+        class: 'HazardProp',
+        maxHealth: 60,
+        width: 30,
+        height: 30,
+        weightClass: 'medium',
+        color: 0xFF4500, // orange red
+        blocksBullets: true,
+        onDestroy: 'createFireZone',
+        fireRadius: 50,
+        fireDuration: 12000,
+        fireDamage: 8,
+        layer: 'ground',
+        spriteKey: 'interior3',
+        spriteFrame: 6  // Bottom-left in 3x3 grid
+    },
+
+    molotovBottle: {
+        name: 'Molotov Bottle',
+        class: 'HazardProp',
+        maxHealth: 10,
+        width: 15,
+        height: 20,
+        weightClass: 'light',
+        color: 0x8B4513, // brown
+        blocksBullets: false,
+        onDestroy: 'createFireZone',
+        fireRadius: 45,
+        fireDuration: 6000,
+        fireDamage: 6,
+        layer: 'table',
+        spriteKey: 'interior3',
+        spriteFrame: 7  // Bottom-center in 3x3 grid
+    },
+
+    keroseneCanister: {
+        name: 'Kerosene Canister',
+        class: 'HazardProp',
+        maxHealth: 50,
+        width: 30,
+        height: 35,
+        weightClass: 'medium',
+        color: 0xFF4500, // red orange
+        blocksBullets: true,
+        explosionRadius: 70,
+        explosionDamage: 25,
+        onDestroy: 'createLiquidTrailFire',
+        fireRadius: 55,
+        fireDuration: 10000,
+        fireDamage: 7,
+        layer: 'ground',
+        spriteKey: 'interior3',
+        spriteFrame: 8  // Bottom-right in 3x3 grid
+    },
+
+    // Additional props from interior4 sprite bundle (tactical)
+    ornateMirror: {
+        name: 'Ornate Mirror',
+        class: 'TacticalProp',
+        maxHealth: 60,
+        width: 40,
+        height: 60,
+        weightClass: null,
+        color: 0xC0C0C0, // silver frame
+        blocksBullets: true,
+        onDestroy: 'createGlassShardHazard',
+        glassShardRadius: 30,
+        glassShardDamage: 4,
+        glassShardDuration: 5000,
+        layer: 'wall',
+        spriteKey: 'interior4',
+        spriteFrame: 3  // Middle-left in 3x3 grid
+    },
+
+    wantedPosterBoard: {
+        name: 'Wanted Poster Board',
+        class: 'TacticalProp',
+        maxHealth: 80,
+        width: 50,
+        height: 70,
+        weightClass: null,
+        color: 0x8B4513, // brown wood
+        blocksBullets: true,
+        layer: 'wall',
+        spriteKey: 'interior4',
+        spriteFrame: 6  // Bottom-left in 3x3 grid
+    },
+
+    spittoon: {
+        name: 'Spittoon',
+        class: 'PhysicsProp',
+        maxHealth: 40,
+        width: 25,
+        height: 25,
+        weightClass: 'light',
+        color: 0xFFD700, // brass/gold
+        blocksBullets: true,
+        impactDamage: 5,
+        impactSpeed: 110,
+        friction: 0.85, // Rolls easily
+        layer: 'ground',
+        spriteKey: 'interior4',
+        spriteFrame: 8  // Bottom-right in 3x3 grid
+    },
+
+    // Additional props from interior5 sprite bundle (Bundle 5: Special Props & Structural)
+
+    trapdoorOpen: {
+        name: 'Trapdoor (Open)',
+        class: 'SpecialProp',
+        maxHealth: Infinity,
+        width: 60,
+        height: 60,
+        weightClass: null,
+        color: 0x654321,
+        blocksBullets: false,
+        interactive: false,
+        layer: 'floor',
+        spriteKey: 'interior5',
+        spriteFrame: 3  // Middle-left in 3x3 grid
+    },
+
+    stagePlatform: {
+        name: 'Stage Platform',
+        class: 'StructuralProp',
+        maxHealth: 200,
+        width: 80,
+        height: 60,
+        weightClass: 'heavy',
+        color: 0x8B4513,
+        blocksBullets: true,
+        layer: 'ground',
+        spriteKey: 'interior5',
+        spriteFrame: 4  // Middle-center in 3x3 grid
+    },
+
+    hitchingPost: {
+        name: 'Hitching Post',
+        class: 'StructuralProp',
+        maxHealth: 120,
+        width: 20,
+        height: 50,
+        weightClass: 'heavy',
+        color: 0x8B4513,
+        blocksBullets: true,
+        layer: 'ground',
+        spriteKey: 'interior5',
+        spriteFrame: 5  // Middle-right in 3x3 grid
+    },
+
+    balconyRailing: {
+        name: 'Balcony Railing',
+        class: 'StructuralProp',
+        maxHealth: 100,
+        width: 100,
+        height: 30,
+        weightClass: 'heavy',
+        color: 0x8B4513,
+        blocksBullets: true,
+        layer: 'wall',
+        spriteKey: 'interior5',
+        spriteFrame: 6  // Bottom-left in 3x3 grid
+    },
+
+    windowIntact: {
+        name: 'Window (Intact)',
+        class: 'TacticalProp',
+        maxHealth: 40,
+        width: 50,
+        height: 60,
+        weightClass: null,
+        color: 0x8B4513, // brown frame
+        blocksBullets: true,
+        onDestroy: 'createGlassShardHazard',
+        glassShardRadius: 25,
+        glassShardDamage: 3,
+        glassShardDuration: 4000,
+        layer: 'wall',
+        spriteKey: 'interior5',
+        spriteFrame: 7  // Bottom-center in 3x3 grid
+    },
+
+    windowBroken: {
+        name: 'Window (Broken)',
+        class: 'StructuralProp',
+        maxHealth: 20,
+        width: 50,
+        height: 60,
+        weightClass: null,
+        color: 0x8B4513, // brown frame
+        blocksBullets: false, // Already broken
+        layer: 'wall',
+        spriteKey: 'interior5',
         spriteFrame: 8  // Bottom-right in 3x3 grid
     }
 };
