@@ -33,6 +33,39 @@ export class FortificationManager {
     }
 
     /**
+     * Spawn initial saloon furniture in "normal" positions
+     */
+    spawnInitialFurniture() {
+        console.log('Spawning initial saloon furniture');
+
+        // Bar counter (top-left area)
+        this.spawnFortificationProp('barCounter', 300, 400, false);
+
+        // Piano (top-right area)
+        this.spawnFortificationProp('piano', 1620, 400, false);
+
+        // Card tables (scattered around)
+        this.spawnFortificationProp('cardTable', 700, 500, false);
+        this.spawnFortificationProp('cardTable', 1220, 500, false);
+
+        // Chairs around tables
+        this.spawnFortificationProp('woodenChair', 650, 450, false);
+        this.spawnFortificationProp('woodenChair', 750, 450, false);
+        this.spawnFortificationProp('woodenChair', 1170, 450, false);
+        this.spawnFortificationProp('woodenChair', 1270, 450, false);
+
+        // Barrels in corners
+        this.spawnFortificationProp('barrel', 200, 250, false);
+        this.spawnFortificationProp('barrel', 1720, 250, false);
+
+        // Bar stools at bar
+        this.spawnFortificationProp('barStool', 250, 400, false);
+        this.spawnFortificationProp('barStool', 350, 400, false);
+
+        console.log(`Spawned ${this.fortificationProps.length} initial furniture pieces`);
+    }
+
+    /**
      * Spawn new items at spawn points based on wave number
      * @param {number} waveNumber - Current wave number
      */

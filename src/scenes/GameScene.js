@@ -114,6 +114,7 @@ export class GameScene extends Phaser.Scene {
         // Initialize fortification manager
         this.fortificationManager = new FortificationManager(this);
         this.fortificationManager.initializeSpawnPoints();
+        this.fortificationManager.spawnInitialFurniture();
 
         // Initialize boss announcer
         this.bossAnnouncer = new BossAnnouncer(this);
