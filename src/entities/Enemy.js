@@ -428,6 +428,65 @@ export class Enemy {
         return closestPlayer;
     }
 
+    /**
+     * Find nearest fortification prop
+     * @returns {EnvironmentProp|null}
+     */
+    findNearestFortification() {
+        if (!this.scene.fortificationManager) return null;
+
+        let nearestProp = null;
+        let nearestDistance = Infinity;
+
+        this.scene.fortificationManager.fortificationProps.forEach(prop => {
+            if (!prop.isAlive()) return;
+
+            const distance = this.distanceTo(prop);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestProp = prop;
+            }
+        });
+
+        return nearestProp;
+    }
+
+    /**
+     * Calculate distance to a fortification prop
+     * @param {EnvironmentProp} prop
+     * @returns {number}
+     */
+    distanceTo(prop) {
+        const dx = this.sprite.x - prop.x;
+        const dy = this.sprite.y - prop.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
+     * Attack a fortification prop
+     * @param {EnvironmentProp} prop
+     */
+    attackFortification(prop) {
+        if (!this.canAttack()) return;
+
+        // Deal damage to fortification
+        const damage = this.damage || 10;
+        prop.takeDamage(damage);
+
+        console.log(`${this.config.name} attacked ${prop.name} for ${damage} damage`);
+
+        // Set attack cooldown
+        this.nextAttack = Date.now() + this.attackCooldown;
+    }
+
+    /**
+     * Check if enemy can attack (cooldown expired)
+     * @returns {boolean}
+     */
+    canAttack() {
+        return Date.now() >= this.nextAttack;
+    }
+
     update(time, playerX, playerY) {
         if (!this.alive) return;
 
@@ -541,6 +600,18 @@ export class Enemy {
     }
 
     updateBasicShooter(time, playerX, playerY, skipMovement = false) {
+        // Check for nearby fortifications to attack
+        if (this.scene.fortificationManager) {
+            const nearbyFortification = this.findNearestFortification();
+            if (nearbyFortification) {
+                const fortDistance = this.distanceTo(nearbyFortification);
+                // Attack if fortification is very close (blocking path)
+                if (fortDistance < 60) {
+                    this.attackFortification(nearbyFortification);
+                }
+            }
+        }
+
         // Only handle movement if not in formation
         if (!skipMovement) {
             const dx = playerX - this.sprite.x;
@@ -605,6 +676,18 @@ export class Enemy {
     }
 
     updateTank(time, playerX, playerY, skipMovement = false) {
+        // Check for nearby fortifications to attack
+        if (this.scene.fortificationManager) {
+            const nearbyFortification = this.findNearestFortification();
+            if (nearbyFortification) {
+                const fortDistance = this.distanceTo(nearbyFortification);
+                // Attack if fortification is very close (blocking path)
+                if (fortDistance < 60) {
+                    this.attackFortification(nearbyFortification);
+                }
+            }
+        }
+
         // Only handle movement if not in formation
         if (!skipMovement) {
             const dx = playerX - this.sprite.x;
