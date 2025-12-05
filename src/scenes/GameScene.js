@@ -15,6 +15,13 @@ import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { WallManager } from '../systems/WallManager.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
 
+// Game states
+const GAME_STATE = {
+    BETWEEN_WAVES: 'between_waves',
+    WAVE_ACTIVE: 'wave_active',
+    GAME_OVER: 'game_over'
+};
+
 export class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
@@ -28,6 +35,9 @@ export class GameScene extends Phaser.Scene {
         // Scene setup
         this.cameras.main.setBackgroundColor('#4a3428'); // Wooden saloon floor (fallback)
         this.isGameOver = false;
+
+        // Initialize game state
+        this.gameState = GAME_STATE.WAVE_ACTIVE;
 
         // Get difficulty from scene data or registry
         this.difficulty = data.difficulty || this.registry.get('difficulty') || DEFAULT_DIFFICULTY;
@@ -205,7 +215,7 @@ export class GameScene extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 3
         }).setOrigin(0.5, 0);
-        this.tacticalPropUI.setDepth(100);
+        this.tacticalPropUI.setDepth(500);
 
         // Add stored cocktail indicator (bottom left of screen)
         this.storedCocktailHUD = this.add.container(30, 980);
@@ -227,7 +237,7 @@ export class GameScene extends Phaser.Scene {
 
         this.storedCocktailHUD.add([hudBg, hudText, hudIcon, hudName]);
         this.storedCocktailHUD.setVisible(false);  // Hidden until cocktail stored
-        this.storedCocktailHUD.setDepth(100);
+        this.storedCocktailHUD.setDepth(500);
 
         // Store references for updates
         this.storedCocktailHUDIcon = hudIcon;
@@ -278,7 +288,7 @@ export class GameScene extends Phaser.Scene {
         }).setOrigin(0.5, 0);
 
         // Set explicit depth values for proper layering
-        this.lockText.setDepth(100);
+        this.lockText.setDepth(500);
 
         // Set depth for all player reticles
         Object.values(this.playerReticles).forEach(reticle => reticle.setDepth(10));
@@ -1613,7 +1623,7 @@ export class GameScene extends Phaser.Scene {
                 strokeThickness: 4
             }
         ).setOrigin(0.5);
-        text.setDepth(100);
+        text.setDepth(500);
 
         // Fade out
         this.tweens.add({
@@ -1668,5 +1678,38 @@ export class GameScene extends Phaser.Scene {
                 }
             });
         }
+    }
+
+    /**
+     * Transition to a new game state
+     * @param {string} newState - The new game state from GAME_STATE enum
+     */
+    setGameState(newState) {
+        const oldState = this.gameState;
+        this.gameState = newState;
+        console.log(`Game state transition: ${oldState} -> ${newState}`);
+
+        // Trigger state-specific logic
+        if (newState === GAME_STATE.BETWEEN_WAVES) {
+            this.onEnterBetweenWaves();
+        } else if (newState === GAME_STATE.WAVE_ACTIVE) {
+            this.onEnterWaveActive();
+        }
+    }
+
+    /**
+     * Called when entering BETWEEN_WAVES state
+     */
+    onEnterBetweenWaves() {
+        console.log('Entering BETWEEN_WAVES state');
+        // Placeholder - will be implemented in Task 2
+    }
+
+    /**
+     * Called when entering WAVE_ACTIVE state
+     */
+    onEnterWaveActive() {
+        console.log('Entering WAVE_ACTIVE state');
+        // Placeholder - will be implemented in Task 2
     }
 }
