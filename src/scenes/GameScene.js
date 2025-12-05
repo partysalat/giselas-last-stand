@@ -78,7 +78,8 @@ export class GameScene extends Phaser.Scene {
             S: Phaser.Input.Keyboard.KeyCodes.S,
             D: Phaser.Input.Keyboard.KeyCodes.D,
             R: Phaser.Input.Keyboard.KeyCodes.R, // Phase 4: Tactical prop activation
-            V: Phaser.Input.Keyboard.KeyCodes.V  // Debug: Toggle collision box visualization
+            V: Phaser.Input.Keyboard.KeyCodes.V,  // Debug: Toggle collision box visualization
+            SPACE: Phaser.Input.Keyboard.KeyCodes.SPACE // Start next wave during between-waves state
         });
 
         // Track R key state for tactical props (to avoid JustDown timing issues)
@@ -338,16 +339,13 @@ export class GameScene extends Phaser.Scene {
         this.lastVKeyState = this.keys.V.isDown;
 
         // SPACE key: Start next wave when in BETWEEN_WAVES state
-        if (this.gameState === GAME_STATE.BETWEEN_WAVES) {
-            const spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-            if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
-                console.log('SPACE pressed - starting next wave');
-                this.setGameState(GAME_STATE.WAVE_ACTIVE);
+        if (this.gameState === GAME_STATE.BETWEEN_WAVES && Phaser.Input.Keyboard.JustDown(this.keys.SPACE)) {
+            console.log('SPACE pressed - starting next wave');
+            this.setGameState(GAME_STATE.WAVE_ACTIVE);
 
-                // Start next wave
-                if (this.waveManager) {
-                    this.waveManager.startNextWave();
-                }
+            // Start next wave
+            if (this.waveManager) {
+                this.waveManager.startNextWave();
             }
         }
 

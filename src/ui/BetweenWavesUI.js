@@ -6,7 +6,6 @@ export class BetweenWavesUI {
         this.scene = scene;
         this.container = null;
         this.instructionText = null;
-        this.readyButton = null;
         this.visible = false;
     }
 
