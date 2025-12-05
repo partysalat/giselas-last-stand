@@ -256,6 +256,144 @@ Isometric 3/4 top-down view of a red cartoon crab wearing brown cowboy hat, red 
 
 ---
 
+### Player Character: Gisela - 2x2 Directional Sprite Sheet with Animation
+
+**This bundled prompt generates 4 directions with 2-frame walk animation (8 frames total) in a single sprite sheet.**
+
+**ChatGPT Optimized (3x3 Grid with Idle Animation):**
+```
+Create a video game player character sprite sheet showing 4 directional views with idle and walk animations arranged in a 3x3 grid. This is for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like character sprites in Stardew Valley or Enter the Gungeon.
+
+PLAYER CHARACTER: Gisela - bright red cartoon crab gunslinger. Hero character. Brown leather cowboy hat on top of shell, red bandana around neck, worn leather holsters. Two silver revolvers - one in each large claw. Natural crab anatomy - prominent claws holding guns, hard red shell with texture and segments, multiple legs visible, eye stalks. Cartoonish proportions, bold and heroic.
+
+STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded with 2-3 flat tone levels. Clean, vibrant colors - bright red for shell, brown for hat, silver for guns. No gradients, flat color zones with clear shadows.
+
+ANIMATION: Each direction has idle + 2 walk frames. Idle is neutral standing. Walk frames show subtle leg movement and shell bobbing for simple animation loop.
+
+FRAME LAYOUT - 3x3 Grid:
+
+ROW 1: FACING DOWN/TOWARD CAMERA (3 frames)
+- FRAME 1: Idle standing pose, revolvers aimed forward, neutral leg stance
+- FRAME 2: Walk step 1 - left legs forward, body shifted slightly left
+- FRAME 3: Walk step 2 - right legs forward, body shifted slightly right
+
+ROW 2: FACING LEFT (3 frames)
+- FRAME 1: Idle standing pose in left profile, revolvers aimed left, neutral stance
+- FRAME 2: Walk step 1 - legs in walking motion leftward, slight lean
+- FRAME 3: Walk step 2 - opposite leg positions, body shifted
+
+ROW 3: FACING RIGHT (3 frames)
+- FRAME 1: Idle standing pose in right profile, revolvers aimed right, neutral stance
+- FRAME 2: Walk step 1 - legs in walking motion rightward, slight lean
+- FRAME 3: Walk step 2 - opposite leg positions (mirror of left walk)
+
+OPTIONAL: Can include back view as 4th direction instead of right, or generate separately.
+
+COMPOSITION: Character centered in each frame taking 70% of space. White or transparent background. Clear borders between all 9 frames. Consistent size and detail across all frames. Wild west cowboy meets ocean creature aesthetic.
+```
+
+**ChatGPT Optimized (4x2 Grid, 2 Frames Per Direction):**
+```
+Create a video game player character sprite sheet showing 4 directional views with 2-frame walk animations arranged in a 4x2 grid (4 rows, 2 columns). This is for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like character sprites in Stardew Valley or Enter the Gungeon.
+
+PLAYER CHARACTER: Gisela - bright red cartoon crab gunslinger. Hero character. Brown leather cowboy hat on top of shell, red bandana around neck, worn leather holsters. Two silver revolvers - one in each large claw. Natural crab anatomy - prominent claws holding guns, hard red shell with texture and segments, multiple legs visible, eye stalks. Cartoonish proportions, bold and heroic.
+
+STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded with 2-3 flat tone levels. Clean, vibrant colors - bright red for shell, brown for hat, silver for guns. No gradients, flat color zones with clear shadows.
+
+ANIMATION: Each direction has 2 frames showing a simple walk cycle. Frame 1 is the neutral standing pose. Frame 2 shows a subtle walking motion - legs slightly repositioned, body slightly shifted, shell bobbing slightly. Animation should be subtle but noticeable. This creates a simple idle/walk cycle.
+
+CRITICAL: Each ROW shows a different direction. Each COLUMN shows a different animation frame (Frame 1 = standing, Frame 2 = walking step).
+
+FRAME LAYOUT - 4x2 Grid (4 rows, 2 columns):
+
+ROW 1: FACING DOWN/TOWARD CAMERA
+- COLUMN 1 (Frame 1): Gisela faces toward viewer, neutral standing pose, both claws holding revolvers aimed forward, legs in neutral stance
+- COLUMN 2 (Frame 2): Same direction, slight walking motion - left legs forward, right legs back, body shifted slightly, shell bobbed down a bit
+
+ROW 2: FACING UP/AWAY FROM CAMERA
+- COLUMN 1 (Frame 1): Gisela faces away, back of hat and shell visible, revolvers at sides, neutral standing
+- COLUMN 2 (Frame 2): Same direction, walking motion - opposite leg positioning, body shifted, slight shell movement
+
+ROW 3: FACING LEFT
+- COLUMN 1 (Frame 1): Gisela in left profile, claws with revolvers aimed left, side view of shell, neutral stance
+- COLUMN 2 (Frame 2): Same direction, walking left - legs in walking motion, body leaning slightly into movement, subtle shift
+
+ROW 4: FACING RIGHT
+- COLUMN 1 (Frame 1): Gisela in right profile, claws with revolvers aimed right, side view of shell, neutral stance
+- COLUMN 2 (Frame 2): Same direction, walking right - legs in walking motion (mirror of left), body leaning right, subtle shift
+
+IMPORTANT: Frame 1 and Frame 2 in each row must be nearly identical except for the subtle walk animation differences. The character's direction, pose, and gun positions stay consistent - only leg positions and body tilt change slightly. This creates a simple 2-frame walk loop.
+
+COMPOSITION: Character centered in each frame taking 70% of space. White or transparent background. Clear borders between all 8 frames. Consistent size and detail across all frames. Wild west cowboy meets ocean creature aesthetic.
+```
+
+**Alternative: 2x2 Grid (4 Directions, Single Frame):**
+
+If the animation version is too complex, use this simpler version with just 4 static frames:
+
+```
+Create a video game player character sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like character sprites in Stardew Valley or Enter the Gungeon.
+
+PLAYER CHARACTER: Gisela - bright red cartoon crab gunslinger. Hero character. Brown leather cowboy hat on shell, red bandana around neck, two silver revolvers in claws. Natural crab anatomy with prominent claws, textured red shell, multiple legs, eye stalks. Cartoonish heroic proportions.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Bright red shell, brown hat, silver guns. No gradients.
+
+CRITICAL: Each frame shows a DIFFERENT DIRECTION rotating 90-degree increments.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Gisela faces directly toward viewer
+- Both claws holding revolvers aimed forward
+- Front of shell and face visible with eye stalks
+- Brown cowboy hat from front angle
+- Red bandana visible around neck
+- Heroic ready stance
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Gisela faces away from viewer
+- BACK of shell prominently displayed with texture
+- Back of brown cowboy hat visible
+- Red bandana trailing down back
+- Revolvers visible in claws at sides
+- Walking away stance
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Gisela in complete LEFT PROFILE
+- Side view of shell showing depth
+- Both claws extended left with revolvers aimed left
+- Hat visible from left side angle
+- Side profile of eye stalks
+- Walking leftward stance
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Gisela in complete RIGHT PROFILE (mirror of left)
+- Side view of shell from right angle
+- Both claws extended right with revolvers aimed right
+- Hat visible from right side angle
+- Side profile of eye stalks
+- Walking rightward stance
+
+COMPOSITION: Character centered taking 70% of each frame. White/transparent background. Clear borders between frames. All four views maintain consistent size and heroic character presence.
+```
+
+**Bing Condensed - Animated 3x3 with Idle (480 chars):**
+```
+3x3 grid animated player sprite: red crab Gisela, cowboy hat, bandana, revolvers, 3 directions (front/left/right) each with idle + 2 walk frames (9 frames total). Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, walk cycle animation, hero character, transparent background
+```
+
+**Bing Condensed - Static 2x2 (480 chars):**
+```
+2x2 grid player character turnaround: red crab gunslinger Gisela, brown cowboy hat, red bandana, revolvers in claws, heroic pose, 4 directions (front/back/left/right). Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, wild west beach hero, sprite sheet, transparent background
+```
+
+**Bing Condensed - Animated 4x2 (480 chars):**
+```
+4x2 grid animated player sprite: red crab Gisela, cowboy hat, bandana, revolvers, 4 directions with 2-frame walk cycle (8 frames total). Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, simple walk animation, hero character, transparent background
+```
+
+---
+
 ### Enemy: Bandit Lobster (Multi-Directional)
 
 **ChatGPT Base Prompt:**
