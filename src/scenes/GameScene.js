@@ -1760,6 +1760,11 @@ export class GameScene extends Phaser.Scene {
         const completedWave = this.waveManager ? this.waveManager.currentWave : 0;
         const nextWave = completedWave + 1;
 
+        // Restore health to all surviving fortification props
+        if (this.fortificationManager) {
+            this.fortificationManager.restoreAllPropsHealth();
+        }
+
         // Show UI overlay with wave numbers
         if (this.betweenWavesUI) {
             this.betweenWavesUI.show(completedWave, nextWave);
@@ -1790,6 +1795,16 @@ export class GameScene extends Phaser.Scene {
         // Hide UI overlay
         if (this.betweenWavesUI) {
             this.betweenWavesUI.hide();
+        }
+
+        // Clean up any uncollected cocktails from between-waves phase
+        if (this.cocktails) {
+            this.cocktails.forEach(cocktail => {
+                if (cocktail.isAlive()) {
+                    cocktail.destroy();
+                }
+            });
+            this.cocktails = [];
         }
     }
 

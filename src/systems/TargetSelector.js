@@ -184,6 +184,7 @@ export class TargetSelector {
         // Build list of prop targets only (Q key)
         const targets = [];
 
+        // Add targetable props from environment manager
         if (this.scene.environmentManager) {
             const props = this.scene.environmentManager.getProps();
             props.forEach(prop => {
@@ -194,6 +195,27 @@ export class TargetSelector {
                 const isTargetable = prop.explosionRadius > 0 ||
                                     prop.className === 'HazardProp' ||
                                     (prop.className === 'TacticalProp' && prop.type === 'stageLights');
+
+                if (isTargetable) {
+                    targets.push({
+                        type: 'prop',
+                        prop: prop,
+                        x: prop.x,
+                        y: prop.y,
+                        label: prop.name || prop.type
+                    });
+                }
+            });
+        }
+
+        // Add targetable props from fortification manager (gunpowder kegs, oil lamps, etc.)
+        if (this.scene.fortificationManager) {
+            const fortProps = this.scene.fortificationManager.fortificationProps;
+            fortProps.forEach(prop => {
+                if (!prop.isAlive()) return;
+
+                // Add explosive/hazardous fortification props
+                const isTargetable = prop.explosionRadius > 0 || prop.className === 'HazardProp';
 
                 if (isTargetable) {
                     targets.push({

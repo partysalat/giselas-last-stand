@@ -1624,6 +1624,26 @@ export class EnvironmentProp {
     getHealthPercent() {
         return this.health / this.maxHealth;
     }
+
+    /**
+     * Restore prop to full health (used between waves)
+     */
+    restoreHealth() {
+        this.health = this.maxHealth;
+
+        // Hide health bar when at full health
+        if (this.healthBarBg && this.healthBarFill) {
+            this.healthBarBg.setVisible(false);
+            this.healthBarFill.setVisible(false);
+        }
+
+        // Update health bar fill to show full health
+        if (this.healthBarFill) {
+            this.healthBarFill.width = this.width;
+            this.healthBarFill.x = this.x;
+            this.healthBarFill.setFillStyle(0x00ff00, 0.8); // Green at full health
+        }
+    }
 }
 
 /**

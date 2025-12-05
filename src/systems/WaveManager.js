@@ -910,48 +910,9 @@ export class WaveManager {
         // Spawn cocktails between waves
         this.spawnCocktails();
 
-        // Show "Get Ready" message
-        const readyText = this.scene.add.text(960, 300, 'GRAB A COCKTAIL!', {
-            fontSize: '48px',
-            color: '#ffff00',
-            fontFamily: 'Arial'
-        }).setOrigin(0.5);
-
-        // Countdown timer
-        let countdown = 10;
-        const countdownText = this.scene.add.text(960, 360, `${countdown}`, {
-            fontSize: '36px',
-            color: '#ffffff',
-            fontFamily: 'Arial'
-        }).setOrigin(0.5);
-
-        const countdownTimer = this.scene.time.addEvent({
-            delay: 1000,
-            repeat: 9,
-            callback: () => {
-                countdown--;
-                countdownText.setText(`${countdown}`);
-            }
-        });
-
-        // Start next wave after 10 second delay
-        this.scene.time.delayedCall(10000, () => {
-            readyText.destroy();
-            countdownText.destroy();
-
-            // Clean up any uncollected cocktails
-            this.scene.cocktails.forEach(cocktail => {
-                if (cocktail.isAlive()) {
-                    cocktail.destroy();
-                }
-            });
-            this.scene.cocktails = [];
-
-            this.startNextWave();
-            if (this.scene.updateWaveUI) {
-                this.scene.updateWaveUI();
-            }
-        });
+        // NOTE: Old auto-timer logic disabled when FortificationManager is active
+        // The new system uses SPACE key and BetweenWavesUI instead of auto-timer
+        // Cocktails still spawn, but players control when to start next wave
     }
 
     getCurrentWave() {

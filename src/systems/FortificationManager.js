@@ -130,11 +130,11 @@ export class FortificationManager {
 
         // Wave 3-4: Add traps
         if (waveNumber <= 4) {
-            return ['woodenChair', 'cardTable', 'barrel', 'explosiveBarrel'];
+            return ['woodenChair', 'cardTable', 'barrel', 'gunpowderKeg'];
         }
 
         // Wave 5+: Full variety
-        return ['woodenChair', 'cardTable', 'barrel', 'explosiveBarrel', 'oilLamp'];
+        return ['woodenChair', 'cardTable', 'barrel', 'gunpowderKeg', 'oilLamp'];
     }
 
     /**
@@ -159,12 +159,37 @@ export class FortificationManager {
         // Enable drag-and-drop
         this.makeDraggable(prop);
 
+        // Setup collision with players
+        this.setupPlayerCollision(prop);
+
         // Track in fortifications array
         this.fortificationProps.push(prop);
 
         console.log(`Spawned fortification prop: ${propType} at (${x}, ${y})`);
 
         return prop;
+    }
+
+    /**
+     * Setup collision between prop and all players
+     * @param {EnvironmentProp} prop - The prop to setup collision for
+     */
+    setupPlayerCollision(prop) {
+        const sprite = prop.getSprite();
+        if (!sprite || !sprite.body) {
+            // No physics body (hazard props like oil lamps, explosives)
+            return;
+        }
+
+        // Add collision with player manager if it exists
+        if (this.scene.playerManager) {
+            const players = this.scene.playerManager.getLivingPlayers();
+            players.forEach(player => {
+                if (player.sprite) {
+                    this.scene.physics.add.collider(player.sprite, sprite);
+                }
+            });
+        }
     }
 
     /**
@@ -272,11 +297,20 @@ export class FortificationManager {
         // Check if current position is valid
         const isValid = this.isValidPlacement(pointer.x, pointer.y, prop);
 
-        // Tint sprite red if invalid
-        if (!isValid) {
-            sprite.setTint(0xff0000);
-        } else {
-            sprite.clearTint();
+        // Tint sprite red if invalid (only for Image/Sprite objects that support tinting)
+        if (sprite.setTint && sprite.clearTint) {
+            if (!isValid) {
+                sprite.setTint(0xff0000);
+            } else {
+                sprite.clearTint();
+            }
+        } else if (sprite.setFillStyle) {
+            // For Rectangle shapes, change fill color
+            if (!isValid) {
+                sprite.setFillStyle(0xff0000, 0.5);
+            } else {
+                sprite.setFillStyle(sprite._originalColor || 0xffffff, sprite._originalAlpha || 1);
+            }
         }
 
         // Update sprite position
@@ -351,7 +385,14 @@ export class FortificationManager {
         const sprite = prop.getSprite();
         if (sprite) {
             sprite.setAlpha(1.0);
-            sprite.clearTint(); // Clear red tint if present
+
+            // Clear red tint if present (only for objects that support tinting)
+            if (sprite.clearTint) {
+                sprite.clearTint();
+            } else if (sprite.setFillStyle && sprite._originalColor) {
+                // Restore original color for Rectangle shapes
+                sprite.setFillStyle(sprite._originalColor, sprite._originalAlpha || 1);
+            }
 
             // Restore original depth based on Y position
             const baseDepthMap = {
@@ -451,6 +492,24 @@ export class FortificationManager {
         // Players can create tight barricades this way
 
         return true;
+    }
+
+    /**
+     * Restore health to all surviving fortification props
+     * Called at the start of between-waves phase
+     */
+    restoreAllPropsHealth() {
+        let restoredCount = 0;
+        this.fortificationProps.forEach(prop => {
+            if (prop.isAlive() && prop.restoreHealth) {
+                prop.restoreHealth();
+                restoredCount++;
+            }
+        });
+
+        if (restoredCount > 0) {
+            console.log(`Restored health to ${restoredCount} fortification props`);
+        }
     }
 
     /**

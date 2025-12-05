@@ -480,6 +480,146 @@ export class Enemy {
     }
 
     /**
+     * Apply obstacle avoidance to a movement angle
+     * @param {number} angle - Desired movement angle
+     * @returns {number} - Adjusted angle that avoids obstacles
+     */
+    applyObstacleAvoidance(angle) {
+        if (!this.scene.fortificationManager) return angle;
+
+        const raycastDistance = 60;
+        const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
+        const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
+
+        const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY, 40);
+        if (!hasObstacle) {
+            return angle; // No obstacle, use original angle
+        }
+
+        // Try multiple angles to find a clear path
+        const testAngles = [
+            angle + Math.PI / 4,      // 45° right
+            angle - Math.PI / 4,      // 45° left
+            angle + Math.PI / 2,      // 90° right
+            angle - Math.PI / 2,      // 90° left
+            angle + Math.PI * 3 / 4,  // 135° right
+            angle - Math.PI * 3 / 4   // 135° left
+        ];
+
+        for (const testAngle of testAngles) {
+            const testX = this.sprite.x + Math.cos(testAngle) * raycastDistance;
+            const testY = this.sprite.y + Math.sin(testAngle) * raycastDistance;
+
+            if (!this.scene.fortificationManager.checkObstacleAt(testX, testY, 40)) {
+                return testAngle; // Found clear path
+            }
+        }
+
+        // All paths blocked - move backward
+        return angle + Math.PI;
+    }
+
+    /**
+     * Boss-specific obstacle handling: push lightweight props, avoid heavy ones
+     * @param {number} angle - Movement angle
+     * @returns {number} Modified angle
+     */
+    applyBossObstacleHandling(angle) {
+        if (!this.scene.fortificationManager) return angle;
+
+        const raycastDistance = 60;
+        const pushRadius = 80; // How close boss needs to be to push props
+        const pushForce = 200; // How hard to push props
+
+        // Find props in the way
+        const propsInWay = this.scene.fortificationManager.fortificationProps.filter(prop => {
+            if (!prop.isAlive()) return false;
+
+            const dx = prop.x - this.sprite.x;
+            const dy = prop.y - this.sprite.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            return distance < pushRadius;
+        });
+
+        // Push lightweight and medium props away
+        propsInWay.forEach(prop => {
+            if (prop.weightClass === 'light' || prop.weightClass === 'medium') {
+                // Push prop away from boss
+                const dx = prop.x - this.sprite.x;
+                const dy = prop.y - this.sprite.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance > 0) {
+                    const pushAngle = Math.atan2(dy, dx);
+                    const sprite = prop.getSprite();
+
+                    if (sprite && sprite.body) {
+                        // Medium props are pushed with less force than light props
+                        const force = prop.weightClass === 'medium' ? pushForce * 0.6 : pushForce;
+
+                        // Apply push force
+                        sprite.body.setVelocity(
+                            Math.cos(pushAngle) * force,
+                            Math.sin(pushAngle) * force
+                        );
+
+                        // Gradually slow down the prop
+                        sprite.body.setDrag(150);
+                    }
+                }
+            }
+        });
+
+        // Check if there are heavy props blocking the path
+        const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
+        const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
+
+        // Find heavy props in the path
+        const heavyPropsInWay = propsInWay.filter(prop => {
+            return prop.weightClass === 'heavy';
+        });
+
+        if (heavyPropsInWay.length === 0) {
+            return angle; // No heavy obstacles, continue straight (light/medium props will be pushed)
+        }
+
+        // Heavy props block the path - try to find alternate route
+        const testAngles = [
+            angle + Math.PI / 4,      // 45° right
+            angle - Math.PI / 4,      // 45° left
+            angle + Math.PI / 2,      // 90° right
+            angle - Math.PI / 2,      // 90° left
+            angle + Math.PI * 3 / 4,  // 135° right
+            angle - Math.PI * 3 / 4   // 135° left
+        ];
+
+        for (const testAngle of testAngles) {
+            const testX = this.sprite.x + Math.cos(testAngle) * raycastDistance;
+            const testY = this.sprite.y + Math.sin(testAngle) * raycastDistance;
+
+            // Check if this path has heavy props
+            const hasHeavyObstacle = this.scene.fortificationManager.fortificationProps.some(prop => {
+                if (!prop.isAlive()) return false;
+                if (prop.weightClass !== 'heavy') return false;
+
+                const dx = prop.x - testX;
+                const dy = prop.y - testY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                return distance < 60;
+            });
+
+            if (!hasHeavyObstacle) {
+                return testAngle; // Found clear path
+            }
+        }
+
+        // All paths blocked by heavy props - move backward
+        return angle + Math.PI;
+    }
+
+    /**
      * Check if enemy can attack (cooldown expired)
      * @returns {boolean}
      */
@@ -635,20 +775,8 @@ export class Enemy {
                 let angle = Math.atan2(dy, dx);
 
                 // TODO: Implement proper A* pathfinding for smoother enemy navigation
-                // Current approach uses simple obstacle avoidance which may cause stuck enemies
-
-                // Check for obstacles ahead
-                if (this.scene.fortificationManager) {
-                    const raycastDistance = 50;
-                    const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
-                    const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
-
-                    const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY);
-                    if (hasObstacle) {
-                        // Try perpendicular angles to go around
-                        angle += Math.PI / 2 * (Math.random() > 0.5 ? 1 : -1);
-                    }
-                }
+                // Apply obstacle avoidance
+                angle = this.applyObstacleAvoidance(angle);
 
                 this.sprite.body.setVelocity(
                     Math.cos(angle) * this.speed,
@@ -710,18 +838,8 @@ export class Enemy {
             if (distance > 40) {
                 let angle = Math.atan2(dy, dx);
 
-                // Check for obstacles ahead
-                if (this.scene.fortificationManager) {
-                    const raycastDistance = 50;
-                    const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
-                    const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
-
-                    const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY);
-                    if (hasObstacle) {
-                        // Try perpendicular angles to go around
-                        angle += Math.PI / 2 * (Math.random() > 0.5 ? 1 : -1);
-                    }
-                }
+                // Apply obstacle avoidance
+                angle = this.applyObstacleAvoidance(angle);
 
                 this.sprite.body.setVelocity(
                     Math.cos(angle) * this.speed,
@@ -779,6 +897,7 @@ export class Enemy {
                 case 'idle':
                     // Circle around player at high altitude
                     const angle = Math.atan2(dy, dx) + Math.PI / 2;
+                    // Flying fish flies over obstacles (no obstacle avoidance needed)
                     this.sprite.body.setVelocity(
                         Math.cos(angle) * this.speed * 0.6,
                         Math.sin(angle) * this.speed * 0.6
@@ -798,6 +917,7 @@ export class Enemy {
                         this.swoopTarget.y - this.sprite.y,
                         this.swoopTarget.x - this.sprite.x
                     );
+                    // Flying fish flies over obstacles (no obstacle avoidance needed)
                     this.sprite.body.setVelocity(
                         Math.cos(swoopAngle) * this.speed * 1.5,
                         Math.sin(swoopAngle) * this.speed * 1.5
@@ -817,6 +937,7 @@ export class Enemy {
                 case 'rising':
                     // Move away from player after swoop
                     const escapeAngle = Math.atan2(dy, dx) + Math.PI;
+                    // Flying fish flies over obstacles (no obstacle avoidance needed)
                     this.sprite.body.setVelocity(
                         Math.cos(escapeAngle) * this.speed,
                         Math.sin(escapeAngle) * this.speed
@@ -1135,20 +1256,8 @@ export class Enemy {
                 let angle = Math.atan2(dy, dx);
 
                 // TODO: Implement proper A* pathfinding for smoother enemy navigation
-                // Current approach uses simple obstacle avoidance which may cause stuck enemies
-
-                // Check for obstacles ahead
-                if (this.scene.fortificationManager) {
-                    const raycastDistance = 50;
-                    const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
-                    const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
-
-                    const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY);
-                    if (hasObstacle) {
-                        // Try perpendicular angles to go around
-                        angle += Math.PI / 2 * (Math.random() > 0.5 ? 1 : -1);
-                    }
-                }
+                // Apply obstacle avoidance
+                angle = this.applyObstacleAvoidance(angle);
 
                 this.sprite.body.setVelocity(
                     Math.cos(angle) * this.config.speed,
@@ -1191,14 +1300,16 @@ export class Enemy {
             // Kiting behavior: maintain optimal distance
             if (distance < this.config.kiteDistance) {
                 // Too close - back away
-                const angle = Math.atan2(dy, dx);
+                let angle = Math.atan2(dy, dx) + Math.PI; // Reverse direction
+                angle = this.applyObstacleAvoidance(angle);
                 this.sprite.body.setVelocity(
-                    -Math.cos(angle) * this.config.speed,
-                    -Math.sin(angle) * this.config.speed
+                    Math.cos(angle) * this.config.speed,
+                    Math.sin(angle) * this.config.speed
                 );
             } else if (distance > this.config.attackRange) {
                 // Too far - move closer
-                const angle = Math.atan2(dy, dx);
+                let angle = Math.atan2(dy, dx);
+                angle = this.applyObstacleAvoidance(angle);
                 this.sprite.body.setVelocity(
                     Math.cos(angle) * this.config.speed,
                     Math.sin(angle) * this.config.speed
@@ -1207,7 +1318,8 @@ export class Enemy {
                 // Good range - strafe
                 const angle = Math.atan2(dy, dx);
                 const strafeDirection = (Math.random() > 0.5 ? 1 : -1);
-                const strafeAngle = angle + (Math.PI / 2) * strafeDirection;
+                let strafeAngle = angle + (Math.PI / 2) * strafeDirection;
+                strafeAngle = this.applyObstacleAvoidance(strafeAngle);
 
                 this.sprite.body.setVelocity(
                     Math.cos(strafeAngle) * this.config.speed * 0.7,
@@ -1349,7 +1461,11 @@ export class Enemy {
 
         // Movement toward player (when not attacking)
         if (!this.chargingAttack && distance > 100) {
-            const angle = Math.atan2(dy, dx);
+            let angle = Math.atan2(dy, dx);
+
+            // Apply boss obstacle handling (push light/medium props, avoid heavy)
+            angle = this.applyBossObstacleHandling(angle);
+
             this.sprite.body.setVelocity(
                 Math.cos(angle) * currentSpeed,
                 Math.sin(angle) * currentSpeed
@@ -1537,7 +1653,11 @@ export class Enemy {
         // Slow movement toward player
         const dx = playerX - this.sprite.x;
         const dy = playerY - this.sprite.y;
-        const angle = Math.atan2(dy, dx);
+        let angle = Math.atan2(dy, dx);
+
+        // Apply boss obstacle handling (push light/medium props, avoid heavy)
+        angle = this.applyBossObstacleHandling(angle);
+
         this.sprite.body.setVelocity(
             Math.cos(angle) * this.config.speed,
             Math.sin(angle) * this.config.speed
@@ -1739,7 +1859,11 @@ export class Enemy {
 
         // Movement
         if (!this.attackingInProgress && distance > 150) {
-            const angle = Math.atan2(dy, dx);
+            let angle = Math.atan2(dy, dx);
+
+            // Apply boss obstacle handling (push light/medium props, avoid heavy)
+            angle = this.applyBossObstacleHandling(angle);
+
             this.sprite.body.setVelocity(
                 Math.cos(angle) * this.config.speed,
                 Math.sin(angle) * this.config.speed
