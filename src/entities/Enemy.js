@@ -561,7 +561,24 @@ export class Enemy {
 
             // Move toward player at medium speed
             if (distance > 50) {
-                const angle = Math.atan2(dy, dx);
+                let angle = Math.atan2(dy, dx);
+
+                // TODO: Implement proper A* pathfinding for smoother enemy navigation
+                // Current approach uses simple obstacle avoidance which may cause stuck enemies
+
+                // Check for obstacles ahead
+                if (this.scene.fortificationManager) {
+                    const raycastDistance = 50;
+                    const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
+                    const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
+
+                    const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY);
+                    if (hasObstacle) {
+                        // Try perpendicular angles to go around
+                        angle += Math.PI / 2 * (Math.random() > 0.5 ? 1 : -1);
+                    }
+                }
+
                 this.sprite.body.setVelocity(
                     Math.cos(angle) * this.speed,
                     Math.sin(angle) * this.speed
@@ -596,7 +613,21 @@ export class Enemy {
 
             // Slow advance toward player
             if (distance > 40) {
-                const angle = Math.atan2(dy, dx);
+                let angle = Math.atan2(dy, dx);
+
+                // Check for obstacles ahead
+                if (this.scene.fortificationManager) {
+                    const raycastDistance = 50;
+                    const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
+                    const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
+
+                    const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY);
+                    if (hasObstacle) {
+                        // Try perpendicular angles to go around
+                        angle += Math.PI / 2 * (Math.random() > 0.5 ? 1 : -1);
+                    }
+                }
+
                 this.sprite.body.setVelocity(
                     Math.cos(angle) * this.speed,
                     Math.sin(angle) * this.speed

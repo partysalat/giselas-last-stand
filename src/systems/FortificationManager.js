@@ -333,6 +333,25 @@ export class FortificationManager {
     }
 
     /**
+     * Check if there's an obstacle at a position
+     * @param {number} x - X position
+     * @param {number} y - Y position
+     * @param {number} radius - Check radius (default 30)
+     * @returns {boolean} True if obstacle present
+     */
+    checkObstacleAt(x, y, radius = 30) {
+        return this.fortificationProps.some(prop => {
+            if (!prop.isAlive()) return false;
+
+            const dx = prop.x - x;
+            const dy = prop.y - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            return distance < (radius + Math.max(prop.width, prop.height) / 2);
+        });
+    }
+
+    /**
      * Clean up all fortifications
      */
     destroy() {
