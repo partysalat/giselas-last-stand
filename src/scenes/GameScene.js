@@ -12,6 +12,7 @@ import { BossAnnouncer } from '../systems/BossAnnouncer.js';
 import { BossHealthBar } from '../ui/BossHealthBar.js';
 import { CoverManager } from '../systems/CoverManager.js';
 import { EnvironmentManager } from '../systems/EnvironmentManager.js';
+import { WallManager } from '../systems/WallManager.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
 
 export class GameScene extends Phaser.Scene {
@@ -108,6 +109,13 @@ export class GameScene extends Phaser.Scene {
 
         // Add compatibility alias so existing code still works
         this.coverManager = this.environmentManager;
+
+        // Initialize wall manager (creates saloon walls framing the play area)
+        this.wallManager = new WallManager(this);
+        this.wallManager.createWalls();
+
+        // Setup wall collisions with players
+        this.wallManager.setupPlayerCollisions(this.playerManager);
 
         // Create graphics for formation lines
         this.formationGraphics = this.add.graphics();

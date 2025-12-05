@@ -1282,6 +1282,55 @@ Isometric 3/4 view wooden bowl filled with salted bar nuts, peanuts and cashews 
 #### Floor Tiles
 - [x] Wooden saloon floor with beach elements - ✅ DONE
 
+#### Saloon Back Wall (Decorative Background)
+- [ ] Decorative saloon back wall - TODO
+
+**ChatGPT Optimized - Saloon Back Wall:**
+```
+Create a decorative western saloon back wall background image for a top-down shooter game. This is viewed from an isometric 3/4 perspective (45 degrees from above), showing the interior back wall of the saloon as seen from above, like in Stardew Valley or Enter the Gungeon.
+
+PURPOSE: This is a decorative background element that sits at the top of the screen to create atmosphere and make players feel like they're inside a saloon. It's not interactive, just visual scenery.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. No gradients. Wild west saloon aesthetic with beach/ocean theme elements.
+
+WALL CONTENTS - Create a rich, detailed saloon back wall featuring:
+
+LEFT SECTION:
+- Large ornate mirror with decorative wooden frame
+- Weathered brown wood paneling behind
+- Wanted posters tacked to wall
+- Small shelf with whiskey bottles
+
+CENTER SECTION:
+- Long wooden bar counter/back bar shelving
+- Multiple shelves with bottles (whiskey, rum, various spirits)
+- Polished wood with brass fixtures
+- Glass bottles in various shapes and colors
+- Some bottles with beach/nautical theme labels
+
+RIGHT SECTION:
+- Another decorative mirror or framed painting
+- More wooden wall paneling
+- Coiled rope or fishing net decoration
+- Small seashells and beach elements as decoration
+
+DETAILS:
+- Warm brown wood tones (0x8B4513) for wall paneling
+- Brass/gold accents on fixtures and frames
+- Glass bottles with amber, clear, and dark liquids
+- Subtle beach weathering (salt stains, sand accumulation)
+- Interior lighting creating highlights on bottles and mirrors
+
+AESTHETIC: Rich, lived-in saloon atmosphere. The back wall should feel authentic to a frontier beach saloon - sturdy wooden construction with maritime influences. Bottles should look realistic but stylized with comic book outlines. Create depth and interest without being cluttered.
+
+COMPOSITION: Wide horizontal image (approximately 1920px wide x 200-300px tall). Designed to tile horizontally if needed. Viewed from slightly above as if looking down at the back wall of a saloon. This will be placed at the top of the game screen as atmospheric background. No transparent areas - solid background.
+```
+
+**Bing Condensed (480 chars):**
+```
+Isometric 3/4 western saloon back wall, wide horizontal view from above, wooden paneling, ornate mirrors, shelves with whiskey bottles, wanted posters, brass fixtures, beach decorations, weathered wood, comic book art thick black outlines cel-shading, warm brown tones, wild west beach saloon interior, decorative background not interactive, 1920x250px
+```
+
 **Additional environment pieces needed:**
 - [ ] Bar counter
 - [ ] Poker table (obstacle)

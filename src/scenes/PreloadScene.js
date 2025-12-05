@@ -179,6 +179,9 @@ export class PreloadScene extends Phaser.Scene {
             frameHeight: 128
         });
 
+        // Load decorative back wall image
+        this.load.image('backwall', 'assets/sprites/environment/walls.png');
+
         // this.load.image('barrel', 'assets/sprites/environment/barrel.png');
         // this.load.image('saloon-doors', 'assets/sprites/environment/saloon-doors.png');
 
