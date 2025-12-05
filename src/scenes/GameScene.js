@@ -65,11 +65,16 @@ export class GameScene extends Phaser.Scene {
             A: Phaser.Input.Keyboard.KeyCodes.A,
             S: Phaser.Input.Keyboard.KeyCodes.S,
             D: Phaser.Input.Keyboard.KeyCodes.D,
-            R: Phaser.Input.Keyboard.KeyCodes.R // Phase 4: Tactical prop activation
+            R: Phaser.Input.Keyboard.KeyCodes.R, // Phase 4: Tactical prop activation
+            V: Phaser.Input.Keyboard.KeyCodes.V  // Debug: Toggle collision box visualization
         });
 
         // Track R key state for tactical props (to avoid JustDown timing issues)
         this.lastRKeyState = false;
+
+        // Track V key state for debug visualization toggle
+        this.lastVKeyState = false;
+        this.showCollisionBoxes = false;
 
         // Create enemy array
         this.enemies = [];
@@ -292,6 +297,13 @@ export class GameScene extends Phaser.Scene {
     update(time, delta) {
         if (this.isGameOver) return;
 
+        // Handle V key toggle for collision box visualization
+        if (this.keys.V.isDown && !this.lastVKeyState) {
+            this.showCollisionBoxes = !this.showCollisionBoxes;
+            this.toggleCollisionBoxVisualization();
+        }
+        this.lastVKeyState = this.keys.V.isDown;
+
         // Update wave manager (for spawn animations)
         if (this.waveManager) {
             this.waveManager.update(time);
@@ -446,6 +458,9 @@ export class GameScene extends Phaser.Scene {
                 if (this.coverManager) {
                     this.coverManager.getCovers().forEach(cover => {
                         if (!cover.isAlive()) return;
+
+                        // Skip collision with floor props (trapdoors) and props without physics bodies
+                        if (cover.layer === 'floor' || !cover.sprite.body) return;
 
                         const dx = enemy.getSprite().x - cover.x;
                         const dy = enemy.getSprite().y - cover.y;
@@ -1591,5 +1606,49 @@ export class GameScene extends Phaser.Scene {
             ease: 'Power2',
             onComplete: () => text.destroy()
         });
+    }
+
+    /**
+     * Toggle collision box visualization for debugging
+     */
+    toggleCollisionBoxVisualization() {
+        console.log('Collision box visualization:', this.showCollisionBoxes ? 'ON' : 'OFF');
+
+        // Toggle physics debug for the entire world
+        if (this.showCollisionBoxes) {
+            this.physics.world.createDebugGraphic();
+            this.physics.world.debugGraphic.clear();
+            this.physics.world.drawDebug = true;
+        } else {
+            if (this.physics.world.debugGraphic) {
+                this.physics.world.debugGraphic.clear();
+                this.physics.world.drawDebug = false;
+            }
+        }
+
+        // Also draw custom collision boxes for props without physics bodies
+        if (this.coverManager && this.coverManager.getProps) {
+            this.coverManager.getProps().forEach(prop => {
+                if (prop.debugGraphics) {
+                    prop.debugGraphics.destroy();
+                    prop.debugGraphics = null;
+                }
+
+                if (this.showCollisionBoxes) {
+                    // Create debug rectangle for props
+                    const bounds = prop.getBounds();
+                    prop.debugGraphics = this.add.rectangle(
+                        bounds.x,
+                        bounds.y,
+                        bounds.width,
+                        bounds.height,
+                        0x00ff00,
+                        0
+                    );
+                    prop.debugGraphics.setStrokeStyle(2, 0x00ff00);
+                    prop.debugGraphics.setDepth(1000); // Draw on top
+                }
+            });
+        }
     }
 }

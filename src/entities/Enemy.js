@@ -234,6 +234,10 @@ export class Enemy {
             this.sprite = scene.add.circle(x, y, config.radius, config.color);
             this.useDirectionalSprites = false;
         }
+
+        // Set depth so enemies render above floor props (trapdoors at depth 2)
+        this.sprite.setDepth(10);
+
         scene.physics.add.existing(this.sprite);
 
         // Physics configuration
@@ -487,6 +491,14 @@ export class Enemy {
         // Update directional sprites based on velocity
         if (this.useDirectionalSprites && this.sprite.body) {
             this.updateDirection(this.sprite.body.velocity.x, this.sprite.body.velocity.y);
+        }
+
+        // Update depth based on Y position for isometric sorting
+        // Use the bottom of the sprite (feet/base) for proper isometric depth
+        // Higher Y = closer to camera = render on top
+        if (this.sprite) {
+            const spriteBottom = this.sprite.y + (this.sprite.displayHeight / 2);
+            this.sprite.setDepth(10 + spriteBottom / 10);
         }
 
         // Update visual indicators

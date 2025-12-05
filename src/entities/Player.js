@@ -17,6 +17,9 @@ export class Player {
         // Scale down to appropriate size
         this.sprite.setScale(0.5);
 
+        // Set depth so player renders above floor props (trapdoors at depth 2)
+        this.sprite.setDepth(10);
+
         scene.physics.add.existing(this.sprite);
 
         // Physics body configuration - use circular collision
@@ -97,6 +100,12 @@ export class Player {
 
         // Apply velocity
         this.sprite.body.setVelocity(velocityX, velocityY);
+
+        // Update depth based on Y position for isometric sorting
+        // Use the bottom of the sprite (feet) for proper isometric depth
+        // Higher Y = closer to camera = render on top
+        const spriteBottom = this.sprite.y + (this.sprite.displayHeight / 2);
+        this.sprite.setDepth(10 + spriteBottom / 10);
 
         // Update bullets
         this.bullets = this.bullets.filter(bullet => {

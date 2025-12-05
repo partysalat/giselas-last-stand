@@ -111,12 +111,31 @@ export class EnvironmentProp {
                 this.spriteFrame
             );
 
-            // Scale sprite to match desired dimensions with a multiplier for better visibility
-            // Assuming sprite frames are 128x128, we scale based on desired width
-            const spriteScaleMultiplier = 1.5; // Make sprites 50% larger
-            const scaleX = (this.width / 128) * spriteScaleMultiplier;
-            const scaleY = (this.height / 128) * spriteScaleMultiplier;
-            this.sprite.setScale(scaleX, scaleY);
+            // Scale sprite to approximate collision box size while maintaining aspect ratio
+            // Sprites are 128x128, we want them to visually match the collision box
+            // Use the larger dimension (width or height) to determine scale
+            const spriteSize = 128; // Original sprite size
+            const targetScale = Math.max(this.width, this.height) / spriteSize;
+
+            // Apply a multiplier to make sprites larger and more visible
+            // Small/medium props get boosted more to improve visibility
+            let visualMultiplier = 1.0;
+            const maxDimension = Math.max(this.width, this.height);
+
+            if (maxDimension <= 40) {
+                // Very small props (chairs, lamps, stools) - make them much larger
+                visualMultiplier = 2.5;
+            } else if (maxDimension <= 70) {
+                // Medium props (barrels, crates, tables) - make them 50% larger
+                visualMultiplier = 1.5;
+            } else {
+                // Large props (counters, pianos) - keep closer to actual size
+                visualMultiplier = 1.2;
+            }
+
+            const visualScale = targetScale * visualMultiplier;
+
+            this.sprite.setScale(visualScale);
         } else {
             // Fallback to rectangle sprite for props without sprites
             this.sprite = this.scene.add.rectangle(
@@ -135,14 +154,23 @@ export class EnvironmentProp {
             }
         }
 
-        // Set depth based on layer
-        const depthMap = {
-            'ground': 5,
-            'table': 6,
-            'ceiling': 35,
-            'wall': 4
+        // Set initial depth based on layer and Y position for isometric sorting
+        const baseDepthMap = {
+            'floor': 2,     // Floor elements (trapdoors) - below everything
+            'ground': 5,    // Ground level props
+            'wall': 4,      // Wall-mounted props
+            'table': 6,     // Table-level props
+            'structure': 7, // Structural elements
+            'ceiling': 35   // Ceiling-mounted props
         };
-        this.sprite.setDepth(depthMap[this.layer] || 5);
+
+        // Calculate depth: base layer depth + Y position for isometric sorting
+        // Use the bottom of the prop sprite for proper isometric depth
+        // Props closer to bottom of screen (higher Y) render on top
+        const baseDepth = baseDepthMap[this.layer] || 5;
+        const spriteBottom = this.y + (this.sprite.displayHeight / 2);
+        const depthOffset = spriteBottom / 10;
+        this.sprite.setDepth(baseDepth + depthOffset);
 
         // Create health bar (initially hidden)
         this.createHealthBar();
@@ -185,9 +213,11 @@ export class EnvironmentProp {
         // - Explosive props (need to be selectable/targetable, shouldn't block movement)
         // - Hazard props (shouldn't block movement)
         // - Ceiling-mounted props (chandeliers, hanging lamps)
+        // - Floor props (trapdoors - should be passable)
         if (this.explosionRadius > 0 ||
             this.className === 'HazardProp' ||
-            this.layer === 'ceiling') {
+            this.layer === 'ceiling' ||
+            this.layer === 'floor') {
             // No physics body
             return;
         }
@@ -198,8 +228,19 @@ export class EnvironmentProp {
         this.scene.physics.add.existing(this.sprite, isStatic);
 
         // Configure collision body
+        // Sprites are centered at (x,y) by default (origin 0.5, 0.5)
+        // The sprite's scaled size determines the texture bounds
+        const spriteWidth = this.sprite.displayWidth;
+        const spriteHeight = this.sprite.displayHeight;
+
+        // Set physics body size to match collision box
         this.sprite.body.setSize(this.width, this.height);
-        this.sprite.body.setOffset(-this.width / 2, -this.height / 2);
+
+        // Calculate offset: physics body should be centered relative to sprite origin
+        // Offset is from top-left of sprite texture to top-left of physics body
+        const offsetX = (spriteWidth - this.width) / 2;
+        const offsetY = (spriteHeight - this.height) / 2;
+        this.sprite.body.setOffset(offsetX, offsetY);
 
         // For dynamic (light) props, enable physics interactions
         if (!isStatic) {
@@ -598,6 +639,171 @@ export class EnvironmentProp {
         // Update chandelier swaying animation (Phase 5)
         if (this.type === 'chandelier' && this.chandelierState === 'swaying') {
             this.updateChandelierSwaying();
+        }
+
+        // Update trapdoor - check if player or enemy is standing on it
+        if (this.type === 'trapdoor' && this.alive) {
+            this.updateTrapdoor();
+        }
+    }
+
+    /**
+     * Check if trapdoor should open when stepped on
+     */
+    updateTrapdoor() {
+        // Initialize trapdoor state if not set
+        if (!this.trapdoorState) {
+            this.trapdoorState = 'closed';
+        }
+
+        // Skip if already open
+        if (this.trapdoorState === 'open') return;
+
+        const triggerRadius = 30; // Distance to trigger trapdoor
+        let shouldOpen = false;
+
+        // Check if any player is standing on trapdoor
+        if (this.scene.playerManager) {
+            this.scene.playerManager.getLivingPlayers().forEach(player => {
+                const dx = player.getX() - this.x;
+                const dy = player.getY() - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < triggerRadius) {
+                    shouldOpen = true;
+                }
+            });
+        }
+
+        // Check if any enemy is standing on trapdoor
+        if (!shouldOpen && this.scene.enemies) {
+            this.scene.enemies.forEach(enemy => {
+                if (!enemy.isAlive()) return;
+
+                const dx = enemy.getSprite().x - this.x;
+                const dy = enemy.getSprite().y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < triggerRadius) {
+                    shouldOpen = true;
+                }
+            });
+        }
+
+        // Open trapdoor if triggered
+        if (shouldOpen) {
+            this.openTrapdoor();
+        }
+    }
+
+    /**
+     * Open the trapdoor
+     */
+    openTrapdoor() {
+        if (this.trapdoorState === 'open') return;
+
+        console.log(`Trapdoor at (${this.x}, ${this.y}) opening!`);
+        this.trapdoorState = 'open';
+
+        // Change sprite to open trapdoor variant (frame 3)
+        if (this.sprite && this.spriteKey === 'interior5') {
+            this.sprite.setFrame(3); // Middle-left in 3x3 grid (open trapdoor)
+        }
+
+        // Visual effect - dust/particles
+        this.createTrapdoorOpenEffect();
+
+        // Deal damage to entities on the trapdoor
+        this.dealTrapdoorDamage();
+    }
+
+    /**
+     * Deal damage to players and enemies standing on the trapdoor
+     */
+    dealTrapdoorDamage() {
+        const damageRadius = 35; // Slightly larger than trigger radius
+        const playerDamage = 25; // Players take damage but survive
+        const enemyDamage = 9999; // Enemies fall to their death (instant kill)
+
+        // Damage players
+        if (this.scene.playerManager) {
+            this.scene.playerManager.getLivingPlayers().forEach(player => {
+                const dx = player.getX() - this.x;
+                const dy = player.getY() - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < damageRadius) {
+                    console.log(`Player fell into trapdoor! Taking ${playerDamage} damage`);
+                    player.takeDamage(playerDamage);
+                }
+            });
+        }
+
+        // Kill enemies
+        if (this.scene.enemies) {
+            this.scene.enemies.forEach(enemy => {
+                if (!enemy.isAlive()) return;
+
+                const dx = enemy.getSprite().x - this.x;
+                const dy = enemy.getSprite().y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < damageRadius) {
+                    console.log(`Enemy fell into trapdoor! Instant death`);
+                    enemy.takeDamage(enemyDamage);
+
+                    // Create falling animation for enemy
+                    this.createEnemyFallEffect(enemy);
+                }
+            });
+        }
+    }
+
+    /**
+     * Create visual effect for enemy falling into trapdoor
+     */
+    createEnemyFallEffect(enemy) {
+        const enemySprite = enemy.getSprite();
+        if (!enemySprite) return;
+
+        // Animate enemy falling down and fading
+        this.scene.tweens.add({
+            targets: enemySprite,
+            y: enemySprite.y + 50,
+            alpha: 0,
+            scale: 0.5,
+            duration: 400,
+            ease: 'Cubic.easeIn'
+        });
+    }
+
+    /**
+     * Create visual effect when trapdoor opens
+     */
+    createTrapdoorOpenEffect() {
+        const numParticles = 8;
+
+        for (let i = 0; i < numParticles; i++) {
+            const angle = (Math.PI * 2 * i) / numParticles;
+            const distance = 20 + Math.random() * 20;
+
+            const particle = this.scene.add.circle(
+                this.x,
+                this.y,
+                3 + Math.random() * 3,
+                0x8B4513, // Brown dust
+                0.6
+            );
+            particle.setDepth(10);
+
+            this.scene.tweens.add({
+                targets: particle,
+                x: this.x + Math.cos(angle) * distance,
+                y: this.y + Math.sin(angle) * distance,
+                alpha: 0,
+                duration: 300,
+                onComplete: () => particle.destroy()
+            });
         }
     }
 
