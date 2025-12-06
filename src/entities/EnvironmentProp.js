@@ -1669,6 +1669,9 @@ export const PROP_TYPES = {
         height: 50,
         weightClass: 'heavy',
         color: 0x654321,
+        footprintWidth: 40,   // 33% of 120px visual width
+        footprintHeight: 20,  // 40% of 50px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'spawnBottleDebris',
         layer: 'ground',
@@ -1684,6 +1687,9 @@ export const PROP_TYPES = {
         height: 60,
         weightClass: 'heavy',
         color: 0x2F4F4F, // dark slate gray
+        footprintWidth: 40,   // 44% of 90px visual width
+        footprintHeight: 30,  // 50% of 60px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'playDiscordantNotes',
         layer: 'ground',
@@ -1747,6 +1753,9 @@ export const PROP_TYPES = {
         height: 60,
         weightClass: 'light',
         color: 0x006400,
+        footprintWidth: 45,   // 56% of 80px visual width
+        footprintHeight: 35,  // 58% of 60px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior2',
@@ -1761,6 +1770,9 @@ export const PROP_TYPES = {
         height: 30,
         weightClass: 'light',
         color: 0x8B4513,
+        footprintWidth: 20,   // 67% of 30px visual width
+        footprintHeight: 20,  // 67% of 30px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 5,
         impactSpeed: 100,
@@ -1778,6 +1790,9 @@ export const PROP_TYPES = {
         height: 40,
         weightClass: 'medium',
         color: 0xA0522D,
+        footprintWidth: 30,   // 75% of 40px visual width
+        footprintHeight: 30,  // 75% of 40px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 10,
         impactSpeed: 80,
