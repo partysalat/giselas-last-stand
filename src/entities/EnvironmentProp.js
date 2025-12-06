@@ -2435,8 +2435,8 @@ export const PROP_TYPES = {
         height: 50,
         weightClass: 'heavy',
         color: 0x8B4513,
-        footprintWidth: 15,   // 75% of 20px visual width
-        footprintHeight: 40,  // 80% of 50px visual height
+        footprintWidth: 12,   // 60% of 20px visual width
+        footprintHeight: 35,  // 70% of 50px visual height
         footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
