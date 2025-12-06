@@ -236,10 +236,12 @@ export class EnvironmentProp {
         // Configure collision body
         // Use footprint size for physics body (not full sprite size)
         // This creates natural isometric collision where players can walk close to tall props
-        // Scale footprint dimensions by the same visualScale applied to sprite
-        const scale = this.visualScale || 1.0;
-        const physicsWidth = this.footprintWidth * scale;
-        const physicsHeight = this.footprintHeight * scale;
+        // Calculate footprint as percentage of the scaled visual sprite
+        const footprintWidthRatio = this.footprintWidth / this.width;   // e.g., 45/80 = 0.5625
+        const footprintHeightRatio = this.footprintHeight / this.height; // e.g., 35/60 = 0.583
+
+        const physicsWidth = this.sprite.displayWidth * footprintWidthRatio;
+        const physicsHeight = this.sprite.displayHeight * footprintHeightRatio;
 
         // Set the body size and let Phaser center it automatically
         // The third parameter (true) centers the physics body on the sprite
