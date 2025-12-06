@@ -239,15 +239,8 @@ export class EnvironmentProp {
         const physicsHeight = this.footprintHeight;
 
         // Set the body size and let Phaser center it automatically
+        // The third parameter (true) centers the physics body on the sprite
         this.sprite.body.setSize(physicsWidth, physicsHeight, true);
-
-        // Offset body to bottom of sprite for better visual alignment
-        // This makes the collision box sit at the "ground level" of the prop
-        const offsetY = (this.sprite.displayHeight / 2) - (physicsHeight / 2) - 10;
-        this.sprite.body.setOffset(
-            (this.sprite.displayWidth - physicsWidth) / 2,
-            offsetY
-        );
 
         // For dynamic (light) props, enable physics interactions
         if (!isStatic) {
