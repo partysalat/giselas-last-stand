@@ -43,6 +43,11 @@ export class EnvironmentProp {
         this.blocksBullets = config.blocksBullets !== undefined ? config.blocksBullets : true;
         this.layer = config.layer || 'ground';
 
+        // Footprint properties for movement collision (isometric)
+        this.footprintWidth = config.footprintWidth || this.width * 0.5;
+        this.footprintHeight = config.footprintHeight || this.height * 0.5;
+        this.footprintShape = config.footprintShape || 'rectangle';
+
         // Sprite properties
         this.spriteKey = config.spriteKey || null;
         this.spriteFrame = config.spriteFrame !== undefined ? config.spriteFrame : null;
