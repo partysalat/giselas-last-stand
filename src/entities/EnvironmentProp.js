@@ -690,6 +690,40 @@ export class EnvironmentProp {
         if (this.type === 'trapdoor' && this.alive) {
             this.updateTrapdoor();
         }
+
+        // Update depth if prop is moving (isometric sorting)
+        if (this.physicsData) {
+            const speed = Math.sqrt(
+                this.physicsData.velocityX ** 2 +
+                this.physicsData.velocityY ** 2
+            );
+            if (speed > 5) {
+                this.updateDepth();
+            }
+        }
+    }
+
+    /**
+     * Update sprite depth based on current Y position
+     * Called when prop is moving (isometric sorting)
+     */
+    updateDepth() {
+        if (!this.sprite) return;
+
+        const baseDepthMap = {
+            'floor': 2,
+            'ground': 5,
+            'wall': 4,
+            'table': 6,
+            'structure': 7,
+            'ceiling': 35
+        };
+
+        const baseDepth = baseDepthMap[this.layer] || 5;
+        const spriteBottom = this.y + (this.sprite.displayHeight / 2);
+        const depthOffset = spriteBottom / 10;
+
+        this.sprite.setDepth(baseDepth + depthOffset);
     }
 
     /**
