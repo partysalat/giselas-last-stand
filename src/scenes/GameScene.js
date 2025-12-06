@@ -1711,6 +1711,18 @@ export class GameScene extends Phaser.Scene {
         // Also draw custom collision boxes for props without physics bodies
         if (this.coverManager && this.coverManager.getProps) {
             this.coverManager.getProps().forEach(prop => {
+                if (this.showCollisionBoxes) {
+                    // Show sprite bounds (red outlines for bullet collision)
+                    if (prop.showSpriteBoundsDebug) {
+                        prop.showSpriteBoundsDebug();
+                    }
+                } else {
+                    // Hide sprite bounds
+                    if (prop.hideSpriteBoundsDebug) {
+                        prop.hideSpriteBoundsDebug();
+                    }
+                }
+
                 if (prop.debugGraphics) {
                     prop.debugGraphics.destroy();
                     prop.debugGraphics = null;

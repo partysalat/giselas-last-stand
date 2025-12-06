@@ -254,6 +254,43 @@ export class EnvironmentProp {
             this.sprite.body.setBounce(0.3);
             this.sprite.body.setDrag(200); // Friction
         }
+
+        // Show sprite bounds debug if enabled
+        if (this.scene.showCollisionBoxes) {
+            this.showSpriteBoundsDebug();
+        }
+    }
+
+    /**
+     * Show red outline for full sprite bounds (bullet collision area)
+     */
+    showSpriteBoundsDebug() {
+        if (!this.scene.showCollisionBoxes) return;
+
+        this.hideSpriteBoundsDebug();
+
+        // Red outline: Full sprite bounds (what bullets collide with)
+        // This is larger than the physics footprint for movement
+        this.spriteBoundsDebug = this.scene.add.rectangle(
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+            0xFF0000,
+            0
+        );
+        this.spriteBoundsDebug.setStrokeStyle(2, 0xFF0000, 0.5);
+        this.spriteBoundsDebug.setDepth(1000);
+    }
+
+    /**
+     * Hide sprite bounds debug visualization
+     */
+    hideSpriteBoundsDebug() {
+        if (this.spriteBoundsDebug) {
+            this.spriteBoundsDebug.destroy();
+            this.spriteBoundsDebug = null;
+        }
     }
 
     /**
@@ -390,6 +427,9 @@ export class EnvironmentProp {
         if (this.onDestroy || this.explosionRadius > 0) {
             this.triggerDestructionEffect();
         }
+
+        // Clean up sprite bounds debug
+        this.hideSpriteBoundsDebug();
 
         // Clean up health bar
         if (this.healthBarBg) {
