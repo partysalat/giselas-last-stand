@@ -123,18 +123,35 @@ export class FortificationManager {
      * @returns {Array<string>} Array of prop type keys
      */
     getItemsForWave(waveNumber) {
-        // Wave 1-2: Basic furniture only
+        // Wave 1-2: Basic furniture only (more variety, more items)
         if (waveNumber <= 2) {
-            return ['woodenChair', 'cardTable', 'barrel'];
+            return [
+                'woodenChair', 'woodenChair', 'cardTable',
+                'barrel', 'smallCrate', 'barStool', 'barStool'
+            ];
         }
 
-        // Wave 3-4: Add traps
+        // Wave 3-4: Add explosive traps
         if (waveNumber <= 4) {
-            return ['woodenChair', 'cardTable', 'barrel', 'gunpowderKeg'];
+            return [
+                'woodenChair', 'cardTable', 'barrel', 'smallCrate',
+                'barStool', 'gunpowderKeg', 'whiskeyBarrel'
+            ];
         }
 
-        // Wave 5+: Full variety
-        return ['woodenChair', 'cardTable', 'barrel', 'gunpowderKeg', 'oilLamp'];
+        // Wave 5-6: More explosives and variety
+        if (waveNumber <= 6) {
+            return [
+                'woodenChair', 'cardTable', 'barrel', 'smallCrate',
+                'gunpowderKeg', 'oilLamp', 'whiskeyBarrel', 'gasLantern'
+            ];
+        }
+
+        // Wave 7+: Full arsenal with heavy explosives
+        return [
+            'woodenChair', 'cardTable', 'barrel', 'smallCrate', 'barStool',
+            'gunpowderKeg', 'oilLamp', 'whiskeyBarrel', 'gasLantern', 'dynamiteCrate'
+        ];
     }
 
     /**
