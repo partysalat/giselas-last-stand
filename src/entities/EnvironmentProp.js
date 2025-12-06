@@ -233,17 +233,21 @@ export class EnvironmentProp {
         this.scene.physics.add.existing(this.sprite, isStatic);
 
         // Configure collision body
-        // Sprites are centered at (x,y) by default (origin 0.5, 0.5)
-        const spriteWidth = this.sprite.displayWidth;
-        const spriteHeight = this.sprite.displayHeight;
-
-        // Physics body should match the visual sprite size closely
-        // Use 70% to account for visual elements like shadows and decorative edges
-        const physicsWidth = spriteWidth * 0.7;
-        const physicsHeight = spriteHeight * 0.7;
+        // Use footprint size for physics body (not full sprite size)
+        // This creates natural isometric collision where players can walk close to tall props
+        const physicsWidth = this.footprintWidth;
+        const physicsHeight = this.footprintHeight;
 
         // Set the body size and let Phaser center it automatically
         this.sprite.body.setSize(physicsWidth, physicsHeight, true);
+
+        // Offset body to bottom of sprite for better visual alignment
+        // This makes the collision box sit at the "ground level" of the prop
+        const offsetY = (this.sprite.displayHeight / 2) - (physicsHeight / 2) - 10;
+        this.sprite.body.setOffset(
+            (this.sprite.displayWidth - physicsWidth) / 2,
+            offsetY
+        );
 
         // For dynamic (light) props, enable physics interactions
         if (!isStatic) {
