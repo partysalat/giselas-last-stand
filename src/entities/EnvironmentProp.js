@@ -1703,6 +1703,9 @@ export const PROP_TYPES = {
         height: 40,
         weightClass: 'heavy',
         color: 0x8B4513, // saddle brown
+        footprintWidth: 40,   // 40% of 100px visual width
+        footprintHeight: 20,  // 50% of 40px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'dropBooks',
         layer: 'ground',
@@ -1718,6 +1721,9 @@ export const PROP_TYPES = {
         height: 60,
         weightClass: 'heavy',
         color: 0x228B22, // forest green felt
+        footprintWidth: 45,   // 45% of 100px visual width
+        footprintHeight: 30,  // 50% of 60px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         interactive: true,
         activationRadius: 50,
@@ -1735,6 +1741,9 @@ export const PROP_TYPES = {
         height: 50,
         weightClass: 'heavy',
         color: 0x708090, // slate gray
+        footprintWidth: 25,   // 50% of 50px visual width
+        footprintHeight: 25,  // 50% of 50px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'dropCoins',
         layer: 'ground',
@@ -1808,6 +1817,9 @@ export const PROP_TYPES = {
         height: 20,
         weightClass: 'light',
         color: 0xA0522D, // sienna
+        footprintWidth: 15,   // 75% of 20px visual width
+        footprintHeight: 15,  // 75% of 20px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 3,
         impactSpeed: 120,
@@ -1825,6 +1837,9 @@ export const PROP_TYPES = {
         height: 35,
         weightClass: 'light',
         color: 0xDEB887, // burlwood
+        footprintWidth: 25,   // 71% of 35px visual width
+        footprintHeight: 25,  // 71% of 35px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 3,
         impactSpeed: 100,
@@ -1976,6 +1991,9 @@ export const PROP_TYPES = {
         height: 100,
         weightClass: null,
         color: 0x8B4513, // brown
+        footprintWidth: 45,   // 56% of 80px visual width
+        footprintHeight: 60,  // 60% of 100px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'autoSwingClosed',
         knockbackForce: 20,
@@ -2047,6 +2065,9 @@ export const PROP_TYPES = {
         height: 150,
         weightClass: null,
         color: 0x8B4513,
+        footprintWidth: 20,   // 67% of 30px visual width
+        footprintHeight: 100, // 67% of 150px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'stageTilt',
         layer: 'structure',
@@ -2080,6 +2101,9 @@ export const PROP_TYPES = {
         height: 40,
         weightClass: 'heavy',
         color: 0x4682B4, // steel blue
+        footprintWidth: 30,   // 43% of 70px visual width
+        footprintHeight: 18,  // 45% of 40px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'spillWater',
         wetZoneRadius: 80,
@@ -2099,6 +2123,9 @@ export const PROP_TYPES = {
         height: 60,
         weightClass: 'heavy',
         color: 0x8B4513, // saddle brown
+        footprintWidth: 35,   // 44% of 80px visual width
+        footprintHeight: 30,  // 50% of 60px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'dropCoins',
         layer: 'ground',
@@ -2114,6 +2141,9 @@ export const PROP_TYPES = {
         height: 80,
         weightClass: 'heavy',
         color: 0x8B4513, // saddle brown
+        footprintWidth: 30,   // 43% of 70px visual width
+        footprintHeight: 35,  // 44% of 80px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'spawnBottleDebris',
         layer: 'ground',
@@ -2130,6 +2160,9 @@ export const PROP_TYPES = {
         height: 40,
         weightClass: 'medium',
         color: 0xA0522D,
+        footprintWidth: 30,   // 75% of 40px visual width
+        footprintHeight: 30,  // 75% of 40px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 10,
         impactSpeed: 80,
@@ -2147,6 +2180,9 @@ export const PROP_TYPES = {
         height: 30,
         weightClass: 'medium',
         color: 0x8B4513,
+        footprintWidth: 50,   // 71% of 70px visual width
+        footprintHeight: 22,  // 73% of 30px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 8,
         impactSpeed: 90,
@@ -2164,6 +2200,9 @@ export const PROP_TYPES = {
         height: 40,
         weightClass: 'light',
         color: 0x8B4513,
+        footprintWidth: 30,   // 75% of 40px visual width
+        footprintHeight: 30,  // 75% of 40px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 5,
         impactSpeed: 100,
@@ -2181,6 +2220,9 @@ export const PROP_TYPES = {
         height: 25,
         weightClass: 'light',
         color: 0x8B4513,
+        footprintWidth: 18,   // 72% of 25px visual width
+        footprintHeight: 18,  // 72% of 25px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 3,
         impactSpeed: 120,
@@ -2198,6 +2240,9 @@ export const PROP_TYPES = {
         height: 30,
         weightClass: 'medium',
         color: 0x808000, // olive
+        footprintWidth: 25,   // 71% of 35px visual width
+        footprintHeight: 22,  // 73% of 30px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior2',
@@ -2336,6 +2381,9 @@ export const PROP_TYPES = {
         height: 25,
         weightClass: 'light',
         color: 0xFFD700, // brass/gold
+        footprintWidth: 18,   // 72% of 25px visual width
+        footprintHeight: 18,  // 72% of 25px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 5,
         impactSpeed: 110,
@@ -2370,6 +2418,9 @@ export const PROP_TYPES = {
         height: 60,
         weightClass: 'heavy',
         color: 0x8B4513,
+        footprintWidth: 55,   // 69% of 80px visual width
+        footprintHeight: 42,  // 70% of 60px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior5',
@@ -2384,6 +2435,9 @@ export const PROP_TYPES = {
         height: 50,
         weightClass: 'heavy',
         color: 0x8B4513,
+        footprintWidth: 15,   // 75% of 20px visual width
+        footprintHeight: 40,  // 80% of 50px visual height
+        footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior5',
