@@ -119,10 +119,11 @@ export class PlayerManager {
                 W: { isDown: inputState.movement.up },
                 A: { isDown: inputState.movement.left },
                 S: { isDown: inputState.movement.down },
-                D: { isDown: inputState.movement.right }
+                D: { isDown: inputState.movement.right },
+                SPACE: { isDown: inputState.jump }
             };
 
-            player.update(keys);
+            player.update(keys, delta);
         });
     }
 

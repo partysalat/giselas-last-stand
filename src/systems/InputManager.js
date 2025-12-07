@@ -32,7 +32,8 @@ export class InputManager {
             D: Phaser.Input.Keyboard.KeyCodes.D,
             Q: Phaser.Input.Keyboard.KeyCodes.Q,
             E: Phaser.Input.Keyboard.KeyCodes.E,
-            R: Phaser.Input.Keyboard.KeyCodes.R  // Cocktail activation
+            R: Phaser.Input.Keyboard.KeyCodes.R,  // Cocktail activation
+            SPACE: Phaser.Input.Keyboard.KeyCodes.SPACE
         });
 
         // Mouse firing
@@ -195,6 +196,7 @@ export class InputManager {
                 left: this.movement.x < -0.1,
                 right: this.movement.x > 0.1
             },
+            jump: this.keys.SPACE.isDown,
             isFiring: this.isFiring
         };
     }
