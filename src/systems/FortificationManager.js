@@ -19,14 +19,29 @@ export class FortificationManager {
      * Initialize spawn points around saloon perimeter
      */
     initializeSpawnPoints() {
-        // Define 6 fixed spawn points around the edges
+        // Define 14 spawn points around the edges and corners
         this.spawnPoints = [
-            { x: 300, y: 300, active: true },   // Top-left
+            // Top edge
+            { x: 300, y: 200, active: true },   // Top-left corner
+            { x: 640, y: 200, active: true },   // Top-left mid
             { x: 960, y: 200, active: true },   // Top-center
-            { x: 1620, y: 300, active: true },  // Top-right
-            { x: 1620, y: 780, active: true },  // Bottom-right
+            { x: 1280, y: 200, active: true },  // Top-right mid
+            { x: 1620, y: 200, active: true },  // Top-right corner
+
+            // Right edge
+            { x: 1700, y: 440, active: true },  // Right-mid-top
+            { x: 1700, y: 640, active: true },  // Right-mid-bottom
+
+            // Bottom edge
+            { x: 1620, y: 880, active: true },  // Bottom-right corner
+            { x: 1280, y: 880, active: true },  // Bottom-right mid
             { x: 960, y: 880, active: true },   // Bottom-center
-            { x: 300, y: 780, active: true }    // Bottom-left
+            { x: 640, y: 880, active: true },   // Bottom-left mid
+            { x: 300, y: 880, active: true },   // Bottom-left corner
+
+            // Left edge
+            { x: 220, y: 640, active: true },   // Left-mid-bottom
+            { x: 220, y: 440, active: true }    // Left-mid-top
         ];
 
         console.log('Spawn points initialized:', this.spawnPoints.length);
@@ -123,34 +138,38 @@ export class FortificationManager {
      * @returns {Array<string>} Array of prop type keys
      */
     getItemsForWave(waveNumber) {
-        // Wave 1-2: Basic furniture only (more variety, more items)
+        // Wave 1-2: Basic furniture including some heavy pieces
         if (waveNumber <= 2) {
             return [
                 'woodenChair', 'woodenChair', 'cardTable',
-                'barrel', 'smallCrate', 'barStool', 'barStool'
+                'barrel', 'smallCrate', 'barStool', 'barStool',
+                'heavyBookshelf'
             ];
         }
 
-        // Wave 3-4: Add explosive traps
+        // Wave 3-4: Add explosive traps and heavy cover
         if (waveNumber <= 4) {
             return [
                 'woodenChair', 'cardTable', 'barrel', 'smallCrate',
-                'barStool', 'gunpowderKeg', 'whiskeyBarrel'
+                'barStool', 'gunpowderKeg', 'whiskeyBarrel',
+                'heavyBookshelf', 'flippedPokerTable'
             ];
         }
 
-        // Wave 5-6: More explosives and variety
+        // Wave 5-6: More explosives, variety, and heavy objects
         if (waveNumber <= 6) {
             return [
                 'woodenChair', 'cardTable', 'barrel', 'smallCrate',
-                'gunpowderKeg', 'oilLamp', 'whiskeyBarrel', 'gasLantern'
+                'gunpowderKeg', 'oilLamp', 'whiskeyBarrel', 'gasLantern',
+                'heavyBookshelf', 'safe'
             ];
         }
 
-        // Wave 7+: Full arsenal with heavy explosives
+        // Wave 7+: Full arsenal with heavy explosives and fortifications
         return [
             'woodenChair', 'cardTable', 'barrel', 'smallCrate', 'barStool',
-            'gunpowderKeg', 'oilLamp', 'whiskeyBarrel', 'gasLantern', 'dynamiteCrate'
+            'gunpowderKeg', 'oilLamp', 'whiskeyBarrel', 'gasLantern', 'dynamiteCrate',
+            'heavyBookshelf', 'safe', 'flippedPokerTable'
         ];
     }
 
@@ -359,6 +378,26 @@ export class FortificationManager {
             prop.healthBarFill.x = pointer.x - prop.width / 2 + (prop.width * healthPercent) / 2;
             prop.healthBarFill.y = pointer.y - prop.height / 2 - 10;
         }
+
+        // Update sprite bounds debug visualization if exists
+        if (prop.spriteBoundsDebug) {
+            prop.spriteBoundsDebug.x = pointer.x;
+            prop.spriteBoundsDebug.y = pointer.y;
+        }
+
+        // Update depth during drag for proper isometric sorting
+        const baseDepthMap = {
+            'floor': 2,
+            'ground': 5,
+            'wall': 4,
+            'table': 6,
+            'structure': 7,
+            'ceiling': 35
+        };
+        const baseDepth = baseDepthMap[prop.layer] || 5;
+        const spriteBottom = pointer.y + (sprite.displayHeight / 2);
+        const depthOffset = spriteBottom / 10;
+        sprite.setDepth(baseDepth + depthOffset);
     }
 
     /**
@@ -396,6 +435,12 @@ export class FortificationManager {
                 const healthPercent = prop.getHealthPercent();
                 prop.healthBarFill.x = this.dragStartX - prop.width / 2 + (prop.width * healthPercent) / 2;
                 prop.healthBarFill.y = this.dragStartY - prop.height / 2 - 10;
+            }
+
+            // Update sprite bounds debug visualization if exists
+            if (prop.spriteBoundsDebug) {
+                prop.spriteBoundsDebug.x = this.dragStartX;
+                prop.spriteBoundsDebug.y = this.dragStartY;
             }
         }
 

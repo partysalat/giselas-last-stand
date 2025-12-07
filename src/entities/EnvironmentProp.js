@@ -692,14 +692,35 @@ export class EnvironmentProp {
         }
 
         // Update depth if prop is moving (isometric sorting)
+        // Check both physicsData (for explosion forces) and sprite.body (for player pushing)
+        let isMoving = false;
+
         if (this.physicsData) {
             const speed = Math.sqrt(
                 this.physicsData.velocityX ** 2 +
                 this.physicsData.velocityY ** 2
             );
             if (speed > 5) {
-                this.updateDepth();
+                isMoving = true;
             }
+        }
+
+        // Also check if sprite has a physics body that's moving (player pushing)
+        if (this.sprite && this.sprite.body) {
+            const bodySpeed = Math.sqrt(
+                this.sprite.body.velocity.x ** 2 +
+                this.sprite.body.velocity.y ** 2
+            );
+            if (bodySpeed > 5) {
+                isMoving = true;
+                // Update prop position to match sprite position when pushed by player
+                this.x = this.sprite.x;
+                this.y = this.sprite.y;
+            }
+        }
+
+        if (isMoving) {
+            this.updateDepth();
         }
     }
 
