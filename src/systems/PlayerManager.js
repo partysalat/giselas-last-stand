@@ -18,7 +18,7 @@ export class PlayerManager {
 
         playerConfigs.forEach((config, index) => {
             const pos = spawnPositions[index];
-            const player = new Player(this.scene, pos.x, pos.y, config.color);
+            const player = new Player(this.scene, pos.x, pos.y, 0, config.color);
             player.playerName = config.name;
             player.playerIndex = config.index;
             player.isDead = false;
