@@ -68,3 +68,27 @@ export const DIFFICULTY_SETTINGS = {
 
 // Default difficulty
 export const DEFAULT_DIFFICULTY = DIFFICULTY_SETTINGS.MEDIUM;
+
+// Isometric coordinate system configuration
+export const ISOMETRIC_CONFIG = {
+    // Tile dimensions for isometric projection
+    TILE_WIDTH: 64,
+    TILE_HEIGHT: 32,
+
+    // World space configuration
+    WORLD_UNITS_PER_SCREEN_PIXEL: 0.1, // How movement feels
+
+    // Height configuration
+    GRAVITY: 800,              // Downward acceleration for jumping (pixels/sec²)
+    JUMP_VELOCITY: -400,       // Initial upward velocity when jumping
+    MAX_JUMP_HEIGHT: 100,      // Maximum height player can reach
+
+    // Collision configuration
+    PLAYER_HEIGHT: 40,         // Player's physical height in world units
+    PLAYER_RADIUS: 20,         // Player's ground collision radius
+
+    // Obstacle height categories (for jumping)
+    LOW_OBSTACLE: 30,          // Can jump over (barrels, chairs)
+    MEDIUM_OBSTACLE: 60,       // Hard to jump over (tables)
+    HIGH_OBSTACLE: 100,        // Cannot jump over (walls, counters)
+};
