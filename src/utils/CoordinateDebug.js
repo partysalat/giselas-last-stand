@@ -1,4 +1,4 @@
-import { worldToScreen, TILE_WIDTH, TILE_HEIGHT } from './CoordinateTransform.js';
+import { worldToScreen, TILE_WIDTH } from './CoordinateTransform.js';
 
 /**
  * Debug visualization for isometric coordinate system
@@ -10,6 +10,7 @@ export class CoordinateDebug {
         this.graphics = scene.add.graphics();
         this.graphics.setDepth(1000); // Always on top
         this.enabled = false;
+        this.labelTexts = []; // Track label text objects for cleanup
 
         // Debug text display
         this.debugText = scene.add.text(10, 10, '', {
@@ -41,6 +42,10 @@ export class CoordinateDebug {
      */
     drawGrid(gridSize = 20, centerWorldX = 0, centerWorldY = 0) {
         if (!this.enabled) return;
+
+        // Clear old labels
+        this.labelTexts.forEach(text => text.destroy());
+        this.labelTexts = [];
 
         this.graphics.clear();
         this.graphics.lineStyle(1, 0x00ff00, 0.3);
@@ -117,6 +122,7 @@ export class CoordinateDebug {
                 fill: '#ffffff'
             });
             text.setDepth(1002);
+            this.labelTexts.push(text); // Track for cleanup
         }
     }
 
@@ -142,6 +148,7 @@ export class CoordinateDebug {
      * Clean up debug graphics
      */
     destroy() {
+        this.labelTexts.forEach(text => text.destroy());
         this.graphics.destroy();
         this.debugText.destroy();
     }
