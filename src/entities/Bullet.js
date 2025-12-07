@@ -38,7 +38,7 @@ export class Bullet {
     }
 
     update(delta) {
-        if (!this.alive) return;
+        if (!delta || !this.alive) return;
 
         // Update world position
         const deltaSeconds = delta / 1000;

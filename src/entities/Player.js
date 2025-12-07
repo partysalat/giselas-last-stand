@@ -144,7 +144,7 @@ export class Player {
         // Update bullets
         this.bullets = this.bullets.filter(bullet => {
             if (bullet.isAlive()) {
-                bullet.update();
+                bullet.update(delta);
                 return true;
             }
             return false;
