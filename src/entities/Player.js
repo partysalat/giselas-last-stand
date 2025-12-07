@@ -1,15 +1,26 @@
+import { worldToScreen, screenToWorld, calculateDepth } from '../utils/CoordinateTransform.js';
+import { ISOMETRIC_CONFIG } from '../config.js';
+
 export class Player {
-    constructor(scene, x, y, color = 'red') {
+    constructor(scene, worldX, worldY, worldZ = 0, color = 'red') {
         this.scene = scene;
         this.color = color;
 
+        // World space coordinates (isometric 3D)
+        this.worldX = worldX;
+        this.worldY = worldY;
+        this.worldZ = worldZ;
+
+        // Convert to screen space for sprite creation
+        const { screenX, screenY } = worldToScreen(worldX, worldY, worldZ);
+
         // For red color, use directional sprites; others use old system
         if (color === 'red') {
-            this.sprite = scene.add.sprite(x, y, `gisela-${color}-down`);
+            this.sprite = scene.add.sprite(screenX, screenY, `gisela-${color}-down`);
             this.currentDirection = 'down'; // Track current facing direction
             this.useDirectionalSprites = true;
         } else {
-            this.sprite = scene.add.sprite(x, y, `gisela-${color}`);
+            this.sprite = scene.add.sprite(screenX, screenY, `gisela-${color}`);
             this.sprite.play(`gisela-${color}-idle`);
             this.useDirectionalSprites = false;
         }
@@ -17,23 +28,35 @@ export class Player {
         // Scale down to appropriate size
         this.sprite.setScale(0.5);
 
-        // Set depth so player renders above floor props (trapdoors at depth 2)
-        this.sprite.setDepth(10);
+        // Set depth based on world Y position for isometric sorting
+        this.sprite.setDepth(calculateDepth(this.worldY, 10));
 
         scene.physics.add.existing(this.sprite);
 
         // Physics body configuration - use circular collision
-        this.sprite.body.setCircle(20); // Collision radius
-        this.sprite.body.setOffset(28, 28); // Center the collision circle (adjusted for 96x96 sprite)
+        this.sprite.body.setCircle(ISOMETRIC_CONFIG.PLAYER_RADIUS);
+        this.sprite.body.setOffset(28, 28); // Center the collision circle
         this.sprite.body.setCollideWorldBounds(true);
         this.sprite.body.setDrag(500);
         this.sprite.body.setMaxVelocity(300);
 
         // Player properties
-        this.speed = 300;
+        this.speed = 5.0; // World units per second
         this.speedMultiplier = 1.0;
         this.health = 100;
         this.maxHealth = 100;
+
+        // Physical dimensions
+        this.height = ISOMETRIC_CONFIG.PLAYER_HEIGHT;
+        this.radius = ISOMETRIC_CONFIG.PLAYER_RADIUS;
+
+        // Jumping properties
+        this.jumpVelocity = 0;
+        this.gravity = ISOMETRIC_CONFIG.GRAVITY;
+        this.isJumping = false;
+        this.isInAir = false;
+        this.maxJumpHeight = ISOMETRIC_CONFIG.MAX_JUMP_HEIGHT;
+        this.jumpPressed = false; // Track jump button state
 
         // Multiplayer properties
         this.playerName = 'Player 1'; // Will be set by PlayerManager
