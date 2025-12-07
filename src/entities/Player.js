@@ -238,32 +238,37 @@ export class Player {
         this.nextFire = currentTime + cooldown;
 
         // Calculate angle to target based on type
-        let targetX, targetY;
+        let targetScreenX, targetScreenY;
 
         if (targetEnemy.type === 'tentacle') {
             const enemy = targetEnemy.enemy;
             const tentSprite = enemy.tentacleSprites ? enemy.tentacleSprites[targetEnemy.tentacleIndex] : null;
             if (tentSprite) {
-                targetX = tentSprite.x;
-                targetY = tentSprite.y;
+                targetScreenX = tentSprite.x;
+                targetScreenY = tentSprite.y;
             } else {
                 return; // No sprite available
             }
         } else if (targetEnemy.type === 'enemy') {
-            targetX = targetEnemy.enemy.getSprite().x;
-            targetY = targetEnemy.enemy.getSprite().y;
+            targetScreenX = targetEnemy.enemy.getSprite().x;
+            targetScreenY = targetEnemy.enemy.getSprite().y;
         } else if (targetEnemy.type === 'prop') {
-            targetX = targetEnemy.prop.x;
-            targetY = targetEnemy.prop.y;
+            targetScreenX = targetEnemy.prop.x;
+            targetScreenY = targetEnemy.prop.y;
         } else {
             // Legacy format: plain enemy object
-            targetX = targetEnemy.getSprite().x;
-            targetY = targetEnemy.getSprite().y;
+            targetScreenX = targetEnemy.getSprite().x;
+            targetScreenY = targetEnemy.getSprite().y;
         }
 
-        const dx = targetX - this.sprite.x;
-        const dy = targetY - this.sprite.y;
-        const baseAngle = Math.atan2(dy, dx);
+        // Convert target from screen space to world space (assuming ground level)
+        const targetWorld = screenToWorld(targetScreenX, targetScreenY, 0);
+
+        // Calculate angle in world space
+        const baseAngle = Math.atan2(
+            targetWorld.worldY - this.worldY,
+            targetWorld.worldX - this.worldX
+        );
 
         // Calculate damage with buffs
         let damage = this.bulletDamage;
@@ -293,12 +298,13 @@ export class Player {
             bulletAngles.push(baseAngle);
         }
 
-        // Create bullets
+        // Create bullets at player's world position with chest height
         bulletAngles.forEach(angle => {
             const bullet = new this.scene.Bullet(
                 this.scene,
-                this.sprite.x,
-                this.sprite.y,
+                this.worldX,
+                this.worldY,
+                this.worldZ + 20, // Spawn at chest height
                 angle,
                 damage
             );
