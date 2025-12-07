@@ -89,46 +89,57 @@ export class Player {
         this.bulletDamage = 10;
     }
 
-    update(keys) {
-        // Calculate movement vector
-        let velocityX = 0;
-        let velocityY = 0;
+    update(keys, delta) {
+        // Calculate movement vector in world space
+        let worldVelX = 0;
+        let worldVelY = 0;
 
         if (keys.W.isDown) {
-            velocityY = -this.speed;
-        } else if (keys.S.isDown) {
-            velocityY = this.speed;
+            worldVelY -= 1; // Move "up" in world space (toward back of screen)
         }
-
+        if (keys.S.isDown) {
+            worldVelY += 1; // Move "down" in world space (toward front)
+        }
         if (keys.A.isDown) {
-            velocityX = -this.speed;
-        } else if (keys.D.isDown) {
-            velocityX = this.speed;
+            worldVelX -= 1; // Move "left" in world space
+        }
+        if (keys.D.isDown) {
+            worldVelX += 1; // Move "right" in world space
         }
 
         // Normalize diagonal movement
-        if (velocityX !== 0 && velocityY !== 0) {
-            velocityX *= 0.707; // 1/sqrt(2)
-            velocityY *= 0.707;
+        if (worldVelX !== 0 && worldVelY !== 0) {
+            const length = Math.sqrt(worldVelX * worldVelX + worldVelY * worldVelY);
+            worldVelX /= length;
+            worldVelY /= length;
         }
 
         // Apply speed multiplier (for ink cloud slow effect)
-        velocityX *= this.speedMultiplier;
-        velocityY *= this.speedMultiplier;
+        const effectiveSpeed = this.speed * this.speedMultiplier;
+
+        // Update world position
+        const deltaSeconds = delta / 1000;
+        this.worldX += worldVelX * effectiveSpeed * deltaSeconds;
+        this.worldY += worldVelY * effectiveSpeed * deltaSeconds;
 
         // Update sprite direction for red Gisela
-        if (this.useDirectionalSprites && (velocityX !== 0 || velocityY !== 0)) {
-            this.updateDirection(velocityX, velocityY);
+        if (this.useDirectionalSprites && (worldVelX !== 0 || worldVelY !== 0)) {
+            this.updateDirection(worldVelX, worldVelY);
         }
 
-        // Apply velocity
-        this.sprite.body.setVelocity(velocityX, velocityY);
+        // Handle jumping physics
+        this.updateJumping(keys, deltaSeconds);
 
-        // Update depth based on Y position for isometric sorting
-        // Use the bottom of the sprite (feet) for proper isometric depth
-        // Higher Y = closer to camera = render on top
-        const spriteBottom = this.sprite.y + (this.sprite.displayHeight / 2);
-        this.sprite.setDepth(10 + spriteBottom / 10);
+        // Convert world position to screen position and update sprite
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+        this.sprite.setPosition(screenX, screenY);
+
+        // Update depth for proper isometric sorting
+        this.sprite.setDepth(calculateDepth(this.worldY, 10));
+
+        // Update physics body position to match
+        this.sprite.body.x = screenX - this.sprite.body.halfWidth;
+        this.sprite.body.y = screenY - this.sprite.body.halfHeight;
 
         // Update bullets
         this.bullets = this.bullets.filter(bullet => {
@@ -154,6 +165,34 @@ export class Player {
 
         // Check buff expiration
         this.getActiveBuff();
+    }
+
+    updateJumping(keys, deltaSeconds) {
+        // Handle jump input (SPACE bar)
+        const jumpKeyDown = keys.SPACE && keys.SPACE.isDown;
+
+        // Start jump when pressing SPACE while on ground
+        if (jumpKeyDown && !this.jumpPressed && !this.isJumping && this.worldZ === 0) {
+            this.jumpVelocity = ISOMETRIC_CONFIG.JUMP_VELOCITY;
+            this.isJumping = true;
+            this.isInAir = true;
+        }
+
+        this.jumpPressed = jumpKeyDown;
+
+        // Apply gravity and update height
+        if (this.isInAir || this.worldZ > 0) {
+            this.jumpVelocity += this.gravity * deltaSeconds;
+            this.worldZ += this.jumpVelocity * deltaSeconds;
+
+            // Land on ground
+            if (this.worldZ <= 0) {
+                this.worldZ = 0;
+                this.jumpVelocity = 0;
+                this.isJumping = false;
+                this.isInAir = false;
+            }
+        }
     }
 
     shoot(targetEnemy, currentTime) {
@@ -351,35 +390,22 @@ export class Player {
         this.buffAura.setDepth(-1);
     }
 
-    updateDirection(velocityX, velocityY) {
-        // Determine direction based on velocity (supports 8 directions)
+    updateDirection(worldVelX, worldVelY) {
+        // Determine direction based on world-space velocity
+        // In isometric, world directions map differently to visual directions
+
         let newDirection = this.currentDirection;
 
-        // Define threshold for considering movement in a direction
-        const threshold = 0.3; // Lower means more sensitive to slight angles
-
-        const absX = Math.abs(velocityX);
-        const absY = Math.abs(velocityY);
-
-        // Check for diagonal movement (both X and Y significant)
-        if (absX > threshold && absY > threshold) {
-            // Diagonal movement
-            if (velocityY < 0) {
-                // Moving up
-                newDirection = velocityX < 0 ? 'up-left' : 'up-right';
-            } else {
-                // Moving down
-                newDirection = velocityX < 0 ? 'down-left' : 'down-right';
-            }
-        } else if (absY > absX && absY > threshold) {
-            // Primarily vertical movement
-            newDirection = velocityY < 0 ? 'up' : 'down';
-        } else if (absX > absY && absX > threshold) {
-            // Primarily horizontal movement
-            newDirection = velocityX < 0 ? 'left' : 'right';
+        // Prioritize X/Y movement - choose dominant direction
+        if (Math.abs(worldVelX) > Math.abs(worldVelY)) {
+            // X-dominant movement
+            newDirection = worldVelX > 0 ? 'right' : 'left';
+        } else {
+            // Y-dominant movement
+            newDirection = worldVelY > 0 ? 'down' : 'up';
         }
 
-        // Only update texture if direction changed
+        // Only change texture if direction changed
         if (newDirection !== this.currentDirection) {
             this.currentDirection = newDirection;
             this.sprite.setTexture(`gisela-${this.color}-${newDirection}`);
