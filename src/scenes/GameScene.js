@@ -505,10 +505,10 @@ export class GameScene extends Phaser.Scene {
                         }
                     });
 
-                    enemy.update(time, closestPlayer.getX(), closestPlayer.getY());
+                    enemy.update(time, delta, closestPlayer.worldX, closestPlayer.worldY);
                 } else if (this.player) {
                     // Fallback to legacy single player
-                    enemy.update(time, this.player.getX(), this.player.getY());
+                    enemy.update(time, delta, this.player.worldX, this.player.worldY);
                 }
 
                 // Check cover collisions for enemies
