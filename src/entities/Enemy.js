@@ -656,13 +656,8 @@ export class Enemy {
         // Skip update if stunned
         if (this.stunned) return;
 
-        // Calculate distance to target in world space
-        const distToTarget = worldDistance2D(
-            this.worldX,
-            this.worldY,
-            playerWorldX,
-            playerWorldY
-        );
+        // Convert player world coordinates to screen coordinates for legacy behavior methods
+        const { screenX: playerScreenX, screenY: playerScreenY } = worldToScreen(playerWorldX, playerWorldY, 0);
 
         // Handle formation positioning for movement
         let formationHandled = false;
@@ -678,49 +673,44 @@ export class Enemy {
         // Pass formationHandled flag to skip movement if already positioned
         switch(this.config.behavior) {
             case 'ranged_shooter':
-                this.updateRangedShooter(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
+                this.updateRangedShooter(time, playerScreenX, playerScreenY, formationHandled);
                 break;
             case 'ranged_kiter':
-                this.updateRangedKiter(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
+                this.updateRangedKiter(time, playerScreenX, playerScreenY, formationHandled);
                 break;
             case 'basic_shooter':
-                this.updateBasicShooter(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
+                this.updateBasicShooter(time, playerScreenX, playerScreenY, formationHandled);
                 break;
             case 'fast_melee':
-                this.updateFastMelee(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
+                this.updateFastMelee(time, playerScreenX, playerScreenY, formationHandled);
                 break;
             case 'tank':
-                this.updateTank(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
+                this.updateTank(time, playerScreenX, playerScreenY, formationHandled);
                 break;
             case 'teleport':
-                this.updateTeleport(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
+                this.updateTeleport(time, playerScreenX, playerScreenY, formationHandled);
                 break;
             case 'swoop':
-                this.updateSwoop(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
+                this.updateSwoop(time, playerScreenX, playerScreenY, formationHandled);
                 break;
             case 'boss_iron_shell':
-                this.updateBossIronShell(time, delta, playerWorldX, playerWorldY, distToTarget);
+                this.updateBossIronShell(time, playerScreenX, playerScreenY);
                 break;
             case 'boss_kraken_arm':
-                this.updateBossKrakenArm(time, delta, playerWorldX, playerWorldY, distToTarget);
+                this.updateBossKrakenArm(time, playerScreenX, playerScreenY);
                 break;
             case 'boss_leviathan':
-                this.updateBossLeviathan(time, delta, playerWorldX, playerWorldY, distToTarget);
+                this.updateBossLeviathan(time, playerScreenX, playerScreenY);
                 break;
         }
 
-        // Convert world position to screen position and update sprite
-        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
-        this.sprite.setPosition(screenX, screenY);
+        // After behavior methods update sprite position, sync world position from sprite
+        const worldPos = screenToWorld(this.sprite.x, this.sprite.y, 0);
+        this.worldX = worldPos.worldX;
+        this.worldY = worldPos.worldY;
 
         // Update depth for proper isometric sorting
         this.sprite.setDepth(calculateDepth(this.worldY, 10));
-
-        // Update physics body position to match
-        if (this.sprite.body) {
-            this.sprite.body.x = screenX - this.sprite.body.halfWidth;
-            this.sprite.body.y = screenY - this.sprite.body.halfHeight;
-        }
 
         // Update visual indicators
         this.updateVisuals();
