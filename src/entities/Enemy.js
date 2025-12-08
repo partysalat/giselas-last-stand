@@ -1,4 +1,6 @@
 import { EnemyBullet } from './EnemyBullet.js';
+import { worldToScreen, screenToWorld, calculateDepth, worldDistance2D } from '../utils/CoordinateTransform.js';
+import { ISOMETRIC_CONFIG } from '../config.js';
 
 // Enemy type configurations
 const ENEMY_TYPES = {
@@ -155,7 +157,7 @@ const ENEMY_TYPES = {
 export { ENEMY_TYPES };
 
 export class Enemy {
-    constructor(scene, x, y, type = 'lobster', isBounty = false, bountyValue = 0, difficultyMultipliers = null) {
+    constructor(scene, worldX, worldY, type = 'lobster', isBounty = false, bountyValue = 0, difficultyMultipliers = null) {
         this.scene = scene;
         this.type = type;
         this.isBounty = isBounty;
@@ -171,6 +173,15 @@ export class Enemy {
 
         this.config = config;
 
+        // World space coordinates (isometric 3D)
+        this.worldX = worldX;
+        this.worldY = worldY;
+        this.worldZ = 0; // Enemies walk on ground (no flying yet)
+
+        // Physical dimensions
+        this.radius = config.radius || 15;
+        this.height = config.height || 40; // Height for bullet collision
+
         // Store difficulty multipliers for later use (bullet damage scaling)
         // Use default multipliers if none provided to prevent null issues
         this.difficultyMultipliers = difficultyMultipliers || {
@@ -179,64 +190,67 @@ export class Enemy {
             count: 1.0
         };
 
+        // Convert to screen space for sprite creation
+        const { screenX, screenY } = worldToScreen(worldX, worldY, this.worldZ);
+
         // Create sprite based on enemy type
         if (type === 'lobster') {
             // Use directional sprites for bandit lobster
-            this.sprite = scene.add.sprite(x, y, 'bandit-lobster-down');
+            this.sprite = scene.add.sprite(screenX, screenY, 'bandit-lobster-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
             this.spritePrefix = 'bandit-lobster';
         } else if (type === 'hermit') {
             // Use directional sprites for hermit tank
-            this.sprite = scene.add.sprite(x, y, 'hermit-tank-down');
+            this.sprite = scene.add.sprite(screenX, screenY, 'hermit-tank-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
             this.spritePrefix = 'hermit-tank';
         } else if (type === 'shrimp') {
             // Use directional sprites for shrimp
-            this.sprite = scene.add.sprite(x, y, 'shrimp-down');
+            this.sprite = scene.add.sprite(screenX, screenY, 'shrimp-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
             this.spritePrefix = 'shrimp';
         } else if (type === 'flyingfish') {
             // Use directional sprites for flying fish
-            this.sprite = scene.add.sprite(x, y, 'flying-fish-down');
+            this.sprite = scene.add.sprite(screenX, screenY, 'flying-fish-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
             this.spritePrefix = 'flying-fish';
         } else if (type === 'jellyfish') {
             // Use directional sprites for jellyfish
-            this.sprite = scene.add.sprite(x, y, 'jellyfish-down');
+            this.sprite = scene.add.sprite(screenX, screenY, 'jellyfish-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
             this.spritePrefix = 'jellyfish';
         } else if (type === 'boss_iron_shell') {
             // Use spritesheet for Iron Shell boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(x, y, 'iron-shell-boss', 0);
+            this.sprite = scene.add.sprite(screenX, screenY, 'iron-shell-boss', 0);
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
         } else if (type === 'boss_kraken_arm') {
             // Use spritesheet for Kraken boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(x, y, 'kraken-boss', 0);
+            this.sprite = scene.add.sprite(screenX, screenY, 'kraken-boss', 0);
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
         } else if (type === 'boss_leviathan') {
             // Use spritesheet for Leviathan boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(x, y, 'leviathan-boss', 0);
+            this.sprite = scene.add.sprite(screenX, screenY, 'leviathan-boss', 0);
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
             this.currentPhase = 1;  // Track phase for sprite switching
         } else {
             // Create placeholder graphics for other enemies
-            this.sprite = scene.add.circle(x, y, config.radius, config.color);
+            this.sprite = scene.add.circle(screenX, screenY, config.radius, config.color);
             this.useDirectionalSprites = false;
         }
 
-        // Set depth so enemies render above floor props (trapdoors at depth 2)
-        this.sprite.setDepth(10);
+        // Set depth based on world Y position for isometric sorting
+        this.sprite.setDepth(calculateDepth(this.worldY, 10));
 
         scene.physics.add.existing(this.sprite);
 
@@ -318,7 +332,7 @@ export class Enemy {
         // Track last hit by which player (for scoring in multiplayer)
         this.lastHitByPlayerIndex = 0;
 
-        console.log('Enemy created:', config.name, 'at', x, y);
+        console.log('Enemy created:', config.name, 'at world coords', worldX, worldY);
     }
 
     createVisualIndicators() {
