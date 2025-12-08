@@ -6,19 +6,20 @@ import { checkPointVsAABB } from '../utils/CollisionUtils.js';
  * Provides core functionality for destructible objects in the saloon
  */
 export class EnvironmentProp {
-    constructor(scene, x, y, type) {
+    constructor(scene, worldX, worldY, type) {
         this.scene = scene;
         this.type = type;
         this.alive = true;
-        this.x = x;
-        this.y = y;
 
-        // World space coordinates (isometric 3D)
-        // Note: For now, we're treating screen x/y as world x/y during migration
-        // Later phases will properly convert all spawn positions
-        this.worldX = x;
-        this.worldY = y;
+        // World space coordinates (isometric 3D) - PRIMARY source of truth
+        this.worldX = worldX;
+        this.worldY = worldY;
         this.worldZ = 0; // Props sit on ground
+
+        // Convert to screen coordinates for rendering
+        const { screenX, screenY } = worldToScreen(worldX, worldY, this.worldZ);
+        this.x = screenX;
+        this.y = screenY;
 
         // Load configuration from PROP_TYPES
         this.loadConfig();
@@ -606,10 +607,10 @@ export class EnvironmentProp {
             return;
         }
 
-        // Create fire zone using configured properties
+        // Create fire zone using WORLD coordinates
         this.scene.environmentManager.fireSystem.createFireZone(
-            this.x,
-            this.y,
+            this.worldX,
+            this.worldY,
             this.fireRadius,
             this.fireDuration,
             this.fireDamage
@@ -622,7 +623,7 @@ export class EnvironmentProp {
      * Create explosion effect and damage
      */
     explode() {
-        // Visual explosion effect
+        // Visual explosion effect at SCREEN position
         const explosion = this.scene.add.circle(
             this.x,
             this.y,
@@ -654,16 +655,16 @@ export class EnvironmentProp {
             }
         });
 
-        // Damage entities in radius
+        // Damage entities in radius (use WORLD coordinates)
         this.scene.time.delayedCall(50, () => {
-            this.damageInRadius(this.x, this.y, this.explosionRadius, this.explosionDamage);
+            this.damageInRadius(this.worldX, this.worldY, this.explosionRadius, this.explosionDamage);
         });
 
-        // Phase 2: Apply explosion force to nearby props
+        // Phase 2: Apply explosion force to nearby props (use WORLD coordinates)
         if (this.scene.environmentManager && this.scene.environmentManager.physicsManager) {
             this.scene.environmentManager.physicsManager.applyExplosionForce(
-                this.x,
-                this.y,
+                this.worldX,
+                this.worldY,
                 this.explosionRadius,
                 600 // Force magnitude (increased for better visibility)
             );
@@ -672,13 +673,17 @@ export class EnvironmentProp {
 
     /**
      * Damage all entities in radius
+     * @param {number} worldX - World X position of damage center
+     * @param {number} worldY - World Y position of damage center
+     * @param {number} radius - Damage radius
+     * @param {number} damage - Damage amount
      */
-    damageInRadius(x, y, radius, damage) {
-        // Damage players
+    damageInRadius(worldX, worldY, radius, damage) {
+        // Damage players (use WORLD coordinates)
         if (this.scene.playerManager) {
             this.scene.playerManager.getLivingPlayers().forEach(player => {
-                const dx = player.getX() - x;
-                const dy = player.getY() - y;
+                const dx = player.worldX - worldX;
+                const dy = player.worldY - worldY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist < radius) {
@@ -687,13 +692,13 @@ export class EnvironmentProp {
             });
         }
 
-        // Damage enemies
+        // Damage enemies (use WORLD coordinates)
         if (this.scene.enemies) {
             this.scene.enemies.forEach(enemy => {
                 if (!enemy.isAlive()) return;
 
-                const dx = enemy.getSprite().x - x;
-                const dy = enemy.getSprite().y - y;
+                const dx = enemy.worldX - worldX;
+                const dy = enemy.worldY - worldY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist < radius) {
@@ -702,27 +707,29 @@ export class EnvironmentProp {
             });
         }
 
-        // Damage other props via environment manager
+        // Damage other props via environment manager (pass WORLD coordinates)
         if (this.scene.environmentManager) {
-            this.scene.environmentManager.damagePropsInRadius(x, y, radius, damage, this);
+            this.scene.environmentManager.damagePropsInRadius(worldX, worldY, radius, damage, this);
         }
     }
 
     /**
      * Check if bullet collides with this prop
+     * @param {number} bulletWorldX - Bullet's world X position
+     * @param {number} bulletWorldY - Bullet's world Y position
      */
-    checkBulletCollision(bulletX, bulletY) {
+    checkBulletCollision(bulletWorldX, bulletWorldY) {
         if (!this.alive || !this.blocksBullets) return false;
 
-        // AABB collision check
-        const halfWidth = this.width / 2;
-        const halfHeight = this.height / 2;
+        // AABB collision check in WORLD space
+        const halfWidth = this.volumeWidth / 2;
+        const halfDepth = this.volumeDepth / 2;
 
         return (
-            bulletX >= this.x - halfWidth &&
-            bulletX <= this.x + halfWidth &&
-            bulletY >= this.y - halfHeight &&
-            bulletY <= this.y + halfHeight
+            bulletWorldX >= this.worldX - halfWidth &&
+            bulletWorldX <= this.worldX + halfWidth &&
+            bulletWorldY >= this.worldY - halfDepth &&
+            bulletWorldY <= this.worldY + halfDepth
         );
     }
 
@@ -1820,10 +1827,10 @@ export const PROP_TYPES = {
         maxHealth: 200,
         width: 120,
         height: 50,
-        volumeWidth: 120,       // NEW
-        volumeDepth: 50,        // NEW
-        volumeHeight: 90,       // NEW - too tall to jump over
-        jumpable: false,        // NEW
+        volumeWidth: 2.5,       // World units (~120px / 50 = 2.4)
+        volumeDepth: 1.0,       // World units (~50px / 50 = 1.0)
+        volumeHeight: 1.8,      // World units (tall enough to block)
+        jumpable: false,
         weightClass: 'heavy',
         color: 0x654321,
         footprintWidth: 40,   // 33% of 120px visual width
@@ -1842,6 +1849,10 @@ export const PROP_TYPES = {
         maxHealth: 150,
         width: 90,
         height: 60,
+        volumeWidth: 1.8,      // World units (~90px / 50)
+        volumeDepth: 1.2,      // World units (~60px / 50)
+        volumeHeight: 1.5,     // World units
+        jumpable: false,
         weightClass: 'heavy',
         color: 0x2F4F4F, // dark slate gray
         footprintWidth: 40,   // 44% of 90px visual width
@@ -1860,6 +1871,10 @@ export const PROP_TYPES = {
         maxHealth: 180,
         width: 100,
         height: 40,
+        volumeWidth: 2.0,
+        volumeDepth: 0.8,
+        volumeHeight: 1.8,
+        jumpable: false,
         weightClass: 'heavy',
         color: 0x8B4513, // saddle brown
         footprintWidth: 40,   // 40% of 100px visual width
@@ -1878,6 +1893,10 @@ export const PROP_TYPES = {
         maxHealth: 120,
         width: 100,
         height: 60,
+        volumeWidth: 2.0,
+        volumeDepth: 1.2,
+        volumeHeight: 1.5,
+        jumpable: false,
         weightClass: 'heavy',
         color: 0x228B22, // forest green felt
         footprintWidth: 45,   // 45% of 100px visual width
@@ -1898,6 +1917,10 @@ export const PROP_TYPES = {
         maxHealth: 250,
         width: 50,
         height: 50,
+        volumeWidth: 1.0,
+        volumeDepth: 1.0,
+        volumeHeight: 1.5,
+        jumpable: false,
         weightClass: 'heavy',
         color: 0x708090, // slate gray
         footprintWidth: 25,   // 50% of 50px visual width
@@ -1917,6 +1940,10 @@ export const PROP_TYPES = {
         maxHealth: 60,
         width: 80,
         height: 60,
+        volumeWidth: 1.6,
+        volumeDepth: 1.2,
+        volumeHeight: 1.2,
+        jumpable: false,
         weightClass: 'light',
         color: 0x006400,
         footprintWidth: 45,   // 56% of 80px visual width
@@ -1934,10 +1961,10 @@ export const PROP_TYPES = {
         maxHealth: 30,
         width: 30,
         height: 30,
-        volumeWidth: 25,        // NEW
-        volumeDepth: 25,        // NEW
-        volumeHeight: 40,       // NEW - can barely jump over
-        jumpable: true,         // NEW
+        volumeWidth: 0.6,       // World units (~30px / 50 = 0.6)
+        volumeDepth: 0.6,       // World units
+        volumeHeight: 0.8,      // World units (can barely jump over)
+        jumpable: true,
         weightClass: 'light',
         color: 0x8B4513,
         footprintWidth: 20,   // 67% of 30px visual width
@@ -1958,10 +1985,10 @@ export const PROP_TYPES = {
         maxHealth: 50,
         width: 40,
         height: 40,
-        volumeWidth: 30,        // NEW
-        volumeDepth: 30,        // NEW
-        volumeHeight: 35,       // NEW - can jump over
-        jumpable: true,         // NEW
+        volumeWidth: 0.8,       // World units
+        volumeDepth: 0.8,       // World units
+        volumeHeight: 0.7,      // World units - can jump over
+        jumpable: true,
         weightClass: 'medium',
         color: 0xA0522D,
         footprintWidth: 30,   // 75% of 40px visual width
@@ -1982,6 +2009,10 @@ export const PROP_TYPES = {
         maxHealth: 25,
         width: 20,
         height: 20,
+        volumeWidth: 0.4,
+        volumeDepth: 0.4,
+        volumeHeight: 0.8,
+        jumpable: true,
         weightClass: 'light',
         color: 0xA0522D, // sienna
         footprintWidth: 15,   // 75% of 20px visual width
@@ -2002,6 +2033,10 @@ export const PROP_TYPES = {
         maxHealth: 40,
         width: 35,
         height: 35,
+        volumeWidth: 0.7,
+        volumeDepth: 0.7,
+        volumeHeight: 0.7,
+        jumpable: true,
         weightClass: 'light',
         color: 0xDEB887, // burlwood
         footprintWidth: 25,   // 71% of 35px visual width
@@ -2024,6 +2059,10 @@ export const PROP_TYPES = {
         maxHealth: 20,
         width: 15,
         height: 15,
+        volumeWidth: 0.3,
+        volumeDepth: 0.3,
+        volumeHeight: 0.3,
+        jumpable: true,
         weightClass: 'light',
         color: 0xFFD700,
         blocksBullets: true,

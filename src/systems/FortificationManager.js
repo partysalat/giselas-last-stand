@@ -1,4 +1,5 @@
 import { EnvironmentProp, PROP_TYPES } from '../entities/EnvironmentProp.js';
+import { screenToWorld, WORLD_MIN_X, WORLD_MAX_X, WORLD_MIN_Y, WORLD_MAX_Y } from '../utils/CoordinateTransform.js';
 
 /**
  * Manages fortification items: spawning, drag-and-drop, persistence
@@ -16,33 +17,43 @@ export class FortificationManager {
     }
 
     /**
-     * Initialize spawn points around saloon perimeter
+     * Initialize spawn points around saloon perimeter (in WORLD coordinates)
      */
     initializeSpawnPoints() {
-        // Define 14 spawn points around the edges and corners
-        this.spawnPoints = [
+        // Convert screen coordinates to world coordinates
+        const screenSpawnPoints = [
             // Top edge
-            { x: 300, y: 200, active: true },   // Top-left corner
-            { x: 640, y: 200, active: true },   // Top-left mid
-            { x: 960, y: 200, active: true },   // Top-center
-            { x: 1280, y: 200, active: true },  // Top-right mid
-            { x: 1620, y: 200, active: true },  // Top-right corner
+            { x: 300, y: 200 },   // Top-left corner
+            { x: 640, y: 200 },   // Top-left mid
+            { x: 960, y: 200 },   // Top-center
+            { x: 1280, y: 200 },  // Top-right mid
+            { x: 1620, y: 200 },  // Top-right corner
 
             // Right edge
-            { x: 1700, y: 440, active: true },  // Right-mid-top
-            { x: 1700, y: 640, active: true },  // Right-mid-bottom
+            { x: 1700, y: 440 },  // Right-mid-top
+            { x: 1700, y: 640 },  // Right-mid-bottom
 
             // Bottom edge
-            { x: 1620, y: 880, active: true },  // Bottom-right corner
-            { x: 1280, y: 880, active: true },  // Bottom-right mid
-            { x: 960, y: 880, active: true },   // Bottom-center
-            { x: 640, y: 880, active: true },   // Bottom-left mid
-            { x: 300, y: 880, active: true },   // Bottom-left corner
+            { x: 1620, y: 880 },  // Bottom-right corner
+            { x: 1280, y: 880 },  // Bottom-right mid
+            { x: 960, y: 880 },   // Bottom-center
+            { x: 640, y: 880 },   // Bottom-left mid
+            { x: 300, y: 880 },   // Bottom-left corner
 
             // Left edge
-            { x: 220, y: 640, active: true },   // Left-mid-bottom
-            { x: 220, y: 440, active: true }    // Left-mid-top
+            { x: 220, y: 640 },   // Left-mid-bottom
+            { x: 220, y: 440 }    // Left-mid-top
         ];
+
+        // Convert all spawn points from SCREEN to WORLD coordinates
+        this.spawnPoints = screenSpawnPoints.map(point => {
+            const worldPos = screenToWorld(point.x, point.y, 0);
+            return {
+                worldX: worldPos.worldX,
+                worldY: worldPos.worldY,
+                active: true
+            };
+        });
 
         console.log('Spawn points initialized:', this.spawnPoints.length);
     }
@@ -53,29 +64,35 @@ export class FortificationManager {
     spawnInitialFurniture() {
         console.log('Spawning initial saloon furniture');
 
+        // Helper function to convert screen to world coordinates
+        const spawnAt = (type, screenX, screenY, isNew) => {
+            const worldPos = screenToWorld(screenX, screenY, 0);
+            this.spawnFortificationProp(type, worldPos.worldX, worldPos.worldY, isNew);
+        };
+
         // Bar counter (top-left area)
-        this.spawnFortificationProp('barCounter', 300, 400, false);
+        spawnAt('barCounter', 300, 400, false);
 
         // Piano (top-right area)
-        this.spawnFortificationProp('piano', 1620, 400, false);
+        spawnAt('piano', 1620, 400, false);
 
         // Card tables (scattered around)
-        this.spawnFortificationProp('cardTable', 700, 500, false);
-        this.spawnFortificationProp('cardTable', 1220, 500, false);
+        spawnAt('cardTable', 700, 500, false);
+        spawnAt('cardTable', 1220, 500, false);
 
         // Chairs around tables
-        this.spawnFortificationProp('woodenChair', 650, 450, false);
-        this.spawnFortificationProp('woodenChair', 750, 450, false);
-        this.spawnFortificationProp('woodenChair', 1170, 450, false);
-        this.spawnFortificationProp('woodenChair', 1270, 450, false);
+        spawnAt('woodenChair', 650, 450, false);
+        spawnAt('woodenChair', 750, 450, false);
+        spawnAt('woodenChair', 1170, 450, false);
+        spawnAt('woodenChair', 1270, 450, false);
 
         // Barrels in corners
-        this.spawnFortificationProp('barrel', 200, 250, false);
-        this.spawnFortificationProp('barrel', 1720, 250, false);
+        spawnAt('barrel', 200, 250, false);
+        spawnAt('barrel', 1720, 250, false);
 
         // Bar stools at bar
-        this.spawnFortificationProp('barStool', 250, 400, false);
-        this.spawnFortificationProp('barStool', 350, 400, false);
+        spawnAt('barStool', 250, 400, false);
+        spawnAt('barStool', 350, 400, false);
 
         console.log(`Spawned ${this.fortificationProps.length} initial furniture pieces`);
     }
@@ -98,7 +115,7 @@ export class FortificationManager {
             return;
         }
 
-        // Spawn items at available spawn points
+        // Spawn items at available spawn points (using WORLD coordinates)
         let spawnIndex = 0;
         itemsToSpawn.forEach(itemType => {
             if (spawnIndex >= availableSpawnPoints.length) {
@@ -107,7 +124,7 @@ export class FortificationManager {
             }
 
             const spawnPoint = availableSpawnPoints[spawnIndex];
-            this.spawnFortificationProp(itemType, spawnPoint.x, spawnPoint.y, true);
+            this.spawnFortificationProp(itemType, spawnPoint.worldX, spawnPoint.worldY, true);
             spawnIndex++;
         });
     }
@@ -120,10 +137,10 @@ export class FortificationManager {
         const minDistance = 80; // Minimum distance from existing props
 
         return this.spawnPoints.filter(spawnPoint => {
-            // Check if any fortification prop is too close
+            // Check if any fortification prop is too close (use WORLD coordinates)
             const hasPropNearby = this.fortificationProps.some(prop => {
-                const dx = prop.x - spawnPoint.x;
-                const dy = prop.y - spawnPoint.y;
+                const dx = prop.worldX - spawnPoint.worldX;
+                const dy = prop.worldY - spawnPoint.worldY;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 return distance < minDistance;
             });
@@ -176,12 +193,12 @@ export class FortificationManager {
     /**
      * Spawn a fortification prop at a specific location
      * @param {string} propType - Prop type key from PROP_TYPES
-     * @param {number} x - X position
-     * @param {number} y - Y position
+     * @param {number} worldX - World X position
+     * @param {number} worldY - World Y position
      * @param {boolean} isNewSpawn - Whether this is a newly spawned item (shows glow)
      */
-    spawnFortificationProp(propType, x, y, isNewSpawn = false) {
-        const prop = new EnvironmentProp(this.scene, x, y, propType);
+    spawnFortificationProp(propType, worldX, worldY, isNewSpawn = false) {
+        const prop = new EnvironmentProp(this.scene, worldX, worldY, propType);
 
         // Mark as fortification prop
         prop.isFortification = true;
@@ -201,7 +218,7 @@ export class FortificationManager {
         // Track in fortifications array
         this.fortificationProps.push(prop);
 
-        console.log(`Spawned fortification prop: ${propType} at (${x}, ${y})`);
+        console.log(`Spawned fortification prop: ${propType} at world (${worldX}, ${worldY})`);
 
         return prop;
     }
@@ -294,8 +311,10 @@ export class FortificationManager {
     onDragStart(prop, pointer, dragX, dragY) {
         console.log(`Drag start: ${prop.name}`);
         this.draggedProp = prop;
-        this.dragStartX = prop.x;
-        this.dragStartY = prop.y;
+        this.dragStartX = prop.x;  // Screen coord
+        this.dragStartY = prop.y;  // Screen coord
+        this.dragStartWorldX = prop.worldX;  // World coord
+        this.dragStartWorldY = prop.worldY;  // World coord
 
         const sprite = prop.getSprite();
         if (sprite) {
@@ -330,8 +349,11 @@ export class FortificationManager {
         const sprite = prop.getSprite();
         if (!sprite) return;
 
-        // Check if current position is valid
-        const isValid = this.isValidPlacement(pointer.x, pointer.y, prop);
+        // Convert pointer SCREEN position to WORLD coordinates
+        const worldPos = screenToWorld(pointer.x, pointer.y, prop.worldZ);
+
+        // Check if current position is valid (in WORLD space)
+        const isValid = this.isValidPlacement(worldPos.worldX, worldPos.worldY, prop);
 
         // Tint sprite red if invalid (only for Image/Sprite objects that support tinting)
         if (sprite.setTint && sprite.clearTint) {
@@ -349,13 +371,15 @@ export class FortificationManager {
             }
         }
 
-        // Update sprite position
+        // Update sprite position (SCREEN coordinates)
         sprite.x = pointer.x;
         sprite.y = pointer.y;
 
-        // Update prop position
+        // Update prop positions (both SCREEN and WORLD)
         prop.x = pointer.x;
         prop.y = pointer.y;
+        prop.worldX = worldPos.worldX;
+        prop.worldY = worldPos.worldY;
 
         // Update shadow position
         if (this.dragShadow) {
@@ -406,13 +430,16 @@ export class FortificationManager {
     onDragEnd(prop, pointer, dragX, dragY) {
         console.log(`Drag end: ${prop.name} at (${pointer.x}, ${pointer.y})`);
 
-        // Validate placement position
-        const isValidPosition = this.isValidPlacement(pointer.x, pointer.y, prop);
+        // Convert final pointer position to world coordinates
+        const worldPos = screenToWorld(pointer.x, pointer.y, prop.worldZ);
+
+        // Validate placement position (in WORLD space)
+        const isValidPosition = this.isValidPlacement(worldPos.worldX, worldPos.worldY, prop);
 
         if (!isValidPosition) {
             console.log('Invalid placement - returning to start position');
 
-            // Return to drag start position
+            // Return to drag start position (both SCREEN and WORLD)
             const sprite = prop.getSprite();
             if (sprite) {
                 sprite.x = this.dragStartX;
@@ -420,6 +447,8 @@ export class FortificationManager {
             }
             prop.x = this.dragStartX;
             prop.y = this.dragStartY;
+            prop.worldX = this.dragStartWorldX;
+            prop.worldY = this.dragStartWorldY;
 
             // Update physics body
             if (sprite && sprite.body) {
@@ -503,47 +532,49 @@ export class FortificationManager {
 
     /**
      * Check if there's an obstacle at a position
-     * @param {number} x - X position
-     * @param {number} y - Y position
+     * @param {number} worldX - World X position
+     * @param {number} worldY - World Y position
      * @param {number} radius - Check radius (default 30)
      * @returns {boolean} True if obstacle present
      */
-    checkObstacleAt(x, y, radius = 30) {
+    checkObstacleAt(worldX, worldY, radius = 30) {
         return this.fortificationProps.some(prop => {
             if (!prop.isAlive()) return false;
 
-            const dx = prop.x - x;
-            const dy = prop.y - y;
+            const dx = prop.worldX - worldX;
+            const dy = prop.worldY - worldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            return distance < (radius + Math.max(prop.width, prop.height) / 2);
+            return distance < (radius + Math.max(prop.volumeWidth, prop.volumeDepth) / 2);
         });
     }
 
     /**
      * Check if placement position is valid
-     * @param {number} x - X position
-     * @param {number} y - Y position
+     * @param {number} worldX - World X position
+     * @param {number} worldY - World Y position
      * @param {EnvironmentProp} prop - The prop being placed
      * @returns {boolean} True if position valid
      */
-    isValidPlacement(x, y, prop) {
-        // Check world bounds (stay within game area)
-        const margin = Math.max(prop.width, prop.height) / 2;
-        if (x < margin || x > 1920 - margin || y < margin || y > 1080 - margin) {
+    isValidPlacement(worldX, worldY, prop) {
+        // Check world bounds (use WORLD space bounds)
+        const margin = Math.max(prop.volumeWidth, prop.volumeDepth) / 2;
+
+        if (worldX < WORLD_MIN_X + margin || worldX > WORLD_MAX_X - margin ||
+            worldY < WORLD_MIN_Y + margin || worldY > WORLD_MAX_Y - margin) {
             console.log('Out of bounds');
             return false;
         }
 
-        // Check overlap with players
+        // Check overlap with players (use WORLD coordinates)
         if (this.scene.playerManager) {
             const players = this.scene.playerManager.getLivingPlayers();
             for (const player of players) {
-                const dx = player.getX() - x;
-                const dy = player.getY() - y;
+                const dx = player.worldX - worldX;
+                const dy = player.worldY - worldY;
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                if (distance < 80) {
+                if (distance < 5) { // 5 world units radius
                     console.log('Too close to player');
                     return false;
                 }

@@ -424,8 +424,8 @@ export class GameScene extends Phaser.Scene {
             const aimInfluence = inputManager.getAimInfluence();
             const inputMode = inputManager.getInputMode();
             targetSelector.update(
-                player.getX(),
-                player.getY(),
+                player.worldX,
+                player.worldY,
                 aimInfluence,
                 inputMode,
                 this.enemies
@@ -435,8 +435,8 @@ export class GameScene extends Phaser.Scene {
             // E key = cycle enemies (including tentacles)
             if (inputManager.shouldCycleEnemyTarget()) {
                 targetSelector.cycleToEnemyTarget(
-                    player.getX(),
-                    player.getY(),
+                    player.worldX,
+                    player.worldY,
                     this.enemies,
                     'next'
                 );
@@ -444,8 +444,8 @@ export class GameScene extends Phaser.Scene {
             // Q key = cycle props (barrels, lamps, chandeliers, etc.)
             if (inputManager.shouldCyclePropTarget()) {
                 targetSelector.cycleToPropTarget(
-                    player.getX(),
-                    player.getY(),
+                    player.worldX,
+                    player.worldY,
                     'next'
                 );
             }
@@ -522,13 +522,13 @@ export class GameScene extends Phaser.Scene {
                 // Get all living players
                 const livingPlayers = this.playerManager.getLivingPlayers();
                 if (livingPlayers.length > 0) {
-                    // Find closest player to this enemy
+                    // Find closest player to this enemy (using world coordinates)
                     let closestPlayer = livingPlayers[0];
                     let closestDistance = Infinity;
 
                     livingPlayers.forEach(player => {
-                        const dx = player.getX() - enemy.getSprite().x;
-                        const dy = player.getY() - enemy.getSprite().y;
+                        const dx = player.worldX - enemy.worldX;
+                        const dy = player.worldY - enemy.worldY;
                         const distance = Math.sqrt(dx * dx + dy * dy);
 
                         if (distance < closestDistance) {

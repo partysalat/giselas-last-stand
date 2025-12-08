@@ -1,7 +1,6 @@
 import { SpawnPointManager } from './SpawnPointManager.js';
 import { BossAnnouncer } from './BossAnnouncer.js';
 import { BossHealthBar } from '../ui/BossHealthBar.js';
-import { screenToWorld } from '../utils/CoordinateTransform.js';
 
 const BOUNTY_NAMES = [
     { name: 'Big Claw McGraw', type: 'lobster' },
@@ -519,8 +518,9 @@ export class WaveManager {
                                spawnIndex === bountyIndex &&
                                group.type === bountyInfo.type;
 
-                // Convert spawn point from screen space to world space
-                const { worldX, worldY } = screenToWorld(spawnData.x, spawnData.y, 0);
+                // Spawn points are already in world space (from SpawnPointManager)
+                const worldX = spawnData.x;
+                const worldY = spawnData.y;
 
                 const enemy = new this.scene.Enemy(
                     this.scene,

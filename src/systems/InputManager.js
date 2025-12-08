@@ -1,3 +1,5 @@
+import { screenToWorld } from '../utils/CoordinateTransform.js';
+
 export class InputManager {
     constructor(scene, playerIndex = 0) {
         this.scene = scene;
@@ -5,6 +7,7 @@ export class InputManager {
 
         // Input state
         this.movement = { x: 0, y: 0 };
+        // aimInfluence: For mouse mode, stores WORLD coordinates; for gamepad, stores directional vector
         this.aimInfluence = { x: 0, y: 0 };
         this.isFiring = false;
         this.cycleEnemyTarget = false;  // E key - cycle enemies
@@ -95,10 +98,11 @@ export class InputManager {
             this.inputMode = 'keyboard';
         }
 
-        // Aim influence from mouse position
+        // Aim influence from mouse position (convert SCREEN to WORLD coordinates)
         const pointer = this.scene.input.activePointer;
-        this.aimInfluence.x = pointer.worldX;
-        this.aimInfluence.y = pointer.worldY;
+        const worldPos = screenToWorld(pointer.worldX, pointer.worldY, 0);
+        this.aimInfluence.x = worldPos.worldX;  // True world coordinates
+        this.aimInfluence.y = worldPos.worldY;
 
         // Target cycling with Q/E
         // Q = cycle props (barrels, lamps, chandeliers, etc.)

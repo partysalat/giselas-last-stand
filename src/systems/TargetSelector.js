@@ -7,7 +7,7 @@ export class TargetSelector {
         this.influenceConeAngle = Math.PI / 3; // 60 degree cone
     }
 
-    update(playerX, playerY, aimInfluence, inputMode, enemies) {
+    update(playerWorldX, playerWorldY, aimInfluence, inputMode, enemies) {
         // Remove lock if target is dead
         if (this.lockedTarget) {
             if (this.lockedTarget.type === 'enemy') {
@@ -32,11 +32,11 @@ export class TargetSelector {
             return this.currentTarget;
         }
 
-        // Get enemies in range
+        // Get enemies in range (use WORLD coordinates)
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
-            const dx = enemy.getSprite().x - playerX;
-            const dy = enemy.getSprite().y - playerY;
+            const dx = enemy.worldX - playerWorldX;
+            const dy = enemy.worldY - playerWorldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
             return distance <= this.maxRange;
         });
@@ -54,21 +54,21 @@ export class TargetSelector {
             if (Math.abs(aimInfluence.x) > 0.1 || Math.abs(aimInfluence.y) > 0.1) {
                 const influenceAngle = Math.atan2(aimInfluence.y, aimInfluence.x);
                 influencedTarget = this.findTargetInCone(
-                    playerX, playerY,
+                    playerWorldX, playerWorldY,
                     influenceAngle,
                     enemiesInRange
                 );
             }
         } else {
-            // Mouse cursor position
-            const dx = aimInfluence.x - playerX;
-            const dy = aimInfluence.y - playerY;
+            // Mouse cursor position (now in WORLD coordinates from InputManager)
+            const dx = aimInfluence.x - playerWorldX;
+            const dy = aimInfluence.y - playerWorldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance > 20) { // Dead zone
+            if (distance > 1) { // Dead zone (1 world unit)
                 const influenceAngle = Math.atan2(dy, dx);
                 influencedTarget = this.findTargetInCone(
-                    playerX, playerY,
+                    playerWorldX, playerWorldY,
                     influenceAngle,
                     enemiesInRange
                 );
@@ -81,18 +81,18 @@ export class TargetSelector {
         }
 
         // Priority 3: Nearest enemy (fallback)
-        const nearest = this.findNearestEnemy(playerX, playerY, enemiesInRange);
+        const nearest = this.findNearestEnemy(playerWorldX, playerWorldY, enemiesInRange);
         this.currentTarget = nearest;
         return this.currentTarget;
     }
 
-    findTargetInCone(playerX, playerY, coneAngle, enemies) {
+    findTargetInCone(playerWorldX, playerWorldY, coneAngle, enemies) {
         let bestTarget = null;
         let bestScore = -Infinity;
 
         enemies.forEach(enemy => {
-            const dx = enemy.getSprite().x - playerX;
-            const dy = enemy.getSprite().y - playerY;
+            const dx = enemy.worldX - playerWorldX;
+            const dy = enemy.worldY - playerWorldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
             const angleToEnemy = Math.atan2(dy, dx);
 
@@ -117,13 +117,13 @@ export class TargetSelector {
         return bestTarget;
     }
 
-    findNearestEnemy(playerX, playerY, enemies) {
+    findNearestEnemy(playerWorldX, playerWorldY, enemies) {
         let nearest = null;
         let minDistance = Infinity;
 
         enemies.forEach(enemy => {
-            const dx = enemy.getSprite().x - playerX;
-            const dy = enemy.getSprite().y - playerY;
+            const dx = enemy.worldX - playerWorldX;
+            const dy = enemy.worldY - playerWorldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < minDistance) {
@@ -144,19 +144,19 @@ export class TargetSelector {
         this.lockedTarget = null;
     }
 
-    cycleToEnemyTarget(playerX, playerY, enemies, direction) {
+    cycleToEnemyTarget(playerWorldX, playerWorldY, enemies, direction) {
         // Build list of enemy targets only (E key)
         const targets = [];
 
         enemies.forEach(enemy => {
             if (!enemy.isAlive()) return;
 
-            // Add main enemy body
+            // Add main enemy body (use WORLD coordinates)
             targets.push({
                 type: 'enemy',
                 enemy: enemy,
-                x: enemy.getSprite().x,
-                y: enemy.getSprite().y,
+                x: enemy.worldX,
+                y: enemy.worldY,
                 label: enemy.config.name
             });
 
@@ -168,7 +168,7 @@ export class TargetSelector {
                             type: 'tentacle',
                             enemy: enemy,
                             tentacleIndex: index,
-                            x: sprite.x,
+                            x: sprite.x,  // TODO: tentacles may need world coords too
                             y: sprite.y,
                             label: `Tentacle ${index + 1}`
                         });
@@ -177,14 +177,14 @@ export class TargetSelector {
             }
         });
 
-        this.cycleTargets(targets, playerX, playerY, direction);
+        this.cycleTargets(targets, playerWorldX, playerWorldY, direction);
     }
 
-    cycleToPropTarget(playerX, playerY, direction) {
+    cycleToPropTarget(playerWorldX, playerWorldY, direction) {
         // Build list of prop targets only (Q key)
         const targets = [];
 
-        // Add targetable props from environment manager
+        // Add targetable props from environment manager (use WORLD coordinates)
         if (this.scene.environmentManager) {
             const props = this.scene.environmentManager.getProps();
             props.forEach(prop => {
@@ -200,15 +200,15 @@ export class TargetSelector {
                     targets.push({
                         type: 'prop',
                         prop: prop,
-                        x: prop.x,
-                        y: prop.y,
+                        x: prop.worldX,
+                        y: prop.worldY,
                         label: prop.name || prop.type
                     });
                 }
             });
         }
 
-        // Add targetable props from fortification manager (gunpowder kegs, oil lamps, etc.)
+        // Add targetable props from fortification manager (use WORLD coordinates)
         if (this.scene.fortificationManager) {
             const fortProps = this.scene.fortificationManager.fortificationProps;
             fortProps.forEach(prop => {
@@ -221,18 +221,18 @@ export class TargetSelector {
                     targets.push({
                         type: 'prop',
                         prop: prop,
-                        x: prop.x,
-                        y: prop.y,
+                        x: prop.worldX,
+                        y: prop.worldY,
                         label: prop.name || prop.type
                     });
                 }
             });
         }
 
-        this.cycleTargets(targets, playerX, playerY, direction);
+        this.cycleTargets(targets, playerWorldX, playerWorldY, direction);
     }
 
-    cycleTargets(targets, playerX, playerY, direction) {
+    cycleTargets(targets, playerWorldX, playerWorldY, direction) {
         // Common cycling logic for both enemy and prop targets
 
         if (targets.length === 0) {
@@ -240,10 +240,10 @@ export class TargetSelector {
             return;
         }
 
-        // Sort by distance from player
+        // Sort by distance from player (in WORLD coordinates)
         targets.sort((a, b) => {
-            const distA = Math.sqrt(Math.pow(a.x - playerX, 2) + Math.pow(a.y - playerY, 2));
-            const distB = Math.sqrt(Math.pow(b.x - playerX, 2) + Math.pow(b.y - playerY, 2));
+            const distA = Math.sqrt(Math.pow(a.x - playerWorldX, 2) + Math.pow(a.y - playerWorldY, 2));
+            const distB = Math.sqrt(Math.pow(b.x - playerWorldX, 2) + Math.pow(b.y - playerWorldY, 2));
             return distA - distB;
         });
 

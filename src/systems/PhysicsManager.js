@@ -1,7 +1,10 @@
+import { screenToWorld } from '../utils/CoordinateTransform.js';
+
 /**
  * PhysicsManager
  * Handles physics-based movement and collisions for environment props
  * Manages weight classes, knockback, rolling/sliding, and impact damage
+ * Note: Phaser physics works in SCREEN space, but we keep world coordinates synchronized
  */
 export class PhysicsManager {
     constructor(scene) {
@@ -220,16 +223,21 @@ export class PhysicsManager {
     updatePropMovement(prop, delta) {
         const physics = prop.physicsData;
 
-        // Apply velocity to sprite body
+        // Apply velocity to sprite body (Phaser physics works in SCREEN space)
         if (prop.sprite && prop.sprite.body) {
             // Use velocity property directly for arcade physics
             prop.sprite.body.velocity.x = physics.velocityX;
             prop.sprite.body.velocity.y = physics.velocityY;
         }
 
-        // Update prop position tracking
+        // Update prop SCREEN position tracking
         prop.x = prop.sprite.x;
         prop.y = prop.sprite.y;
+
+        // Convert sprite's NEW screen position back to WORLD coordinates
+        const worldPos = screenToWorld(prop.sprite.x, prop.sprite.y, prop.worldZ);
+        prop.worldX = worldPos.worldX;
+        prop.worldY = worldPos.worldY;
 
         // Update health bar position
         if (prop.healthBarBg && prop.healthBarFill) {
@@ -328,15 +336,13 @@ export class PhysicsManager {
         const physics = prop.physicsData;
 
         players.forEach(player => {
-            const dist = Phaser.Math.Distance.Between(
-                prop.x,
-                prop.y,
-                player.getX(),
-                player.getY()
-            );
+            // Distance check in WORLD space
+            const dx = prop.worldX - player.worldX;
+            const dy = prop.worldY - player.worldY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Collision radius check
-            const collisionRadius = Math.max(prop.width, prop.height) / 2 + 20;
+            // Collision radius check (in world units)
+            const collisionRadius = Math.max(prop.volumeWidth, prop.volumeDepth) / 2 + 1;
             if (dist < collisionRadius) {
                 // Deal impact damage
                 player.takeDamage(physics.impactDamage);
@@ -373,16 +379,13 @@ export class PhysicsManager {
         this.scene.enemies.forEach(enemy => {
             if (!enemy.isAlive()) return;
 
-            const enemySprite = enemy.getSprite();
-            const dist = Phaser.Math.Distance.Between(
-                prop.x,
-                prop.y,
-                enemySprite.x,
-                enemySprite.y
-            );
+            // Distance check in WORLD space
+            const dx = prop.worldX - enemy.worldX;
+            const dy = prop.worldY - enemy.worldY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Collision radius check
-            const collisionRadius = Math.max(prop.width, prop.height) / 2 + 20;
+            // Collision radius check (in world units)
+            const collisionRadius = Math.max(prop.volumeWidth, prop.volumeDepth) / 2 + 1;
             if (dist < collisionRadius) {
                 // Deal impact damage
                 enemy.takeDamage(physics.impactDamage);
@@ -414,18 +417,22 @@ export class PhysicsManager {
     /**
      * Apply explosion force to all props in radius
      * Called by explosion effects
+     * @param {number} worldX - World X position of explosion center
+     * @param {number} worldY - World Y position of explosion center
+     * @param {number} radius - Explosion radius
+     * @param {number} force - Force magnitude
      */
-    applyExplosionForce(x, y, radius, force) {
+    applyExplosionForce(worldX, worldY, radius, force) {
         if (!this.scene.environmentManager) {
             return;
         }
 
-        const props = this.scene.environmentManager.getPropsInRadius(x, y, radius);
+        const props = this.scene.environmentManager.getPropsInRadius(worldX, worldY, radius);
 
         props.forEach(prop => {
-            // Calculate direction from explosion center
-            const dx = prop.x - x;
-            const dy = prop.y - y;
+            // Calculate direction from explosion center (in WORLD space)
+            const dx = prop.worldX - worldX;
+            const dy = prop.worldY - worldY;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist === 0) return;
@@ -447,11 +454,15 @@ export class PhysicsManager {
 
     /**
      * Apply contact force (player/enemy bumping into props)
+     * @param {EnvironmentProp} prop - The prop to apply force to
+     * @param {number} sourceWorldX - World X position of source
+     * @param {number} sourceWorldY - World Y position of source
+     * @param {number} force - Force magnitude
      */
-    applyContactForce(prop, sourceX, sourceY, force = 50) {
-        // Calculate direction away from source
-        const dx = prop.x - sourceX;
-        const dy = prop.y - sourceY;
+    applyContactForce(prop, sourceWorldX, sourceWorldY, force = 50) {
+        // Calculate direction away from source (in WORLD space)
+        const dx = prop.worldX - sourceWorldX;
+        const dy = prop.worldY - sourceWorldY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist === 0) return;

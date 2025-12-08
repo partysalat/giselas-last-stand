@@ -28,6 +28,12 @@ export const WORLD_SCALE = 1.0;
 export const SCREEN_ORIGIN_X = 864;
 export const SCREEN_ORIGIN_Y = 108;
 
+// World space bounds (for clamping entities)
+export const WORLD_MIN_X = 0;
+export const WORLD_MAX_X = 30;
+export const WORLD_MIN_Y = 0;
+export const WORLD_MAX_Y = 25;
+
 /**
  * Convert world coordinates to screen (pixel) coordinates
  * @param {number} worldX - World X position
