@@ -131,6 +131,8 @@ export class GameScene extends Phaser.Scene {
         this.fortificationManager = new FortificationManager(this);
         this.fortificationManager.initializeSpawnPoints();
         this.fortificationManager.spawnInitialFurniture();
+        // Disable dragging initially since game starts in WAVE_ACTIVE state
+        this.fortificationManager.disablePropDragging();
 
         // Initialize boss announcer
         this.bossAnnouncer = new BossAnnouncer(this);
@@ -1812,6 +1814,11 @@ export class GameScene extends Phaser.Scene {
             this.fortificationManager.restoreAllPropsHealth();
         }
 
+        // Enable prop dragging during between-waves phase
+        if (this.fortificationManager) {
+            this.fortificationManager.enablePropDragging();
+        }
+
         // Show UI overlay with wave numbers
         if (this.betweenWavesUI) {
             this.betweenWavesUI.show(completedWave, nextWave);
@@ -1838,6 +1845,11 @@ export class GameScene extends Phaser.Scene {
      */
     onEnterWaveActive() {
         console.log('Entering WAVE_ACTIVE state');
+
+        // Disable prop dragging during active wave
+        if (this.fortificationManager) {
+            this.fortificationManager.disablePropDragging();
+        }
 
         // Hide UI overlay
         if (this.betweenWavesUI) {

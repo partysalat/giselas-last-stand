@@ -309,6 +309,12 @@ export class FortificationManager {
      * Handle drag start
      */
     onDragStart(prop, pointer, dragX, dragY) {
+        // Only allow dragging during BETWEEN_WAVES state
+        if (this.scene.gameState !== 'between_waves') {
+            console.log('Cannot drag props during active wave');
+            return;
+        }
+
         console.log(`Drag start: ${prop.name}`);
         this.draggedProp = prop;
         this.dragStartX = prop.x;  // Screen coord
@@ -346,6 +352,11 @@ export class FortificationManager {
      * Handle drag movement
      */
     onDrag(prop, pointer, dragX, dragY) {
+        // Only allow dragging during BETWEEN_WAVES state
+        if (this.scene.gameState !== 'between_waves') {
+            return;
+        }
+
         const sprite = prop.getSprite();
         if (!sprite) return;
 
@@ -428,6 +439,11 @@ export class FortificationManager {
      * Handle drag end
      */
     onDragEnd(prop, pointer, dragX, dragY) {
+        // Only allow dragging during BETWEEN_WAVES state
+        if (this.scene.gameState !== 'between_waves') {
+            return;
+        }
+
         console.log(`Drag end: ${prop.name} at (${pointer.x}, ${pointer.y})`);
 
         // Convert final pointer position to world coordinates
@@ -603,6 +619,32 @@ export class FortificationManager {
         if (restoredCount > 0) {
             console.log(`Restored health to ${restoredCount} fortification props`);
         }
+    }
+
+    /**
+     * Enable dragging for all fortification props (called when entering BETWEEN_WAVES)
+     */
+    enablePropDragging() {
+        console.log('Enabling prop dragging');
+        this.fortificationProps.forEach(prop => {
+            const sprite = prop.getSprite();
+            if (sprite) {
+                sprite.input.enabled = true;
+            }
+        });
+    }
+
+    /**
+     * Disable dragging for all fortification props (called when entering WAVE_ACTIVE)
+     */
+    disablePropDragging() {
+        console.log('Disabling prop dragging');
+        this.fortificationProps.forEach(prop => {
+            const sprite = prop.getSprite();
+            if (sprite) {
+                sprite.input.enabled = false;
+            }
+        });
     }
 
     /**
