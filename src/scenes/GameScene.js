@@ -865,8 +865,8 @@ export class GameScene extends Phaser.Scene {
                     if (!prop.isAlive()) continue;
                     if (!prop.blocksBullets) continue;
 
-                    // Check collision with this bullet
-                    if (prop.checkBulletCollision(bullet.getSprite().x, bullet.getSprite().y)) {
+                    // Check collision with this bullet using world-space height-based detection
+                    if (bullet.checkPropCollision(prop)) {
                         // Damage the prop
                         prop.takeDamage(bullet.getDamage());
 
@@ -893,13 +893,8 @@ export class GameScene extends Phaser.Scene {
                 // Skip collision if enemy is spawning
                 if (!enemy.isCollisionEnabled()) continue;
 
-                // Check distance between bullet and enemy
-                const dx = bullet.getSprite().x - enemy.getSprite().x;
-                const dy = bullet.getSprite().y - enemy.getSprite().y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                // Collision if distance less than combined radii
-                if (distance < 19) { // 4 (bullet) + 15 (enemy)
+                // Check collision using world-space height-based detection
+                if (bullet.checkEnemyCollision(enemy)) {
                     enemy.takeDamage(bullet.getDamage());
                     // Track which player hit this enemy (for scoring)
                     enemy.lastHitByPlayerIndex = player.playerIndex;
