@@ -124,9 +124,21 @@ export class Bullet {
      * @returns {boolean} True if bullet hits enemy
      */
     checkEnemyCollision(enemy) {
-        // Check if bullet is at enemy's height
-        const enemyTop = enemy.worldZ + enemy.height;
-        const inHeightRange = (this.worldZ >= enemy.worldZ && this.worldZ <= enemyTop);
+        // Handle enemies that haven't been converted to world space yet (Phase 5)
+        if (enemy.worldX === undefined || enemy.worldY === undefined) {
+            // Fallback to screen-space collision for legacy enemies
+            const enemySprite = enemy.getSprite();
+            const dx = this.worldX - enemySprite.x;
+            const dy = this.worldY - enemySprite.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < (this.radius + (enemy.radius || 15));
+        }
+
+        // World-space collision with height checking (for Phase 5+ enemies)
+        const enemyHeight = enemy.height || 40; // Default height
+        const enemyZ = enemy.worldZ || 0;
+        const enemyTop = enemyZ + enemyHeight;
+        const inHeightRange = (this.worldZ >= enemyZ && this.worldZ <= enemyTop);
 
         if (!inHeightRange) {
             return false; // Bullet passes over/under enemy
@@ -140,7 +152,7 @@ export class Bullet {
             enemy.worldY
         );
 
-        return distance < (this.radius + enemy.radius);
+        return distance < (this.radius + (enemy.radius || 15));
     }
 
     destroy() {
