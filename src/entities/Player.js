@@ -111,10 +111,12 @@ export class Player {
         }
 
         // Convert screen-space input to world-space movement for isometric
-        // In isometric: moving right on screen = +worldX, -worldY
-        //               moving up on screen = +worldX, +worldY
-        let worldVelX = (screenVelX - screenVelY) * 0.707; // Diagonal in world space
-        let worldVelY = (screenVelX + screenVelY) * 0.707; // Diagonal in world space
+        // Screen up (-Y) = world -X and -Y (northwest in world space)
+        // Screen right (+X) = world +X and -Y (northeast in world space)
+        let worldVelX = screenVelX - screenVelY; // Right adds X, Up subtracts X
+        let worldVelY = screenVelX + screenVelY; // Right subtracts Y, Up subtracts Y
+
+        // The formula above gives us the correct isometric mapping
 
         // Normalize diagonal movement
         if (worldVelX !== 0 && worldVelY !== 0) {
