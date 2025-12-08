@@ -93,9 +93,6 @@ export class Player {
     }
 
     update(keys, delta) {
-        // DEBUG: Log delta time
-        console.log('update() delta:', delta, 'deltaSeconds:', (delta / 1000).toFixed(4));
-
         // Calculate movement vector in world space
         let worldVelX = 0;
         let worldVelY = 0;
@@ -179,18 +176,12 @@ export class Player {
 
         // Start jump when pressing SPACE while on ground
         if (jumpKeyDown && !this.jumpPressed && !this.isJumping && this.worldZ === 0) {
-            console.log('=== STARTING JUMP ===');
-            console.log('deltaSeconds:', deltaSeconds);
-            console.log('JUMP_VELOCITY:', ISOMETRIC_CONFIG.JUMP_VELOCITY);
-            console.log('GRAVITY:', this.gravity);
-
             this.jumpVelocity = ISOMETRIC_CONFIG.JUMP_VELOCITY;
             this.isJumping = true;
             this.isInAir = true;
 
             // Apply initial jump velocity immediately
             this.worldZ += this.jumpVelocity * deltaSeconds;
-            console.log('Initial worldZ after velocity applied:', this.worldZ);
 
             this.jumpPressed = jumpKeyDown;
             return;
@@ -200,15 +191,11 @@ export class Player {
 
         // Apply gravity and update height (only if already in air)
         if (this.isInAir || this.worldZ > 0) {
-            const oldWorldZ = this.worldZ;
             this.jumpVelocity += this.gravity * deltaSeconds;
             this.worldZ += this.jumpVelocity * deltaSeconds;
 
-            console.log('Physics frame: worldZ', oldWorldZ.toFixed(2), '->', this.worldZ.toFixed(2), 'velocity:', this.jumpVelocity.toFixed(2));
-
             // Land on ground
             if (this.worldZ <= 0) {
-                console.log('=== LANDED ===');
                 this.worldZ = 0;
                 this.jumpVelocity = 0;
                 this.isJumping = false;
