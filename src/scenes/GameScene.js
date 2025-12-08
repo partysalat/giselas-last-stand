@@ -15,6 +15,7 @@ import { CoverManager } from '../systems/CoverManager.js';
 import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { WallManager } from '../systems/WallManager.js';
 import { FortificationManager } from '../systems/FortificationManager.js';
+import { IsometricFloor } from '../systems/IsometricFloor.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
 import { screenToWorld } from '../utils/CoordinateTransform.js';
 
@@ -51,8 +52,8 @@ export class GameScene extends Phaser.Scene {
             { index: 0, color: 'red', name: 'Player 1' } // Fallback for testing
         ];
 
-        // Create tiled floor background
-        this.createTiledBackground();
+        // Create isometric floor (replaces flat tiled background)
+        this.createIsometricFloor();
 
         // Convert screen center to world coordinates for player spawn
         const screenCenterX = 1920 / 2;
@@ -328,24 +329,10 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
-    createTiledBackground() {
-        // Create a tiled sprite that fills the entire game world
-        // The environment texture will automatically repeat/tile
-        const bg = this.add.tileSprite(
-            0,           // x position (top-left)
-            0,           // y position (top-left)
-            1920,        // width (game world width)
-            1080,        // height (game world height)
-            'environment' // texture key
-        );
-
-        // Set origin to top-left so positioning is easier
-        bg.setOrigin(0, 0);
-
-        // Send to back behind everything
-        bg.setDepth(-100);
-
-        console.log('Tiled saloon floor background created');
+    createIsometricFloor() {
+        // Create isometric floor renderer
+        this.isometricFloor = new IsometricFloor(this);
+        this.isometricFloor.create(30, 25, 15, 12);
     }
 
     update(time, delta) {
