@@ -110,13 +110,14 @@ export class Player {
             screenVelX += 1; // Move right on screen (east)
         }
 
-        // Convert screen-space input to world-space movement for isometric
-        // Screen up (-Y) = world -X and -Y (northwest in world space)
-        // Screen right (+X) = world +X and -Y (northeast in world space)
-        let worldVelX = screenVelX - screenVelY; // Right adds X, Up subtracts X
-        let worldVelY = screenVelX + screenVelY; // Right subtracts Y, Up subtracts Y
+        // Rotate 90 degrees counterclockwise for proper isometric feel
+        // After rotation: W goes left, D goes up, S goes right, A goes down
+        const rotatedX = screenVelY;  // Up becomes left
+        const rotatedY = -screenVelX; // Right becomes up
 
-        // The formula above gives us the correct isometric mapping
+        // Convert rotated screen-space to world-space for isometric
+        let worldVelX = rotatedX - rotatedY;
+        let worldVelY = rotatedX + rotatedY;
 
         // Normalize diagonal movement
         if (worldVelX !== 0 && worldVelY !== 0) {
