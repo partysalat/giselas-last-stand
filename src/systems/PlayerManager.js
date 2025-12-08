@@ -13,12 +13,16 @@ export class PlayerManager {
     }
 
     createPlayers(playerConfigs) {
-        // Spawn position logic based on player count
+        // Only calculate spawn positions if not provided in configs
         const spawnPositions = this.calculateSpawnPositions(playerConfigs.length);
 
         playerConfigs.forEach((config, index) => {
-            const pos = spawnPositions[index];
-            const player = new Player(this.scene, pos.x, pos.y, 0, config.color);
+            // Use world coords from config if provided, otherwise use calculated positions
+            const worldX = config.worldX ?? spawnPositions[index].x;
+            const worldY = config.worldY ?? spawnPositions[index].y;
+            const worldZ = config.worldZ ?? 0;
+
+            const player = new Player(this.scene, worldX, worldY, worldZ, config.color);
             player.playerName = config.name;
             player.playerIndex = config.index;
             player.isDead = false;
