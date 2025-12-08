@@ -2,7 +2,7 @@ import { worldToScreen, screenToWorld, worldDistance2D, calculateDepth } from '.
 import { ISOMETRIC_CONFIG } from '../config.js';
 
 export class Bullet {
-    constructor(scene, worldX, worldY, worldZ, angle, damage = 10) {
+    constructor(scene, worldX, worldY, worldZ, angle, damage = 10, velocityZ = 0, hasGravity = false) {
         this.scene = scene;
 
         // World space coordinates
@@ -14,7 +14,10 @@ export class Bullet {
         const speed = ISOMETRIC_CONFIG.BULLET_SPEED;
         this.velocityX = Math.cos(angle) * speed;
         this.velocityY = Math.sin(angle) * speed;
-        this.velocityZ = 0; // Bullets travel horizontally (no vertical arc for now)
+        this.velocityZ = velocityZ; // Now accepts initial Z velocity
+
+        // Gravity flag
+        this.hasGravity = hasGravity;
 
         // Convert to screen space for sprite
         const { screenX, screenY } = worldToScreen(worldX, worldY, worldZ);
@@ -46,9 +49,21 @@ export class Bullet {
 
         // Update world position
         const deltaSeconds = delta / 1000;
+
+        // Apply gravity if enabled
+        if (this.hasGravity) {
+            this.velocityZ += ISOMETRIC_CONFIG.GRAVITY * deltaSeconds;
+        }
+
         this.worldX += this.velocityX * deltaSeconds;
         this.worldY += this.velocityY * deltaSeconds;
         this.worldZ += this.velocityZ * deltaSeconds;
+
+        // Destroy if hits ground
+        if (this.worldZ <= 0) {
+            this.destroy();
+            return;
+        }
 
         // Convert to screen space and update sprite
         const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
