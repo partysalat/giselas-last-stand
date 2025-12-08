@@ -110,6 +110,13 @@ export class Player {
             screenVelX += 1; // Move right on screen (east)
         }
 
+        // Normalize screen-space input first to fix diagonal speed
+        if (screenVelX !== 0 || screenVelY !== 0) {
+            const length = Math.sqrt(screenVelX * screenVelX + screenVelY * screenVelY);
+            screenVelX /= length;
+            screenVelY /= length;
+        }
+
         // Rotate 90 degrees counterclockwise for proper isometric feel
         // After rotation: W goes left, D goes up, S goes right, A goes down
         const rotatedX = screenVelY;  // Up becomes left
@@ -118,13 +125,6 @@ export class Player {
         // Convert rotated screen-space to world-space for isometric
         let worldVelX = rotatedX - rotatedY;
         let worldVelY = rotatedX + rotatedY;
-
-        // Normalize diagonal movement
-        if (worldVelX !== 0 && worldVelY !== 0) {
-            const length = Math.sqrt(worldVelX * worldVelX + worldVelY * worldVelY);
-            worldVelX /= length;
-            worldVelY /= length;
-        }
 
         // Apply speed multiplier (for ink cloud slow effect)
         const effectiveSpeed = this.speed * this.speedMultiplier;
