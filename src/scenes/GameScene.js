@@ -16,6 +16,7 @@ import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { WallManager } from '../systems/WallManager.js';
 import { FortificationManager } from '../systems/FortificationManager.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
+import { screenToWorld } from '../utils/CoordinateTransform.js';
 
 // Game states
 const GAME_STATE = {
@@ -53,8 +54,21 @@ export class GameScene extends Phaser.Scene {
         // Create tiled floor background
         this.createTiledBackground();
 
-        // Create PlayerManager instead of single player
-        this.playerManager = new PlayerManager(this, playerConfigs);
+        // Convert screen center to world coordinates for player spawn
+        const screenCenterX = 1920 / 2;
+        const screenCenterY = 1080 / 2;
+        const playerSpawnWorld = screenToWorld(screenCenterX, screenCenterY, 0);
+
+        // Update player configs to use world coordinates
+        const playerConfigsWithWorldCoords = playerConfigs.map(config => ({
+            ...config,
+            worldX: playerSpawnWorld.worldX,
+            worldY: playerSpawnWorld.worldY,
+            worldZ: 0
+        }));
+
+        // Create PlayerManager with world-space player configs
+        this.playerManager = new PlayerManager(this, playerConfigsWithWorldCoords);
 
         // Keep reference to first player for legacy code compatibility
         this.player = this.playerManager.players[0];
