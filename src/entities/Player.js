@@ -33,12 +33,11 @@ export class Player {
 
         scene.physics.add.existing(this.sprite);
 
-        // Physics body configuration - use circular collision
+        // Physics body is only used for collision detection, not movement
         this.sprite.body.setCircle(ISOMETRIC_CONFIG.PLAYER_RADIUS);
         this.sprite.body.setOffset(28, 28); // Center the collision circle
         this.sprite.body.setCollideWorldBounds(true);
-        this.sprite.body.setDrag(500);
-        this.sprite.body.setMaxVelocity(300);
+        this.sprite.body.setImmovable(true); // Prevents physics from moving the body
 
         // Player properties
         this.speed = 5.0; // World units per second
@@ -136,10 +135,6 @@ export class Player {
 
         // Update depth for proper isometric sorting
         this.sprite.setDepth(calculateDepth(this.worldY, 10));
-
-        // Update physics body position to match
-        this.sprite.body.x = screenX - this.sprite.body.halfWidth;
-        this.sprite.body.y = screenY - this.sprite.body.halfHeight;
 
         // Update bullets
         this.bullets = this.bullets.filter(bullet => {
