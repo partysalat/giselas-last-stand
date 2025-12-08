@@ -1,3 +1,5 @@
+import { worldToScreen, calculateDepth } from '../utils/CoordinateTransform.js';
+
 /**
  * Base class for all environment props
  * Provides core functionality for destructible objects in the saloon
@@ -9,6 +11,13 @@ export class EnvironmentProp {
         this.alive = true;
         this.x = x;
         this.y = y;
+
+        // World space coordinates (isometric 3D)
+        // Note: For now, we're treating screen x/y as world x/y during migration
+        // Later phases will properly convert all spawn positions
+        this.worldX = x;
+        this.worldY = y;
+        this.worldZ = 0; // Props sit on ground
 
         // Load configuration from PROP_TYPES
         this.loadConfig();
@@ -47,6 +56,12 @@ export class EnvironmentProp {
         this.footprintWidth = config.footprintWidth || this.width * 0.5;
         this.footprintHeight = config.footprintHeight || this.height * 0.5;
         this.footprintShape = config.footprintShape || 'rectangle';
+
+        // 3D volumetric properties for isometric collision
+        this.volumeWidth = config.volumeWidth || this.width;     // X dimension (world units)
+        this.volumeDepth = config.volumeDepth || this.height;    // Y dimension (world units)
+        this.volumeHeight = config.volumeHeight || 50;           // Z dimension (world units)
+        this.jumpable = config.jumpable !== undefined ? config.jumpable : (this.volumeHeight <= 40);
 
         // Sprite properties
         this.spriteKey = config.spriteKey || null;
