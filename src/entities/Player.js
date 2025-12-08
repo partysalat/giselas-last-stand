@@ -93,22 +93,28 @@ export class Player {
     }
 
     update(keys, delta) {
-        // Calculate movement vector in world space
-        let worldVelX = 0;
-        let worldVelY = 0;
+        // Calculate movement vector in screen space
+        let screenVelX = 0;
+        let screenVelY = 0;
 
         if (keys.W.isDown) {
-            worldVelY -= 1; // Move "up" in world space (toward back of screen)
+            screenVelY -= 1; // Move up on screen (north)
         }
         if (keys.S.isDown) {
-            worldVelY += 1; // Move "down" in world space (toward front)
+            screenVelY += 1; // Move down on screen (south)
         }
         if (keys.A.isDown) {
-            worldVelX -= 1; // Move "left" in world space
+            screenVelX -= 1; // Move left on screen (west)
         }
         if (keys.D.isDown) {
-            worldVelX += 1; // Move "right" in world space
+            screenVelX += 1; // Move right on screen (east)
         }
+
+        // Convert screen-space input to world-space movement for isometric
+        // In isometric: moving right on screen = +worldX, -worldY
+        //               moving up on screen = +worldX, +worldY
+        let worldVelX = (screenVelX - screenVelY) * 0.707; // Diagonal in world space
+        let worldVelY = (screenVelX + screenVelY) * 0.707; // Diagonal in world space
 
         // Normalize diagonal movement
         if (worldVelX !== 0 && worldVelY !== 0) {
