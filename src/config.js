@@ -79,9 +79,9 @@ export const ISOMETRIC_CONFIG = {
     WORLD_UNITS_PER_SCREEN_PIXEL: 0.1, // How movement feels
 
     // Height configuration
-    GRAVITY: 800,              // Downward acceleration for jumping (pixels/sec²)
-    JUMP_VELOCITY: -600,       // Initial upward velocity when jumping (increased for higher jumps)
-    MAX_JUMP_HEIGHT: 150,      // Maximum height player can reach
+    GRAVITY: 400,              // Downward acceleration for jumping (pixels/sec²) - reduced for longer air time
+    JUMP_VELOCITY: -800,       // Initial upward velocity when jumping (increased for higher jumps)
+    MAX_JUMP_HEIGHT: 200,      // Maximum height player can reach
 
     // Collision configuration
     PLAYER_HEIGHT: 40,         // Player's physical height in world units
