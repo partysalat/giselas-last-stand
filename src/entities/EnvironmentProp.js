@@ -1,4 +1,5 @@
 import { worldToScreen, calculateDepth } from '../utils/CoordinateTransform.js';
+import { checkPointVsAABB } from '../utils/CollisionUtils.js';
 
 /**
  * Base class for all environment props
@@ -274,6 +275,50 @@ export class EnvironmentProp {
         if (this.scene.showCollisionBoxes) {
             this.showSpriteBoundsDebug();
         }
+    }
+
+    /**
+     * Check if an entity collides with this prop in 3D space
+     * @param {number} entityWorldX - Entity's world X position
+     * @param {number} entityWorldY - Entity's world Y position
+     * @param {number} entityWorldZ - Entity's world Z position (bottom)
+     * @param {number} entityRadius - Entity's collision radius
+     * @param {number} entityHeight - Entity's physical height
+     * @returns {boolean} True if collision detected
+     */
+    checkCollision3D(entityWorldX, entityWorldY, entityWorldZ, entityRadius, entityHeight) {
+        // Don't collide with non-physical props
+        if (!this.sprite.body) {
+            return false;
+        }
+
+        // Create AABB for this prop
+        const box = {
+            x: this.worldX,
+            y: this.worldY,
+            z: this.worldZ,
+            width: this.volumeWidth,
+            depth: this.volumeDepth,
+            height: this.volumeHeight
+        };
+
+        return checkPointVsAABB(
+            entityWorldX,
+            entityWorldY,
+            entityWorldZ,
+            entityRadius,
+            entityHeight,
+            box
+        );
+    }
+
+    /**
+     * Check if entity can jump over this prop
+     * @param {number} entityZ - Entity's current Z position (center or bottom)
+     * @returns {boolean} True if entity is high enough to clear prop
+     */
+    canJumpOver(entityZ) {
+        return this.jumpable && entityZ > this.volumeHeight;
     }
 
     /**
