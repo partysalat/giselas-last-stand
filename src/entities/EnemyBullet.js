@@ -5,25 +5,32 @@
  * Collision checking is handled in GameScene.updateEnemyBullets()
  */
 
+import { worldToScreen, calculateDepth } from '../utils/CoordinateTransform.js';
+
 export class EnemyBullet {
-    constructor(scene, x, y, targetX, targetY, damage, bulletType = 'normal') {
+    constructor(scene, worldX, worldY, targetWorldX, targetWorldY, damage, bulletType = 'normal') {
         this.scene = scene;
         this.damage = damage;
         this.bulletType = bulletType;  // 'normal', 'heavy', 'burst', 'explosive', 'bubble'
         this.alive = true;
 
-        // Set speed based on bullet type
+        // Store world coordinates
+        this.worldX = worldX;
+        this.worldY = worldY;
+        this.worldZ = 0; // Bullets travel at ground level
+
+        // Set speed based on bullet type (world units per second)
         if (bulletType === 'heavy') {
-            this.speed = 250;
+            this.speed = 5;  // World units per second
         } else if (bulletType === 'bubble') {
-            this.speed = 300;  // Boss bubble bullets
+            this.speed = 6;  // Boss bubble bullets
         } else {
-            this.speed = 400;
+            this.speed = 8;  // World units per second
         }
 
         // Calculate direction with inaccuracy
-        const dx = targetX - x;
-        const dy = targetY - y;
+        const dx = targetWorldX - worldX;
+        const dy = targetWorldY - worldY;
 
         // Add spread/inaccuracy (bubbles have no inaccuracy)
         const inaccuracy = bulletType === 'heavy' ? 0.05 : (bulletType === 'bubble' ? 0 : 0.1);  // radians
@@ -33,6 +40,9 @@ export class EnemyBullet {
         this.velocityX = Math.cos(finalAngle) * this.speed;
         this.velocityY = Math.sin(finalAngle) * this.speed;
         this.angle = finalAngle;
+
+        // Convert to screen space for sprite
+        const { screenX, screenY } = worldToScreen(worldX, worldY, this.worldZ);
 
         // Create Phaser sprite with type-specific visuals
         let size, color;
@@ -47,7 +57,7 @@ export class EnemyBullet {
             color = 0xFFD700;
         }
 
-        this.sprite = scene.add.circle(x, y, size / 2, color);
+        this.sprite = scene.add.circle(screenX, screenY, size / 2, color);
 
         // Set depth to render above floor and most entities
         this.sprite.setDepth(100);
@@ -71,14 +81,21 @@ export class EnemyBullet {
     update(deltaTime) {
         if (!this.alive) return;
 
-        // Update position
+        // Update world position
         const dt = deltaTime / 1000;  // Convert to seconds
-        this.sprite.x += this.velocityX * dt;
-        this.sprite.y += this.velocityY * dt;
+        this.worldX += this.velocityX * dt;
+        this.worldY += this.velocityY * dt;
 
-        // Check bounds (1920x1080 with margin)
-        if (this.sprite.x < -50 || this.sprite.x > 1970 ||
-            this.sprite.y < -50 || this.sprite.y > 1130) {
+        // Convert to screen space and update sprite
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+        this.sprite.setPosition(screenX, screenY);
+
+        // Update depth for proper isometric sorting
+        this.sprite.setDepth(calculateDepth(this.worldY, 100));
+
+        // Check bounds (screen bounds with margin)
+        if (screenX < -50 || screenX > 1970 ||
+            screenY < -50 || screenY > 1130) {
             this.destroy();
             return;
         }
@@ -90,18 +107,20 @@ export class EnemyBullet {
         }
     }
 
-    checkCollision(targetX, targetY, targetRadius) {
-        const dx = this.sprite.x - targetX;
-        const dy = this.sprite.y - targetY;
+    checkCollision(targetWorldX, targetWorldY, targetRadius) {
+        // Use world coordinates for collision detection
+        const dx = this.worldX - targetWorldX;
+        const dy = this.worldY - targetWorldY;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
+        // Bullet radius in world units
         let bulletRadius;
         if (this.bulletType === 'heavy') {
-            bulletRadius = 6;
+            bulletRadius = 0.12;  // ~6 pixels in world units
         } else if (this.bulletType === 'bubble') {
-            bulletRadius = 7;  // Larger bubble bullets
+            bulletRadius = 0.14;  // ~7 pixels in world units
         } else {
-            bulletRadius = 4;
+            bulletRadius = 0.08;  // ~4 pixels in world units
         }
 
         return distance < (bulletRadius + targetRadius);
@@ -113,7 +132,7 @@ export class EnemyBullet {
 
     explode() {
         if (this.bulletType === 'explosive') {
-            // Create explosion visual
+            // Create explosion visual at sprite position (screen space)
             const explosion = this.scene.add.circle(
                 this.sprite.x,
                 this.sprite.y,
@@ -132,11 +151,11 @@ export class EnemyBullet {
                 onComplete: () => explosion.destroy()
             });
 
-            // Return explosion data for AoE damage
+            // Return explosion data for AoE damage (in world coordinates)
             return {
-                x: this.sprite.x,
-                y: this.sprite.y,
-                radius: 30,
+                worldX: this.worldX,
+                worldY: this.worldY,
+                radius: 0.6,  // World units (~30 pixels)
                 damage: this.damage * 0.5
             };
         }

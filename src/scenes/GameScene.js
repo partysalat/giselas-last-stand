@@ -1521,10 +1521,9 @@ export class GameScene extends Phaser.Scene {
 
             // Check collision with all living players
             for (const player of this.playerManager.getLivingPlayers()) {
-                const playerRadius = 20;  // Player collision radius
-                const bulletSprite = bullet.getSprite();
+                const playerRadius = 0.4;  // Player collision radius in world units
 
-                if (bullet.checkCollision(player.getX(), player.getY(), playerRadius)) {
+                if (bullet.checkCollision(player.worldX, player.worldY, playerRadius)) {
                     // Hit player!
                     console.log('Player hit by bullet! Damage:', bullet.getDamage());
                     const newHealth = player.takeDamage(bullet.getDamage());
@@ -1539,12 +1538,12 @@ export class GameScene extends Phaser.Scene {
                     // Check for explosion (bounty lobster bullets)
                     const explosion = bullet.explode();
                     if (explosion) {
-                        // Explosion AoE - damage other players in radius
+                        // Explosion AoE - damage other players in radius (using world coordinates)
                         for (const otherPlayer of this.playerManager.getLivingPlayers()) {
                             if (otherPlayer === player) continue; // Already hit
 
-                            const dx = otherPlayer.getX() - explosion.x;
-                            const dy = otherPlayer.getY() - explosion.y;
+                            const dx = otherPlayer.worldX - explosion.worldX;
+                            const dy = otherPlayer.worldY - explosion.worldY;
                             const dist = Math.sqrt(dx * dx + dy * dy);
 
                             if (dist < explosion.radius) {

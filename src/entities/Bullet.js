@@ -19,12 +19,9 @@ export class Bullet {
         // Convert to screen space for sprite
         const { screenX, screenY } = worldToScreen(worldX, worldY, worldZ);
 
-        // Use a bright circle instead of image for better visibility
-        this.sprite = scene.add.circle(screenX, screenY, 8, 0xFFFF00); // Bright yellow circle
-        this.sprite.setStrokeStyle(2, 0xFF0000, 1); // Red outline
-
-        // DEBUG: Log bullet creation
-        console.log(`Bullet created at world(${worldX.toFixed(1)}, ${worldY.toFixed(1)}, ${worldZ.toFixed(1)}) -> screen(${screenX.toFixed(0)}, ${screenY.toFixed(0)}) depth=${calculateDepth(worldY, 100).toFixed(1)}`);
+        // Use a small circle for bullet visual
+        this.sprite = scene.add.circle(screenX, screenY, 4, 0xFFFF00); // Small yellow circle
+        this.sprite.setStrokeStyle(1, 0xFF8800, 1); // Orange outline
 
         // NOTE: We don't use Arcade Physics for bullets anymore
         // Custom world-space physics is more accurate for isometric
