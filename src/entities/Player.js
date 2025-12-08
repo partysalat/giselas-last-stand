@@ -174,8 +174,14 @@ export class Player {
         // Handle jump input (SPACE bar)
         const jumpKeyDown = keys.SPACE && keys.SPACE.isDown;
 
+        // DEBUG: Log jump state
+        if (jumpKeyDown) {
+            console.log('SPACE pressed! worldZ:', this.worldZ, 'isJumping:', this.isJumping, 'jumpPressed:', this.jumpPressed);
+        }
+
         // Start jump when pressing SPACE while on ground
         if (jumpKeyDown && !this.jumpPressed && !this.isJumping && this.worldZ === 0) {
+            console.log('STARTING JUMP!');
             this.jumpVelocity = ISOMETRIC_CONFIG.JUMP_VELOCITY;
             this.isJumping = true;
             this.isInAir = true;
@@ -188,8 +194,14 @@ export class Player {
             this.jumpVelocity += this.gravity * deltaSeconds;
             this.worldZ += this.jumpVelocity * deltaSeconds;
 
+            // DEBUG: Log jump physics
+            if (this.worldZ > 1) {
+                console.log('In air! worldZ:', this.worldZ.toFixed(2), 'velocity:', this.jumpVelocity.toFixed(2));
+            }
+
             // Land on ground
             if (this.worldZ <= 0) {
+                console.log('LANDED!');
                 this.worldZ = 0;
                 this.jumpVelocity = 0;
                 this.isJumping = false;
