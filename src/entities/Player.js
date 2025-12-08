@@ -174,22 +174,24 @@ export class Player {
         // Handle jump input (SPACE bar)
         const jumpKeyDown = keys.SPACE && keys.SPACE.isDown;
 
-        // DEBUG: Log jump state
-        if (jumpKeyDown) {
-            console.log('SPACE pressed! worldZ:', this.worldZ, 'isJumping:', this.isJumping, 'jumpPressed:', this.jumpPressed);
-        }
-
         // Start jump when pressing SPACE while on ground
         if (jumpKeyDown && !this.jumpPressed && !this.isJumping && this.worldZ === 0) {
             console.log('STARTING JUMP!');
             this.jumpVelocity = ISOMETRIC_CONFIG.JUMP_VELOCITY;
             this.isJumping = true;
             this.isInAir = true;
+
+            // Apply initial jump velocity immediately to ensure we leave the ground
+            this.worldZ += this.jumpVelocity * deltaSeconds;
+
+            // Prevent immediate landing check in this frame
+            this.jumpPressed = jumpKeyDown;
+            return; // EXIT EARLY - don't run physics this frame
         }
 
         this.jumpPressed = jumpKeyDown;
 
-        // Apply gravity and update height
+        // Apply gravity and update height (only if already in air)
         if (this.isInAir || this.worldZ > 0) {
             this.jumpVelocity += this.gravity * deltaSeconds;
             this.worldZ += this.jumpVelocity * deltaSeconds;
