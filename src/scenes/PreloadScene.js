@@ -190,8 +190,40 @@ export class PreloadScene extends Phaser.Scene {
         // this.load.image('bounty-poster', 'assets/ui/bounty-poster.png');
     }
 
+    generateIsometricFloorTile() {
+        // Create a 64x32 diamond-shaped tile
+        const graphics = this.add.graphics();
+
+        // Draw diamond shape
+        graphics.fillStyle(0x6B4423, 1); // Wood color
+        graphics.beginPath();
+        graphics.moveTo(32, 0);   // Top
+        graphics.lineTo(64, 16);  // Right
+        graphics.lineTo(32, 32);  // Bottom
+        graphics.lineTo(0, 16);   // Left
+        graphics.closePath();
+        graphics.fillPath();
+
+        // Add shading for depth
+        graphics.fillStyle(0x5A3419, 1); // Darker shade
+        graphics.beginPath();
+        graphics.moveTo(32, 16);  // Center
+        graphics.lineTo(64, 16);  // Right
+        graphics.lineTo(32, 32);  // Bottom
+        graphics.lineTo(0, 16);   // Left
+        graphics.closePath();
+        graphics.fillPath();
+
+        // Generate texture from graphics
+        graphics.generateTexture('iso-floor-tile', 64, 32);
+        graphics.destroy();
+    }
+
     create() {
         console.log('Assets loaded, creating animations...');
+
+        // Generate procedural textures
+        this.generateIsometricFloorTile();
 
         // === CREATE ANIMATIONS ===
 
