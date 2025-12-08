@@ -80,8 +80,8 @@ export const ISOMETRIC_CONFIG = {
 
     // Height configuration
     GRAVITY: 800,              // Downward acceleration for jumping (pixels/sec²)
-    JUMP_VELOCITY: -400,       // Initial upward velocity when jumping
-    MAX_JUMP_HEIGHT: 100,      // Maximum height player can reach
+    JUMP_VELOCITY: -600,       // Initial upward velocity when jumping (increased for higher jumps)
+    MAX_JUMP_HEIGHT: 150,      // Maximum height player can reach
 
     // Collision configuration
     PLAYER_HEIGHT: 40,         // Player's physical height in world units
