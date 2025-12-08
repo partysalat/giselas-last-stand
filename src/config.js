@@ -75,6 +75,11 @@ export const ISOMETRIC_CONFIG = {
     TILE_WIDTH: 64,
     TILE_HEIGHT: 32,
 
+    // Movement tuning (ADJUST THESE after testing)
+    PLAYER_SPEED: 8.0,         // World units per second (tune this!)
+    ENEMY_SPEED_MULTIPLIER: 0.8, // Enemies slightly slower than players
+    BULLET_SPEED: 20.0,        // Bullet speed in world units/sec
+
     // World space configuration
     WORLD_UNITS_PER_SCREEN_PIXEL: 0.1, // How movement feels
 
@@ -85,16 +90,16 @@ export const ISOMETRIC_CONFIG = {
     WORLD_MAX_Y: 24.5,
 
     // Height configuration
-    GRAVITY: -800,             // Downward acceleration for jumping (negative = pulls down)
-    JUMP_VELOCITY: 400,        // Initial upward velocity when jumping (positive = goes up!)
-    MAX_JUMP_HEIGHT: 100,      // Maximum height player can reach
+    GRAVITY: -1200,            // Downward acceleration (tune for jump feel)
+    JUMP_VELOCITY: 500,        // Initial upward velocity (tune for height)
+    MAX_JUMP_HEIGHT: 100,
 
     // Collision configuration
     PLAYER_HEIGHT: 0.8,        // Player's physical height in world units (~40 pixels)
     PLAYER_RADIUS: 0.4,        // Player's ground collision radius (~20 pixels)
 
-    // Obstacle height categories (for jumping)
-    LOW_OBSTACLE: 0.6,         // Can jump over (barrels, chairs) (~30 pixels)
-    MEDIUM_OBSTACLE: 1.2,      // Hard to jump over (tables) (~60 pixels)
-    HIGH_OBSTACLE: 2.0,        // Cannot jump over (walls, counters) (~100 pixels)
+    // Obstacle height categories
+    LOW_OBSTACLE: 0.7,         // Can jump over (~35 pixels)
+    MEDIUM_OBSTACLE: 1.2,      // Can barely jump over (~60 pixels)
+    HIGH_OBSTACLE: 2.0,        // Cannot jump over (~100 pixels)
 };

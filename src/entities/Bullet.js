@@ -11,7 +11,7 @@ export class Bullet {
         this.worldZ = worldZ;
 
         // World space velocity
-        const speed = 15; // World units per second (increased for visible travel)
+        const speed = ISOMETRIC_CONFIG.BULLET_SPEED;
         this.velocityX = Math.cos(angle) * speed;
         this.velocityY = Math.sin(angle) * speed;
         this.velocityZ = 0; // Bullets travel horizontally (no vertical arc for now)

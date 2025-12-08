@@ -44,7 +44,7 @@ export class Player {
         this.sprite.body.setImmovable(true); // Prevents physics from moving the body
 
         // Player properties
-        this.speed = 5.0; // World units per second
+        this.speed = ISOMETRIC_CONFIG.PLAYER_SPEED;
         this.speedMultiplier = 1.0;
         this.health = 100;
         this.maxHealth = 100;

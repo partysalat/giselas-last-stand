@@ -264,7 +264,7 @@ export class Enemy {
         // Enemy properties from config
         this.health = scaledHealth;
         this.maxHealth = scaledHealth;
-        this.speed = config.speed;
+        this.speed = config.speed * ISOMETRIC_CONFIG.ENEMY_SPEED_MULTIPLIER;
         this.damage = scaledDamage;
         this.attackRange = config.attackRange;
         this.attackCooldown = config.attackCooldown;
