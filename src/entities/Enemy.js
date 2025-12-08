@@ -641,7 +641,7 @@ export class Enemy {
         return Date.now() >= this.nextAttack;
     }
 
-    update(time, playerX, playerY) {
+    update(time, delta, playerWorldX, playerWorldY) {
         if (!this.alive) return;
 
         // Phase 4: Check if stun has expired
@@ -655,6 +655,14 @@ export class Enemy {
 
         // Skip update if stunned
         if (this.stunned) return;
+
+        // Calculate distance to target in world space
+        const distToTarget = worldDistance2D(
+            this.worldX,
+            this.worldY,
+            playerWorldX,
+            playerWorldY
+        );
 
         // Handle formation positioning for movement
         let formationHandled = false;
@@ -670,52 +678,80 @@ export class Enemy {
         // Pass formationHandled flag to skip movement if already positioned
         switch(this.config.behavior) {
             case 'ranged_shooter':
-                this.updateRangedShooter(time, playerX, playerY, formationHandled);
+                this.updateRangedShooter(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
                 break;
             case 'ranged_kiter':
-                this.updateRangedKiter(time, playerX, playerY, formationHandled);
+                this.updateRangedKiter(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
                 break;
             case 'basic_shooter':
-                this.updateBasicShooter(time, playerX, playerY, formationHandled);
+                this.updateBasicShooter(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
                 break;
             case 'fast_melee':
-                this.updateFastMelee(time, playerX, playerY, formationHandled);
+                this.updateFastMelee(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
                 break;
             case 'tank':
-                this.updateTank(time, playerX, playerY, formationHandled);
+                this.updateTank(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
                 break;
             case 'teleport':
-                this.updateTeleport(time, playerX, playerY, formationHandled);
+                this.updateTeleport(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
                 break;
             case 'swoop':
-                this.updateSwoop(time, playerX, playerY, formationHandled);
+                this.updateSwoop(time, delta, playerWorldX, playerWorldY, distToTarget, formationHandled);
                 break;
             case 'boss_iron_shell':
-                this.updateBossIronShell(time, playerX, playerY);
+                this.updateBossIronShell(time, delta, playerWorldX, playerWorldY, distToTarget);
                 break;
             case 'boss_kraken_arm':
-                this.updateBossKrakenArm(time, playerX, playerY);
+                this.updateBossKrakenArm(time, delta, playerWorldX, playerWorldY, distToTarget);
                 break;
             case 'boss_leviathan':
-                this.updateBossLeviathan(time, playerX, playerY);
+                this.updateBossLeviathan(time, delta, playerWorldX, playerWorldY, distToTarget);
                 break;
         }
 
-        // Update directional sprites based on velocity
-        if (this.useDirectionalSprites && this.sprite.body) {
-            this.updateDirection(this.sprite.body.velocity.x, this.sprite.body.velocity.y);
-        }
+        // Convert world position to screen position and update sprite
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+        this.sprite.setPosition(screenX, screenY);
 
-        // Update depth based on Y position for isometric sorting
-        // Use the bottom of the sprite (feet/base) for proper isometric depth
-        // Higher Y = closer to camera = render on top
-        if (this.sprite) {
-            const spriteBottom = this.sprite.y + (this.sprite.displayHeight / 2);
-            this.sprite.setDepth(10 + spriteBottom / 10);
+        // Update depth for proper isometric sorting
+        this.sprite.setDepth(calculateDepth(this.worldY, 10));
+
+        // Update physics body position to match
+        if (this.sprite.body) {
+            this.sprite.body.x = screenX - this.sprite.body.halfWidth;
+            this.sprite.body.y = screenY - this.sprite.body.halfHeight;
         }
 
         // Update visual indicators
         this.updateVisuals();
+    }
+
+    /**
+     * Move toward a target position in world space
+     * @param {number} targetWorldX - Target world X coordinate
+     * @param {number} targetWorldY - Target world Y coordinate
+     * @param {number} deltaSeconds - Time delta in seconds
+     */
+    moveToward(targetWorldX, targetWorldY, deltaSeconds) {
+        // Calculate direction vector
+        const dx = targetWorldX - this.worldX;
+        const dy = targetWorldY - this.worldY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > 0.1) {
+            // Normalize and apply speed
+            const speed = this.speed / 10; // Convert config speed to world units per second
+            const moveX = (dx / distance) * speed * deltaSeconds;
+            const moveY = (dy / distance) * speed * deltaSeconds;
+
+            this.worldX += moveX;
+            this.worldY += moveY;
+
+            // Update sprite direction based on world-space movement
+            if (this.useDirectionalSprites) {
+                this.updateDirection(dx, dy);
+            }
+        }
     }
 
     updateDirection(velocityX, velocityY) {
