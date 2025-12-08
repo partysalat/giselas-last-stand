@@ -217,6 +217,28 @@ export class Player {
         }
     }
 
+    getTargetCenterHeight(targetEnemy) {
+        if (targetEnemy.type === 'tentacle') {
+            // Tentacles: estimate center height based on sprite position
+            const enemy = targetEnemy.enemy;
+            const tentSprite = enemy.tentacleSprites ? enemy.tentacleSprites[targetEnemy.tentacleIndex] : null;
+            if (!tentSprite) return 0;
+            // Tentacles are roughly 40 pixels tall, center is ~20 pixels
+            return 0.4; // ~20 pixels in world units
+        } else if (targetEnemy.type === 'enemy') {
+            // Regular enemy: use worldZ + half height
+            const enemy = targetEnemy.enemy;
+            return enemy.worldZ + (enemy.height / 2);
+        } else if (targetEnemy.type === 'prop') {
+            // Props: use worldZ + half volume height
+            const prop = targetEnemy.prop;
+            return prop.worldZ + (prop.volumeHeight / 2);
+        } else {
+            // Legacy format: plain enemy object
+            return targetEnemy.worldZ + (targetEnemy.height / 2);
+        }
+    }
+
     shoot(targetEnemy, currentTime) {
         // Check if we have a target
         if (!targetEnemy) {
