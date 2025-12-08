@@ -28,6 +28,10 @@ export class Player {
         // Scale down to appropriate size
         this.sprite.setScale(0.5);
 
+        // Create shadow sprite at ground level
+        this.shadow = scene.add.ellipse(screenX, screenY, 30, 15, 0x000000, 0.3);
+        this.shadow.setDepth(1); // Below player but above floor
+
         // Set depth based on world Y position for isometric sorting
         this.sprite.setDepth(calculateDepth(this.worldY, 10));
 
@@ -132,6 +136,10 @@ export class Player {
         // Convert world position to screen position and update sprite
         const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
         this.sprite.setPosition(screenX, screenY);
+
+        // Update shadow at ground level (worldZ = 0)
+        const shadowPos = worldToScreen(this.worldX, this.worldY, 0);
+        this.shadow.setPosition(shadowPos.screenX, shadowPos.screenY);
 
         // Update depth for proper isometric sorting
         this.sprite.setDepth(calculateDepth(this.worldY, 10));
@@ -513,6 +521,9 @@ export class Player {
         }
         if (this.storedCocktailGlow) {
             this.storedCocktailGlow.destroy();
+        }
+        if (this.shadow) {
+            this.shadow.destroy();
         }
         this.sprite.destroy();
     }
