@@ -1820,6 +1820,10 @@ export const PROP_TYPES = {
         maxHealth: 200,
         width: 120,
         height: 50,
+        volumeWidth: 120,       // NEW
+        volumeDepth: 50,        // NEW
+        volumeHeight: 90,       // NEW - too tall to jump over
+        jumpable: false,        // NEW
         weightClass: 'heavy',
         color: 0x654321,
         footprintWidth: 40,   // 33% of 120px visual width
@@ -1930,6 +1934,10 @@ export const PROP_TYPES = {
         maxHealth: 30,
         width: 30,
         height: 30,
+        volumeWidth: 25,        // NEW
+        volumeDepth: 25,        // NEW
+        volumeHeight: 40,       // NEW - can barely jump over
+        jumpable: true,         // NEW
         weightClass: 'light',
         color: 0x8B4513,
         footprintWidth: 20,   // 67% of 30px visual width
@@ -1950,6 +1958,10 @@ export const PROP_TYPES = {
         maxHealth: 50,
         width: 40,
         height: 40,
+        volumeWidth: 30,        // NEW
+        volumeDepth: 30,        // NEW
+        volumeHeight: 35,       // NEW - can jump over
+        jumpable: true,         // NEW
         weightClass: 'medium',
         color: 0xA0522D,
         footprintWidth: 30,   // 75% of 40px visual width
