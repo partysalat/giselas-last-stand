@@ -1829,7 +1829,7 @@ export const PROP_TYPES = {
         height: 50,
         volumeWidth: 2.5,       // World units (~120px / 50 = 2.4)
         volumeDepth: 1.0,       // World units (~50px / 50 = 1.0)
-        volumeHeight: 1.8,      // World units (tall enough to block)
+        volumeHeight: 30,      // World units (tall enough to block bullets at chest height)
         jumpable: false,
         weightClass: 'heavy',
         color: 0x654321,
@@ -1851,7 +1851,7 @@ export const PROP_TYPES = {
         height: 60,
         volumeWidth: 1.8,      // World units (~90px / 50)
         volumeDepth: 1.2,      // World units (~60px / 50)
-        volumeHeight: 1.5,     // World units
+        volumeHeight: 30,     // World units (tall enough to block bullets)
         jumpable: false,
         weightClass: 'heavy',
         color: 0x2F4F4F, // dark slate gray
@@ -1873,7 +1873,7 @@ export const PROP_TYPES = {
         height: 40,
         volumeWidth: 2.0,
         volumeDepth: 0.8,
-        volumeHeight: 1.8,
+        volumeHeight: 30,
         jumpable: false,
         weightClass: 'heavy',
         color: 0x8B4513, // saddle brown
@@ -1895,7 +1895,7 @@ export const PROP_TYPES = {
         height: 60,
         volumeWidth: 2.0,
         volumeDepth: 1.2,
-        volumeHeight: 1.5,
+        volumeHeight: 30,
         jumpable: false,
         weightClass: 'heavy',
         color: 0x228B22, // forest green felt
@@ -1919,7 +1919,7 @@ export const PROP_TYPES = {
         height: 50,
         volumeWidth: 1.0,
         volumeDepth: 1.0,
-        volumeHeight: 1.5,
+        volumeHeight: 30,
         jumpable: false,
         weightClass: 'heavy',
         color: 0x708090, // slate gray
@@ -1942,7 +1942,7 @@ export const PROP_TYPES = {
         height: 60,
         volumeWidth: 1.6,
         volumeDepth: 1.2,
-        volumeHeight: 1.2,
+        volumeHeight: 30,
         jumpable: false,
         weightClass: 'light',
         color: 0x006400,
@@ -1963,7 +1963,7 @@ export const PROP_TYPES = {
         height: 30,
         volumeWidth: 0.6,       // World units (~30px / 50 = 0.6)
         volumeDepth: 0.6,       // World units
-        volumeHeight: 0.8,      // World units (can barely jump over)
+        volumeHeight: 30,      // World units (tall enough to block bullets)
         jumpable: true,
         weightClass: 'light',
         color: 0x8B4513,
@@ -1987,7 +1987,7 @@ export const PROP_TYPES = {
         height: 40,
         volumeWidth: 0.8,       // World units
         volumeDepth: 0.8,       // World units
-        volumeHeight: 0.7,      // World units - can jump over
+        volumeHeight: 30,      // World units (tall enough to block bullets)
         jumpable: true,
         weightClass: 'medium',
         color: 0xA0522D,
@@ -2011,7 +2011,7 @@ export const PROP_TYPES = {
         height: 20,
         volumeWidth: 0.4,
         volumeDepth: 0.4,
-        volumeHeight: 0.8,
+        volumeHeight: 30,
         jumpable: true,
         weightClass: 'light',
         color: 0xA0522D, // sienna
@@ -2035,7 +2035,7 @@ export const PROP_TYPES = {
         height: 35,
         volumeWidth: 0.7,
         volumeDepth: 0.7,
-        volumeHeight: 0.7,
+        volumeHeight: 30,
         jumpable: true,
         weightClass: 'light',
         color: 0xDEB887, // burlwood
@@ -2061,7 +2061,7 @@ export const PROP_TYPES = {
         height: 15,
         volumeWidth: 0.3,
         volumeDepth: 0.3,
-        volumeHeight: 0.3,
+        volumeHeight: 30,
         jumpable: true,
         weightClass: 'light',
         color: 0xFFD700,

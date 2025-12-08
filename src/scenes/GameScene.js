@@ -874,10 +874,11 @@ export class GameScene extends Phaser.Scene {
                 if (!bullet.isAlive()) continue;
 
             // Check cover collision FIRST
+            // NOTE: checkBulletCollision expects WORLD coordinates, not screen coordinates
             if (this.coverManager) {
                 const hitCover = this.coverManager.checkBulletCollision(
-                    bullet.getSprite().x,
-                    bullet.getSprite().y,
+                    bullet.getWorldX(),  // Use world coordinates
+                    bullet.getWorldY(),  // Use world coordinates
                     bullet.getDamage()
                 );
 
@@ -1538,11 +1539,11 @@ export class GameScene extends Phaser.Scene {
             }
 
             // Check cover collision
+            // NOTE: checkBulletCollision expects WORLD coordinates, not screen coordinates
             if (this.coverManager) {
-                const bulletSprite = bullet.getSprite();
                 const hitCover = this.coverManager.checkBulletCollision(
-                    bulletSprite.x,
-                    bulletSprite.y,
+                    bullet.worldX,  // Use world coordinates
+                    bullet.worldY,  // Use world coordinates
                     bullet.getDamage()
                 );
 
