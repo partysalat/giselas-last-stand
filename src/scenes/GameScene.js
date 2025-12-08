@@ -16,6 +16,7 @@ import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { WallManager } from '../systems/WallManager.js';
 import { FortificationManager } from '../systems/FortificationManager.js';
 import { IsometricFloor } from '../systems/IsometricFloor.js';
+import { CoordinateDebug } from '../systems/CoordinateDebug.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
 import { screenToWorld } from '../utils/CoordinateTransform.js';
 
@@ -333,6 +334,9 @@ export class GameScene extends Phaser.Scene {
         // Create isometric floor renderer
         this.isometricFloor = new IsometricFloor(this);
         this.isometricFloor.create(30, 25, 15, 12);
+
+        // Create coordinate debug system (toggle with 'I' key)
+        this.coordinateDebug = new CoordinateDebug(this);
     }
 
     update(time, delta) {
@@ -818,6 +822,11 @@ export class GameScene extends Phaser.Scene {
                 this.updateControlsText();
                 this.lastInputMode = firstInputManager.getInputMode();
             }
+        }
+
+        // Update coordinate debug visualization
+        if (this.coordinateDebug) {
+            this.coordinateDebug.update();
         }
     }
 

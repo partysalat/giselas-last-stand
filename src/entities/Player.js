@@ -40,7 +40,7 @@ export class Player {
         // Physics body is only used for collision detection, not movement
         this.sprite.body.setCircle(ISOMETRIC_CONFIG.PLAYER_RADIUS);
         this.sprite.body.setOffset(28, 28); // Center the collision circle
-        this.sprite.body.setCollideWorldBounds(true);
+        // Don't use setCollideWorldBounds - we handle bounds in world space, not screen space
         this.sprite.body.setImmovable(true); // Prevents physics from moving the body
 
         // Player properties
@@ -133,6 +133,10 @@ export class Player {
         const deltaSeconds = delta / 1000;
         this.worldX += worldVelX * effectiveSpeed * deltaSeconds;
         this.worldY += worldVelY * effectiveSpeed * deltaSeconds;
+
+        // Clamp to world bounds
+        this.worldX = Math.max(ISOMETRIC_CONFIG.WORLD_MIN_X, Math.min(ISOMETRIC_CONFIG.WORLD_MAX_X, this.worldX));
+        this.worldY = Math.max(ISOMETRIC_CONFIG.WORLD_MIN_Y, Math.min(ISOMETRIC_CONFIG.WORLD_MAX_Y, this.worldY));
 
         // Update sprite direction for red Gisela
         if (this.useDirectionalSprites && (worldVelX !== 0 || worldVelY !== 0)) {

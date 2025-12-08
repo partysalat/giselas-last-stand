@@ -20,6 +20,14 @@ export const TILE_HEIGHT_HALF = TILE_HEIGHT / 2; // 16
 // This affects movement speed feel - adjust after testing
 export const WORLD_SCALE = 1.0;
 
+// Screen origin offset to center the isometric view
+// Viewport is 1920x1080, center at (960, 540)
+// World center (15, 12) should map to screen center
+// World (15, 12) in isometric: isoX = (15-12)*32 = 96, isoY = (15+12)*16 = 432
+// So origin offset = screen_center - iso_coords = (960-96, 540-432) = (864, 108)
+export const SCREEN_ORIGIN_X = 864;
+export const SCREEN_ORIGIN_Y = 108;
+
 /**
  * Convert world coordinates to screen (pixel) coordinates
  * @param {number} worldX - World X position
@@ -29,8 +37,12 @@ export const WORLD_SCALE = 1.0;
  */
 export function worldToScreen(worldX, worldY, worldZ = 0) {
     // Classic isometric projection formula
-    const screenX = (worldX - worldY) * TILE_WIDTH_HALF;
-    const screenY = (worldX + worldY) * TILE_HEIGHT_HALF - worldZ;
+    const isoX = (worldX - worldY) * TILE_WIDTH_HALF;
+    const isoY = (worldX + worldY) * TILE_HEIGHT_HALF - worldZ;
+
+    // Add origin offset to center the view
+    const screenX = isoX + SCREEN_ORIGIN_X;
+    const screenY = isoY + SCREEN_ORIGIN_Y;
 
     return { screenX, screenY };
 }
@@ -44,12 +56,16 @@ export function worldToScreen(worldX, worldY, worldZ = 0) {
  * @returns {{worldX: number, worldY: number, worldZ: number}}
  */
 export function screenToWorld(screenX, screenY, worldZ = 0) {
-    // Inverse isometric projection
-    // Adjust screenY for height before converting
-    const adjustedScreenY = screenY + worldZ;
+    // Remove origin offset first
+    const isoX = screenX - SCREEN_ORIGIN_X;
+    const isoY = screenY - SCREEN_ORIGIN_Y;
 
-    const worldX = (screenX / TILE_WIDTH_HALF + adjustedScreenY / TILE_HEIGHT_HALF) / 2;
-    const worldY = (adjustedScreenY / TILE_HEIGHT_HALF - screenX / TILE_WIDTH_HALF) / 2;
+    // Inverse isometric projection
+    // Adjust isoY for height before converting
+    const adjustedIsoY = isoY + worldZ;
+
+    const worldX = (isoX / TILE_WIDTH_HALF + adjustedIsoY / TILE_HEIGHT_HALF) / 2;
+    const worldY = (adjustedIsoY / TILE_HEIGHT_HALF - isoX / TILE_WIDTH_HALF) / 2;
 
     return { worldX, worldY, worldZ };
 }

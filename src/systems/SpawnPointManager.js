@@ -3,6 +3,8 @@
  * Manages thematic spawn points for saloon arena
  */
 
+import { screenToWorld } from '../utils/CoordinateTransform.js';
+
 export const SPAWN_POINT_TYPES = {
     MAIN_DOOR: 'main_door',
     WINDOW_LEFT: 'window_left',
@@ -34,31 +36,32 @@ export class SpawnPointManager {
     constructor(scene) {
         this.scene = scene;
 
-        // Spawn point coordinates (positioned outside arena, enemies move in)
+        // Spawn point coordinates in WORLD SPACE (positioned outside arena, enemies move in)
+        // Floor bounds: X(0-30), Y(-0.5-24.5)
         this.spawnPoints = {
             [SPAWN_POINT_TYPES.MAIN_DOOR]: {
-                x: 960,              // Center bottom
-                y: 1180,             // Below screen (1080 + margin)
-                entryX: 960,
-                entryY: 980,         // Target position after animation
+                x: 15,               // Center X
+                y: 27,               // South (below floor)
+                entryX: 15,
+                entryY: 20,          // Target position after animation
                 type: SPAWN_POINT_TYPES.MAIN_DOOR,
                 lastSpawnTime: 0,
                 broken: false        // N/A for door
             },
             [SPAWN_POINT_TYPES.WINDOW_LEFT]: {
-                x: -100,             // Left of screen
-                y: 400,              // Mid-height
-                entryX: 200,         // Target position after animation
-                entryY: 400,
+                x: -3,               // West (left of floor)
+                y: 12,               // Mid-height
+                entryX: 3,           // Target position after animation
+                entryY: 12,
                 type: SPAWN_POINT_TYPES.WINDOW_LEFT,
                 lastSpawnTime: 0,
                 broken: false
             },
             [SPAWN_POINT_TYPES.WINDOW_RIGHT]: {
-                x: 2020,             // Right of screen
-                y: 400,              // Mid-height
-                entryX: 1720,        // Target position after animation
-                entryY: 400,
+                x: 33,               // East (right of floor)
+                y: 12,               // Mid-height
+                entryX: 27,          // Target position after animation
+                entryY: 12,
                 type: SPAWN_POINT_TYPES.WINDOW_RIGHT,
                 lastSpawnTime: 0,
                 broken: false

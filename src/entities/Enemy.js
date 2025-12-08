@@ -7,10 +7,10 @@ const ENEMY_TYPES = {
     lobster: {
         name: 'Bandit Lobster',
         health: 30,
-        speed: 80,
+        speed: 3.0, // World units per second
         damage: 10,
         color: 0xff6600,
-        radius: 15,
+        radius: 0.3, // Collision radius in world units (~15 pixels)
         behavior: 'ranged_shooter',        // CHANGED for ranged combat
         attackRange: 400,
         attackCooldown: 3500,              // CHANGED - 3.5 second cooldown
@@ -21,10 +21,10 @@ const ENEMY_TYPES = {
     shrimp: {
         name: 'Quick-Draw Shrimp',
         health: 15,
-        speed: 200,
+        speed: 7.0, // World units per second (faster than player)
         damage: 5,
         color: 0xff9999,
-        radius: 10,
+        radius: 0.2, // Collision radius in world units (~10 pixels)
         behavior: 'ranged_kiter',          // CHANGED for ranged combat
         attackRange: 350,                  // CHANGED
         attackCooldown: 1500,              // CHANGED - 1.5 second cooldown
@@ -35,10 +35,10 @@ const ENEMY_TYPES = {
     hermit: {
         name: 'Hermit Crab Tank',
         health: 100,
-        speed: 40,
+        speed: 1.5, // World units per second (slow tank)
         damage: 20,
         color: 0x8b4513,
-        radius: 25,
+        radius: 0.5, // Collision radius in world units (~25 pixels)
         behavior: 'tank',
         attackRange: 100,
         attackCooldown: 2000
@@ -46,10 +46,10 @@ const ENEMY_TYPES = {
     jellyfish: {
         name: 'Jellyfish Ghost',
         health: 40,
-        speed: 60,
+        speed: 2.5, // World units per second
         damage: 15,
         color: 0xcc99ff,
-        radius: 18,
+        radius: 0.35, // Collision radius in world units (~18 pixels)
         behavior: 'teleport',
         attackRange: 500,
         attackCooldown: 3000,
@@ -58,10 +58,10 @@ const ENEMY_TYPES = {
     flyingfish: {
         name: 'Flying Fish',
         health: 20,
-        speed: 150,
+        speed: 5.5, // World units per second (slightly faster than player)
         damage: 8,
         color: 0x00ccff,
-        radius: 12,
+        radius: 0.25, // Collision radius in world units (~12 pixels)
         behavior: 'swoop',
         attackRange: 600,
         attackCooldown: 2500,
@@ -70,10 +70,10 @@ const ENEMY_TYPES = {
     boss_iron_shell: {
         name: 'Iron Shell',
         health: 400,
-        speed: 60,
+        speed: 2.5, // World units per second
         damage: 15,
         color: 0x4a4a4a,
-        radius: 45,  // 3x normal hermit (15)
+        radius: 0.9,  // Collision radius in world units (~45 pixels, 3x hermit)
         behavior: 'boss_iron_shell',
         attackRange: 500,
         attackCooldown: 3000,
@@ -93,10 +93,10 @@ const ENEMY_TYPES = {
     boss_kraken_arm: {
         name: "The Kraken's Arm",
         health: 300,  // Body health
-        speed: 40,
+        speed: 1.5, // World units per second (slow boss)
         damage: 20,
         color: 0x9966cc,
-        radius: 60,
+        radius: 1.2,  // Collision radius in world units (~60 pixels)
         behavior: 'boss_kraken_arm',
         attackRange: 600,
         attackCooldown: 4000,
@@ -119,10 +119,10 @@ const ENEMY_TYPES = {
     boss_leviathan: {
         name: 'The Leviathan',
         health: 400,  // Per phase
-        speed: 80,
+        speed: 3.0, // World units per second
         damage: 25,
         color: 0xff4500,
-        radius: 60,
+        radius: 1.2,  // Collision radius in world units (~60 pixels)
         behavior: 'boss_leviathan',
         attackRange: 700,
         attackCooldown: 5000,
@@ -254,8 +254,8 @@ export class Enemy {
 
         scene.physics.add.existing(this.sprite);
 
-        // Physics configuration
-        this.sprite.body.setCollideWorldBounds(true);
+        // Physics body is only used for collision detection, not movement
+        // Don't use setCollideWorldBounds - we handle bounds in world space, not screen space
 
         // Apply difficulty multipliers to stats
         const scaledHealth = Math.ceil(config.health * this.difficultyMultipliers.health);
@@ -429,8 +429,8 @@ export class Enemy {
         let closestDistance = Infinity;
 
         livingPlayers.forEach(player => {
-            const dx = player.getX() - this.sprite.x;
-            const dy = player.getY() - this.sprite.y;
+            const dx = player.getX() - this.worldX;
+            const dy = player.getY() - this.worldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < closestDistance) {
@@ -471,8 +471,8 @@ export class Enemy {
      * @returns {number}
      */
     distanceTo(prop) {
-        const dx = this.sprite.x - prop.x;
-        const dy = this.sprite.y - prop.y;
+        const dx = this.worldX - prop.x;
+        const dy = this.worldY - prop.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
@@ -502,8 +502,8 @@ export class Enemy {
         if (!this.scene.fortificationManager) return angle;
 
         const raycastDistance = 60;
-        const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
-        const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
+        const checkX = this.worldX + Math.cos(angle) * raycastDistance;
+        const checkY = this.worldY + Math.sin(angle) * raycastDistance;
 
         const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY, 40);
         if (!hasObstacle) {
@@ -521,8 +521,8 @@ export class Enemy {
         ];
 
         for (const testAngle of testAngles) {
-            const testX = this.sprite.x + Math.cos(testAngle) * raycastDistance;
-            const testY = this.sprite.y + Math.sin(testAngle) * raycastDistance;
+            const testX = this.worldX + Math.cos(testAngle) * raycastDistance;
+            const testY = this.worldY + Math.sin(testAngle) * raycastDistance;
 
             if (!this.scene.fortificationManager.checkObstacleAt(testX, testY, 40)) {
                 return testAngle; // Found clear path
@@ -549,8 +549,8 @@ export class Enemy {
         const propsInWay = this.scene.fortificationManager.fortificationProps.filter(prop => {
             if (!prop.isAlive()) return false;
 
-            const dx = prop.x - this.sprite.x;
-            const dy = prop.y - this.sprite.y;
+            const dx = prop.x - this.worldX;
+            const dy = prop.y - this.worldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             return distance < pushRadius;
@@ -560,8 +560,8 @@ export class Enemy {
         propsInWay.forEach(prop => {
             if (prop.weightClass === 'light' || prop.weightClass === 'medium') {
                 // Push prop away from boss
-                const dx = prop.x - this.sprite.x;
-                const dy = prop.y - this.sprite.y;
+                const dx = prop.x - this.worldX;
+                const dy = prop.y - this.worldY;
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance > 0) {
@@ -586,8 +586,8 @@ export class Enemy {
         });
 
         // Check if there are heavy props blocking the path
-        const checkX = this.sprite.x + Math.cos(angle) * raycastDistance;
-        const checkY = this.sprite.y + Math.sin(angle) * raycastDistance;
+        const checkX = this.worldX + Math.cos(angle) * raycastDistance;
+        const checkY = this.worldY + Math.sin(angle) * raycastDistance;
 
         // Find heavy props in the path
         const heavyPropsInWay = propsInWay.filter(prop => {
@@ -609,8 +609,8 @@ export class Enemy {
         ];
 
         for (const testAngle of testAngles) {
-            const testX = this.sprite.x + Math.cos(testAngle) * raycastDistance;
-            const testY = this.sprite.y + Math.sin(testAngle) * raycastDistance;
+            const testX = this.worldX + Math.cos(testAngle) * raycastDistance;
+            const testY = this.worldY + Math.sin(testAngle) * raycastDistance;
 
             // Check if this path has heavy props
             const hasHeavyObstacle = this.scene.fortificationManager.fortificationProps.some(prop => {
@@ -656,8 +656,8 @@ export class Enemy {
         // Skip update if stunned
         if (this.stunned) return;
 
-        // Convert player world coordinates to screen coordinates for legacy behavior methods
-        const { screenX: playerScreenX, screenY: playerScreenY } = worldToScreen(playerWorldX, playerWorldY, 0);
+        // Store delta for use in behavior methods (convert ms to seconds)
+        this.deltaSeconds = (delta || 16.67) / 1000;
 
         // Handle formation positioning for movement
         let formationHandled = false;
@@ -670,44 +670,43 @@ export class Enemy {
         }
 
         // Route to behavior-specific update for attack logic
-        // Pass formationHandled flag to skip movement if already positioned
+        // Pass world coordinates directly - behavior methods now work in world space
         switch(this.config.behavior) {
             case 'ranged_shooter':
-                this.updateRangedShooter(time, playerScreenX, playerScreenY, formationHandled);
+                this.updateRangedShooter(time, playerWorldX, playerWorldY, formationHandled);
                 break;
             case 'ranged_kiter':
-                this.updateRangedKiter(time, playerScreenX, playerScreenY, formationHandled);
+                this.updateRangedKiter(time, playerWorldX, playerWorldY, formationHandled);
                 break;
             case 'basic_shooter':
-                this.updateBasicShooter(time, playerScreenX, playerScreenY, formationHandled);
+                this.updateBasicShooter(time, playerWorldX, playerWorldY, formationHandled);
                 break;
             case 'fast_melee':
-                this.updateFastMelee(time, playerScreenX, playerScreenY, formationHandled);
+                this.updateFastMelee(time, playerWorldX, playerWorldY, formationHandled);
                 break;
             case 'tank':
-                this.updateTank(time, playerScreenX, playerScreenY, formationHandled);
+                this.updateTank(time, playerWorldX, playerWorldY, formationHandled);
                 break;
             case 'teleport':
-                this.updateTeleport(time, playerScreenX, playerScreenY, formationHandled);
+                this.updateTeleport(time, playerWorldX, playerWorldY, formationHandled);
                 break;
             case 'swoop':
-                this.updateSwoop(time, playerScreenX, playerScreenY, formationHandled);
+                this.updateSwoop(time, playerWorldX, playerWorldY, formationHandled);
                 break;
             case 'boss_iron_shell':
-                this.updateBossIronShell(time, playerScreenX, playerScreenY);
+                this.updateBossIronShell(time, playerWorldX, playerWorldY);
                 break;
             case 'boss_kraken_arm':
-                this.updateBossKrakenArm(time, playerScreenX, playerScreenY);
+                this.updateBossKrakenArm(time, playerWorldX, playerWorldY);
                 break;
             case 'boss_leviathan':
-                this.updateBossLeviathan(time, playerScreenX, playerScreenY);
+                this.updateBossLeviathan(time, playerWorldX, playerWorldY);
                 break;
         }
 
-        // After behavior methods update sprite position, sync world position from sprite
-        const worldPos = screenToWorld(this.sprite.x, this.sprite.y, 0);
-        this.worldX = worldPos.worldX;
-        this.worldY = worldPos.worldY;
+        // Update sprite position from world coordinates
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+        this.sprite.setPosition(screenX, screenY);
 
         // Update depth for proper isometric sorting
         this.sprite.setDepth(calculateDepth(this.worldY, 10));
@@ -794,8 +793,8 @@ export class Enemy {
 
         // Only handle movement if not in formation
         if (!skipMovement) {
-            const dx = playerX - this.sprite.x;
-            const dy = playerY - this.sprite.y;
+            const dx = playerX - this.worldX;
+            const dy = playerY - this.worldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             // Shooters maintain optimal distance
@@ -804,26 +803,24 @@ export class Enemy {
 
                 if (distance < optimalDistance - 50) {
                     // Too close - back away
-                    this.sprite.x -= (dx / distance) * this.config.speed * 0.5;
-                    this.sprite.y -= (dy / distance) * this.config.speed * 0.5;
+                    const deltaSeconds = this.deltaSeconds;
+                    this.worldX -= (dx / distance) * this.config.speed * 0.5 * deltaSeconds;
+                    this.worldY -= (dy / distance) * this.config.speed * 0.5 * deltaSeconds;
                     return;
                 }
             }
 
             // Move toward player at medium speed
-            if (distance > 50) {
+            if (distance > 5) {  // Changed from 50 to 5 world units
                 let angle = Math.atan2(dy, dx);
 
                 // TODO: Implement proper A* pathfinding for smoother enemy navigation
                 // Apply obstacle avoidance
                 angle = this.applyObstacleAvoidance(angle);
 
-                this.sprite.body.setVelocity(
-                    Math.cos(angle) * this.speed,
-                    Math.sin(angle) * this.speed
-                );
-            } else {
-                this.sprite.body.setVelocity(0, 0);
+                const deltaSeconds = this.deltaSeconds;
+                this.worldX += Math.cos(angle) * this.speed * deltaSeconds;
+                this.worldY += Math.sin(angle) * this.speed * deltaSeconds;
             }
         }
     }
@@ -843,15 +840,14 @@ export class Enemy {
 
         // Only handle movement if not in formation
         if (!skipMovement) {
-            const dx = playerX - this.sprite.x;
-            const dy = playerY - this.sprite.y;
+            const dx = playerX - this.worldX;
+            const dy = playerY - this.worldY;
 
             // Dart quickly toward player
             const angle = Math.atan2(dy, dx);
-            this.sprite.body.setVelocity(
-                Math.cos(angle) * this.speed,
-                Math.sin(angle) * this.speed
-            );
+            const deltaSeconds = this.deltaSeconds;
+            this.worldX += Math.cos(angle) * this.speed * deltaSeconds;
+            this.worldY += Math.sin(angle) * this.speed * deltaSeconds;
         }
     }
 
@@ -870,8 +866,8 @@ export class Enemy {
 
         // Only handle movement if not in formation
         if (!skipMovement) {
-            const dx = playerX - this.sprite.x;
-            const dy = playerY - this.sprite.y;
+            const dx = playerX - this.worldX;
+            const dy = playerY - this.worldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             // Slow advance toward player
@@ -881,19 +877,16 @@ export class Enemy {
                 // Apply obstacle avoidance
                 angle = this.applyObstacleAvoidance(angle);
 
-                this.sprite.body.setVelocity(
-                    Math.cos(angle) * this.speed,
-                    Math.sin(angle) * this.speed
-                );
-            } else {
-                this.sprite.body.setVelocity(0, 0);
+                const deltaSeconds = this.deltaSeconds;
+                this.worldX += Math.cos(angle) * this.speed * deltaSeconds;
+                this.worldY += Math.sin(angle) * this.speed * deltaSeconds;
             }
         }
     }
 
     updateTeleport(time, playerX, playerY, skipMovement = false) {
-        const dx = playerX - this.sprite.x;
-        const dy = playerY - this.sprite.y;
+        const dx = playerX - this.worldX;
+        const dy = playerY - this.worldY;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         // Only handle movement/teleport if not in formation
@@ -903,14 +896,15 @@ export class Enemy {
                 // Teleport closer to player (but not too close)
                 const angle = Math.atan2(dy, dx);
                 const teleportDistance = 150;
-                const newX = this.sprite.x + Math.cos(angle) * teleportDistance;
-                const newY = this.sprite.y + Math.sin(angle) * teleportDistance;
+                const newX = this.worldX + Math.cos(angle) * teleportDistance;
+                const newY = this.worldY + Math.sin(angle) * teleportDistance;
 
                 // Clamp to world bounds
                 const clampedX = Math.max(50, Math.min(1870, newX));
                 const clampedY = Math.max(50, Math.min(1030, newY));
 
-                this.sprite.setPosition(clampedX, clampedY);
+                this.worldX = clampedX;
+                this.worldY = clampedY;
                 this.lastTeleport = time;
 
                 // Visual effect
@@ -919,18 +913,17 @@ export class Enemy {
 
             // Float slowly toward player
             const angle = Math.atan2(dy, dx);
-            this.sprite.body.setVelocity(
-                Math.cos(angle) * this.speed,
-                Math.sin(angle) * this.speed
-            );
+            const deltaSeconds = this.deltaSeconds;
+            this.worldX += Math.cos(angle) * this.speed * deltaSeconds;
+            this.worldY += Math.sin(angle) * this.speed * deltaSeconds;
         }
     }
 
     updateSwoop(time, playerX, playerY, skipMovement = false) {
         // Only handle movement if not in formation
         if (!skipMovement) {
-            const dx = playerX - this.sprite.x;
-            const dy = playerY - this.sprite.y;
+            const dx = playerX - this.worldX;
+            const dy = playerY - this.worldY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             switch(this.swoopPhase) {
@@ -938,10 +931,9 @@ export class Enemy {
                     // Circle around player at high altitude
                     const angle = Math.atan2(dy, dx) + Math.PI / 2;
                     // Flying fish flies over obstacles (no obstacle avoidance needed)
-                    this.sprite.body.setVelocity(
-                        Math.cos(angle) * this.speed * 0.6,
-                        Math.sin(angle) * this.speed * 0.6
-                    );
+                    const deltaSeconds = this.deltaSeconds;
+                    this.worldX += Math.cos(angle) * this.speed * 0.6 * deltaSeconds;
+                    this.worldY += Math.sin(angle) * this.speed * 0.6 * deltaSeconds;
 
                     // Prepare swoop if in range
                     if (distance < this.attackRange && time - this.nextAttack > this.attackCooldown) {
@@ -954,19 +946,18 @@ export class Enemy {
                 case 'swooping':
                     // Fast attack toward saved target position
                     const swoopAngle = Math.atan2(
-                        this.swoopTarget.y - this.sprite.y,
-                        this.swoopTarget.x - this.sprite.x
+                        this.swoopTarget.y - this.worldY,
+                        this.swoopTarget.x - this.worldX
                     );
                     // Flying fish flies over obstacles (no obstacle avoidance needed)
-                    this.sprite.body.setVelocity(
-                        Math.cos(swoopAngle) * this.speed * 1.5,
-                        Math.sin(swoopAngle) * this.speed * 1.5
-                    );
+                    const deltaSeconds2 = 1/60;
+                    this.worldX += Math.cos(swoopAngle) * this.speed * 1.5 * deltaSeconds2;
+                    this.worldY += Math.sin(swoopAngle) * this.speed * 1.5 * deltaSeconds2;
 
                     // Check if reached target
                     const targetDist = Math.sqrt(
-                        Math.pow(this.swoopTarget.x - this.sprite.x, 2) +
-                        Math.pow(this.swoopTarget.y - this.sprite.y, 2)
+                        Math.pow(this.swoopTarget.x - this.worldX, 2) +
+                        Math.pow(this.swoopTarget.y - this.worldY, 2)
                     );
 
                     if (targetDist < 30) {
@@ -978,10 +969,9 @@ export class Enemy {
                     // Move away from player after swoop
                     const escapeAngle = Math.atan2(dy, dx) + Math.PI;
                     // Flying fish flies over obstacles (no obstacle avoidance needed)
-                    this.sprite.body.setVelocity(
-                        Math.cos(escapeAngle) * this.speed,
-                        Math.sin(escapeAngle) * this.speed
-                    );
+                    const deltaSeconds3 = 1/60;
+                    this.worldX += Math.cos(escapeAngle) * this.speed * deltaSeconds3;
+                    this.worldY += Math.sin(escapeAngle) * this.speed * deltaSeconds3;
 
                     // Return to idle after getting distance
                     if (distance > 200) {
@@ -1032,7 +1022,7 @@ export class Enemy {
         }
 
         const leader = this.formationLeader;
-        const leaderPos = { x: leader.getSprite().x, y: leader.getSprite().y };
+        const leaderPos = { x: leader.worldX, y: leader.worldY };
         const closestPlayer = this.getClosestPlayer();
         const playerPos = { x: closestPlayer.getX(), y: closestPlayer.getY() };
 
@@ -1048,18 +1038,15 @@ export class Enemy {
         const targetY = leaderPos.y + Math.sin(angleToTank) * distance;
 
         // Move toward target position using velocity
-        const dx = targetX - this.getSprite().x;
-        const dy = targetY - this.getSprite().y;
+        const dx = targetX - this.worldX;
+        const dy = targetY - this.worldY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist > 10) {
             const moveSpeed = this.config.speed;
-            this.sprite.body.setVelocity(
-                (dx / dist) * moveSpeed,
-                (dy / dist) * moveSpeed
-            );
-        } else {
-            this.sprite.body.setVelocity(0, 0);
+            const deltaSeconds = this.deltaSeconds;
+            this.worldX += (dx / dist) * moveSpeed * deltaSeconds;
+            this.worldY += (dy / dist) * moveSpeed * deltaSeconds;
         }
     }
 
@@ -1082,18 +1069,15 @@ export class Enemy {
         const closestPlayer = this.getClosestPlayer();
         const playerPos = { x: closestPlayer.getX(), y: closestPlayer.getY() };
 
-        const dx = playerPos.x - this.getSprite().x;
-        const dy = playerPos.y - this.getSprite().y;
+        const dx = playerPos.x - this.worldX;
+        const dy = playerPos.y - this.worldY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist > 10) {
             const moveSpeed = this.config.speed * 0.6; // 40% slower when protecting
-            this.sprite.body.setVelocity(
-                (dx / dist) * moveSpeed,
-                (dy / dist) * moveSpeed
-            );
-        } else {
-            this.sprite.body.setVelocity(0, 0);
+            const deltaSeconds = this.deltaSeconds;
+            this.worldX += (dx / dist) * moveSpeed * deltaSeconds;
+            this.worldY += (dy / dist) * moveSpeed * deltaSeconds;
         }
     }
 
@@ -1231,8 +1215,8 @@ export class Enemy {
      * Advances toward player, stops, winds up, shoots
      */
     updateRangedShooter(time, playerX, playerY, skipMovement = false) {
-        const dx = playerX - this.sprite.x;
-        const dy = playerY - this.sprite.y;
+        const dx = playerX - this.worldX;
+        const dy = playerY - this.worldY;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const currentTime = Date.now();
 
@@ -1254,8 +1238,9 @@ export class Enemy {
 
             if (distance < optimalDistance - 50) {
                 // Too close - back away
-                this.sprite.x -= (dx / distance) * this.config.speed * 0.5;
-                this.sprite.y -= (dy / distance) * this.config.speed * 0.5;
+                const deltaSeconds = this.deltaSeconds;
+                this.worldX -= (dx / distance) * this.config.speed * 0.5 * deltaSeconds;
+                this.worldY -= (dy / distance) * this.config.speed * 0.5 * deltaSeconds;
                 return;
             }
         }
@@ -1286,12 +1271,9 @@ export class Enemy {
             // Start wind-up
             this.isWindingUp = true;
             this.windUpStartTime = currentTime;
-            if (!skipMovement) {
-                this.sprite.body.setVelocity(0, 0);
-            }
         } else if (!skipMovement) {
             // Only handle movement if not in formation
-            if (distance > 50) {
+            if (distance > 5) {  // Changed from 50 to 5 - move until very close
                 // Move toward player
                 let angle = Math.atan2(dy, dx);
 
@@ -1299,13 +1281,9 @@ export class Enemy {
                 // Apply obstacle avoidance
                 angle = this.applyObstacleAvoidance(angle);
 
-                this.sprite.body.setVelocity(
-                    Math.cos(angle) * this.config.speed,
-                    Math.sin(angle) * this.config.speed
-                );
-            } else {
-                // Close enough, stop
-                this.sprite.body.setVelocity(0, 0);
+                const deltaSeconds = this.deltaSeconds;
+                this.worldX += Math.cos(angle) * this.config.speed * deltaSeconds;
+                this.worldY += Math.sin(angle) * this.config.speed * deltaSeconds;
             }
         }
     }
@@ -1315,8 +1293,8 @@ export class Enemy {
      * Maintains distance while shooting rapidly
      */
     updateRangedKiter(time, playerX, playerY, skipMovement = false) {
-        const dx = playerX - this.sprite.x;
-        const dy = playerY - this.sprite.y;
+        const dx = playerX - this.worldX;
+        const dy = playerY - this.worldY;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const currentTime = Date.now();
         const canShoot = (currentTime - this.lastShotTime) >= this.config.attackCooldown;
@@ -1332,28 +1310,26 @@ export class Enemy {
             // Shooters maintain optimal distance (enhanced kiting for formation shooters)
             if (this.role === 'shooter' && distance < 250) {
                 // Too close - back away
-                this.sprite.x -= (dx / distance) * this.config.speed * 0.5;
-                this.sprite.y -= (dy / distance) * this.config.speed * 0.5;
+                const deltaSeconds = this.deltaSeconds;
+                this.worldX -= (dx / distance) * this.config.speed * 0.5 * deltaSeconds;
+                this.worldY -= (dy / distance) * this.config.speed * 0.5 * deltaSeconds;
                 return;
             }
 
+            const deltaSeconds = this.deltaSeconds;
             // Kiting behavior: maintain optimal distance
             if (distance < this.config.kiteDistance) {
                 // Too close - back away
                 let angle = Math.atan2(dy, dx) + Math.PI; // Reverse direction
                 angle = this.applyObstacleAvoidance(angle);
-                this.sprite.body.setVelocity(
-                    Math.cos(angle) * this.config.speed,
-                    Math.sin(angle) * this.config.speed
-                );
+                this.worldX += Math.cos(angle) * this.config.speed * deltaSeconds;
+                this.worldY += Math.sin(angle) * this.config.speed * deltaSeconds;
             } else if (distance > this.config.attackRange) {
                 // Too far - move closer
                 let angle = Math.atan2(dy, dx);
                 angle = this.applyObstacleAvoidance(angle);
-                this.sprite.body.setVelocity(
-                    Math.cos(angle) * this.config.speed,
-                    Math.sin(angle) * this.config.speed
-                );
+                this.worldX += Math.cos(angle) * this.config.speed * deltaSeconds;
+                this.worldY += Math.sin(angle) * this.config.speed * deltaSeconds;
             } else {
                 // Good range - strafe
                 const angle = Math.atan2(dy, dx);
@@ -1361,10 +1337,8 @@ export class Enemy {
                 let strafeAngle = angle + (Math.PI / 2) * strafeDirection;
                 strafeAngle = this.applyObstacleAvoidance(strafeAngle);
 
-                this.sprite.body.setVelocity(
-                    Math.cos(strafeAngle) * this.config.speed * 0.7,
-                    Math.sin(strafeAngle) * this.config.speed * 0.7
-                );
+                this.worldX += Math.cos(strafeAngle) * this.config.speed * 0.7 * deltaSeconds;
+                this.worldY += Math.sin(strafeAngle) * this.config.speed * 0.7 * deltaSeconds;
             }
         }
     }
@@ -1386,8 +1360,8 @@ export class Enemy {
 
         const bullet = new EnemyBullet(
             this.scene,
-            this.sprite.x,
-            this.sprite.y,
+            this.worldX,
+            this.worldY,
             targetX,
             targetY,
             scaledBulletDamage,
@@ -1417,8 +1391,8 @@ export class Enemy {
      * Phase 2 (50-0% HP): Faster movement with charge attacks
      */
     updateBossIronShell(time, playerX, playerY) {
-        const dx = playerX - this.sprite.x;
-        const dy = playerY - this.sprite.y;
+        const dx = playerX - this.worldX;
+        const dy = playerY - this.worldY;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const currentTime = Date.now();
 
@@ -1434,23 +1408,21 @@ export class Enemy {
 
             if (chargeElapsed < this.config.chargeTelegraphDuration) {
                 // Telegraph phase - stay still and glow
-                this.sprite.body.setVelocity(0, 0);
                 const pulseFactor = 1 + Math.sin(chargeElapsed / 50) * 0.2;
                 this.sprite.setScale(pulseFactor);
                 return;
             } else if (chargeElapsed < this.config.chargeTelegraphDuration + 800) {
                 // Charge phase - rapid movement
-                const chargeAngle = Math.atan2(this.chargeTargetY - this.sprite.y, this.chargeTargetX - this.sprite.x);
-                this.sprite.body.setVelocity(
-                    Math.cos(chargeAngle) * this.config.chargeSpeed,
-                    Math.sin(chargeAngle) * this.config.chargeSpeed
-                );
+                const chargeAngle = Math.atan2(this.chargeTargetY - this.worldY, this.chargeTargetX - this.worldX);
+                const deltaSeconds = this.deltaSeconds;
+                this.worldX += Math.cos(chargeAngle) * this.config.chargeSpeed * deltaSeconds;
+                this.worldY += Math.sin(chargeAngle) * this.config.chargeSpeed * deltaSeconds;
 
                 // Check collision with player during charge
                 const closestPlayer = this.getClosestPlayer();
                 const playerDist = Math.sqrt(
-                    Math.pow(closestPlayer.getX() - this.sprite.x, 2) +
-                    Math.pow(closestPlayer.getY() - this.sprite.y, 2)
+                    Math.pow(closestPlayer.getX() - this.worldX, 2) +
+                    Math.pow(closestPlayer.getY() - this.worldY, 2)
                 );
                 if (playerDist < this.config.radius + 30 && !this.chargeHitPlayer) {
                     closestPlayer.takeDamage(this.config.chargeDamage);
@@ -1461,7 +1433,6 @@ export class Enemy {
                 this.chargingAttack = false;
                 this.chargeHitPlayer = false;  // Reset for next charge
                 this.sprite.setScale(1);
-                this.sprite.body.setVelocity(0, 0);
                 this.lastChargeTime = currentTime;
             }
             return;
@@ -1506,10 +1477,9 @@ export class Enemy {
             // Apply boss obstacle handling (push light/medium props, avoid heavy)
             angle = this.applyBossObstacleHandling(angle);
 
-            this.sprite.body.setVelocity(
-                Math.cos(angle) * currentSpeed,
-                Math.sin(angle) * currentSpeed
-            );
+            const deltaSeconds = this.deltaSeconds;
+            this.worldX += Math.cos(angle) * currentSpeed * deltaSeconds;
+            this.worldY += Math.sin(angle) * currentSpeed * deltaSeconds;
 
             // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=right, 3=left)
             const absX = Math.abs(dx);
@@ -1522,8 +1492,6 @@ export class Enemy {
                 // Primarily horizontal movement
                 this.sprite.setFrame(dx < 0 ? 3 : 2);  // Moving left: frame 3, Moving right: frame 2
             }
-        } else if (!this.chargingAttack) {
-            this.sprite.body.setVelocity(0, 0);
         }
     }
 
@@ -1542,7 +1510,7 @@ export class Enemy {
 
     fireBubbleSpread(targetX, targetY) {
         // Calculate base angle to player
-        const baseAngle = Math.atan2(targetY - this.sprite.y, targetX - this.sprite.x);
+        const baseAngle = Math.atan2(targetY - this.worldY, targetX - this.worldX);
 
         // Scale bubble damage with difficulty multiplier
         const scaledBubbleDamage = Math.ceil(this.config.bubbleDamage * this.difficultyMultipliers.damage);
@@ -1554,10 +1522,10 @@ export class Enemy {
             const angle = baseAngle + spreadOffset;
             const bullet = new EnemyBullet(
                 this.scene,
-                this.sprite.x,
-                this.sprite.y,
-                this.sprite.x + Math.cos(angle) * 100,
-                this.sprite.y + Math.sin(angle) * 100,
+                this.worldX,
+                this.worldY,
+                this.worldX + Math.cos(angle) * 100,
+                this.worldY + Math.sin(angle) * 100,
                 scaledBubbleDamage,
                 'bubble'
             );
@@ -1574,8 +1542,8 @@ export class Enemy {
 
         for (let i = 0; i < tentacleCount; i++) {
             const angle = (i / tentacleCount) * Math.PI * 2;
-            const tentacleX = this.sprite.x + Math.cos(angle) * this.config.tentacleLength;
-            const tentacleY = this.sprite.y + Math.sin(angle) * this.config.tentacleLength;
+            const tentacleX = this.worldX + Math.cos(angle) * this.config.tentacleLength;
+            const tentacleY = this.worldY + Math.sin(angle) * this.config.tentacleLength;
 
             // Create tentacle visual using sprite (each tentacle uses a different frame for variety)
             const tentacleSprite = this.scene.add.sprite(
@@ -1636,8 +1604,8 @@ export class Enemy {
                 const angle = baseAngle + wobble;
 
                 this.tentacleSprites[i].setPosition(
-                    this.sprite.x + Math.cos(angle) * this.config.tentacleLength,
-                    this.sprite.y + Math.sin(angle) * this.config.tentacleLength
+                    this.worldX + Math.cos(angle) * this.config.tentacleLength,
+                    this.worldY + Math.sin(angle) * this.config.tentacleLength
                 );
 
                 // Regeneration
@@ -1691,17 +1659,16 @@ export class Enemy {
         }
 
         // Slow movement toward player
-        const dx = playerX - this.sprite.x;
-        const dy = playerY - this.sprite.y;
+        const dx = playerX - this.worldX;
+        const dy = playerY - this.worldY;
         let angle = Math.atan2(dy, dx);
 
         // Apply boss obstacle handling (push light/medium props, avoid heavy)
         angle = this.applyBossObstacleHandling(angle);
 
-        this.sprite.body.setVelocity(
-            Math.cos(angle) * this.config.speed,
-            Math.sin(angle) * this.config.speed
-        );
+        const deltaSeconds = this.deltaSeconds;
+        this.worldX += Math.cos(angle) * this.config.speed * deltaSeconds;
+        this.worldY += Math.sin(angle) * this.config.speed * deltaSeconds;
 
         // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=right, 3=left)
         const absX = Math.abs(dx);
@@ -1868,8 +1835,8 @@ export class Enemy {
      * Phase 2 (400 HP): Lightning strikes, tidal wave, spawns minions
      */
     updateBossLeviathan(time, playerX, playerY) {
-        const dx = playerX - this.sprite.x;
-        const dy = playerY - this.sprite.y;
+        const dx = playerX - this.worldX;
+        const dy = playerY - this.worldY;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const currentTime = Date.now();
 
@@ -1904,10 +1871,9 @@ export class Enemy {
             // Apply boss obstacle handling (push light/medium props, avoid heavy)
             angle = this.applyBossObstacleHandling(angle);
 
-            this.sprite.body.setVelocity(
-                Math.cos(angle) * this.config.speed,
-                Math.sin(angle) * this.config.speed
-            );
+            const deltaSeconds = this.deltaSeconds;
+            this.worldX += Math.cos(angle) * this.config.speed * deltaSeconds;
+            this.worldY += Math.sin(angle) * this.config.speed * deltaSeconds;
 
             // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=left, 3=right)
             if (this.useSprite) {
@@ -1926,8 +1892,6 @@ export class Enemy {
                 const textureName = this.currentPhase === 2 ? 'leviathan-evolved' : 'leviathan-boss';
                 this.sprite.setTexture(textureName, this.bossFrameIndex);
             }
-        } else if (!this.attackingInProgress) {
-            this.sprite.body.setVelocity(0, 0);
         }
     }
 
@@ -2010,7 +1974,7 @@ export class Enemy {
                 this.scene.environmentManager.destructionManager.handleBossEvent(
                     'boss_leviathan',
                     'lightningChain',
-                    { x: this.sprite.x, y: this.sprite.y }
+                    { x: this.worldX, y: this.worldY }
                 );
             }
             this.lastLightningChain = currentTime;
@@ -2043,10 +2007,10 @@ export class Enemy {
             const angle = angleStep * i;
             const bullet = new EnemyBullet(
                 this.scene,
-                this.sprite.x,
-                this.sprite.y,
-                this.sprite.x + Math.cos(angle) * 200,
-                this.sprite.y + Math.sin(angle) * 200,
+                this.worldX,
+                this.worldY,
+                this.worldX + Math.cos(angle) * 200,
+                this.worldY + Math.sin(angle) * 200,
                 scaledBulletStormDamage,
                 'storm'
             );
@@ -2082,8 +2046,8 @@ export class Enemy {
 
                 // Create shockwave visual
                 const shockwave = this.scene.add.circle(
-                    this.sprite.x,
-                    this.sprite.y,
+                    this.worldX,
+                    this.worldY,
                     this.config.groundPoundRadius,
                     0xff4500,
                     0.4
@@ -2092,8 +2056,8 @@ export class Enemy {
                 // Damage cover in radius
                 if (this.scene.coverManager) {
                     this.scene.coverManager.damageInRadius(
-                        this.sprite.x,
-                        this.sprite.y,
+                        this.worldX,
+                        this.worldY,
                         200,  // shockwave radius
                         50    // damage to cover
                     );
@@ -2102,8 +2066,8 @@ export class Enemy {
                 // Check if any player is in radius - USE CURRENT POSITION
                 if (this.scene.playerManager) {
                     this.scene.playerManager.getLivingPlayers().forEach(player => {
-                        const dx = player.getX() - this.sprite.x;
-                        const dy = player.getY() - this.sprite.y;
+                        const dx = player.getX() - this.worldX;
+                        const dy = player.getY() - this.worldY;
                         const distance = Math.sqrt(dx * dx + dy * dy);
 
                         if (distance <= this.config.groundPoundRadius) {
@@ -2133,7 +2097,7 @@ export class Enemy {
         // Telegraph line showing charge path
         const line = this.scene.add.line(
             0, 0,
-            this.sprite.x, this.sprite.y,
+            this.worldX, this.worldY,
             playerX, playerY,
             0xff0000
         );
@@ -2144,23 +2108,23 @@ export class Enemy {
             line.destroy();
 
             // Execute charge
-            const angle = Math.atan2(playerY - this.sprite.y, playerX - this.sprite.x);
+            const angle = Math.atan2(playerY - this.worldY, playerX - this.worldX);
             const chargeDistance = 400;
-            const targetX = this.sprite.x + Math.cos(angle) * chargeDistance;
-            const targetY = this.sprite.y + Math.sin(angle) * chargeDistance;
+            const targetX = this.worldX + Math.cos(angle) * chargeDistance;
+            const targetY = this.worldY + Math.sin(angle) * chargeDistance;
 
             this.scene.tweens.add({
-                targets: this.sprite,
-                x: targetX,
-                y: targetY,
+                targets: this,
+                worldX: targetX,
+                worldY: targetY,
                 duration: 600,
                 ease: 'Power2',
                 onUpdate: () => {
                     // Check collision with all players during charge
                     if (this.scene.playerManager) {
                         this.scene.playerManager.getLivingPlayers().forEach(player => {
-                            const dx = player.getX() - this.sprite.x;
-                            const dy = player.getY() - this.sprite.y;
+                            const dx = player.getX() - this.worldX;
+                            const dy = player.getY() - this.worldY;
                             const dist = Math.sqrt(dx * dx + dy * dy);
 
                             if (dist < this.config.radius + 20 && !this.chargeHitPlayer) {
@@ -2241,11 +2205,11 @@ export class Enemy {
         this.attackingInProgress = true;
 
         // Move to edge of arena
-        const targetEdgeX = this.sprite.x < 960 ? 100 : 1820;
+        const targetEdgeX = this.worldX < 960 ? 100 : 1820;
 
         this.scene.tweens.add({
-            targets: this.sprite,
-            x: targetEdgeX,
+            targets: this,
+            worldX: targetEdgeX,
             duration: 1000,
             onComplete: () => {
                 // Create wave traveling across screen
@@ -2307,12 +2271,12 @@ export class Enemy {
         this.attackingInProgress = true;
 
         // Calculate sweep angle toward player
-        const dx = playerX - this.sprite.x;
-        const dy = playerY - this.sprite.y;
+        const dx = playerX - this.worldX;
+        const dy = playerY - this.worldY;
         const angle = Math.atan2(dy, dx);
 
         // Visual telegraph
-        const arc = this.scene.add.arc(this.sprite.x, this.sprite.y, 300, angle - 90, angle + 90, false, 0xFF0000, 0.3);
+        const arc = this.scene.add.arc(this.worldX, this.worldY, 300, angle - 90, angle + 90, false, 0xFF0000, 0.3);
         arc.setDepth(15);
 
         this.scene.time.delayedCall(800, () => {
@@ -2323,15 +2287,15 @@ export class Enemy {
                 this.scene.environmentManager.destructionManager.handleBossEvent(
                     'boss_leviathan',
                     'tailSweep',
-                    { x: this.sprite.x, y: this.sprite.y, angle }
+                    { x: this.worldX, y: this.worldY, angle }
                 );
             }
 
             // Damage players in sweep arc
             if (this.scene.playerManager) {
                 this.scene.playerManager.getLivingPlayers().forEach(player => {
-                    const pdx = player.getX() - this.sprite.x;
-                    const pdy = player.getY() - this.sprite.y;
+                    const pdx = player.getX() - this.worldX;
+                    const pdy = player.getY() - this.worldY;
                     const dist = Math.sqrt(pdx * pdx + pdy * pdy);
                     const pAngle = Math.atan2(pdy, pdx);
                     const angleDiff = Math.abs(pAngle - angle);
@@ -2412,8 +2376,8 @@ export class Enemy {
 
         minionTypes.forEach((type, index) => {
             const angle = (index / minionTypes.length) * Math.PI * 2;
-            const spawnX = this.sprite.x + Math.cos(angle) * 150;
-            const spawnY = this.sprite.y + Math.sin(angle) * 150;
+            const spawnX = this.worldX + Math.cos(angle) * 150;
+            const spawnY = this.worldY + Math.sin(angle) * 150;
 
             const minion = new Enemy(this.scene, spawnX, spawnY, type);
             this.scene.enemies.push(minion);

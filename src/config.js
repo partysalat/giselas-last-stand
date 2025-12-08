@@ -78,17 +78,23 @@ export const ISOMETRIC_CONFIG = {
     // World space configuration
     WORLD_UNITS_PER_SCREEN_PIXEL: 0.1, // How movement feels
 
+    // World space bounds (matches isometric floor: 30x25 tiles centered at 15,12)
+    WORLD_MIN_X: 0,
+    WORLD_MAX_X: 30,
+    WORLD_MIN_Y: -0.5,
+    WORLD_MAX_Y: 24.5,
+
     // Height configuration
     GRAVITY: -800,             // Downward acceleration for jumping (negative = pulls down)
     JUMP_VELOCITY: 400,        // Initial upward velocity when jumping (positive = goes up!)
     MAX_JUMP_HEIGHT: 100,      // Maximum height player can reach
 
     // Collision configuration
-    PLAYER_HEIGHT: 40,         // Player's physical height in world units
-    PLAYER_RADIUS: 20,         // Player's ground collision radius
+    PLAYER_HEIGHT: 0.8,        // Player's physical height in world units (~40 pixels)
+    PLAYER_RADIUS: 0.4,        // Player's ground collision radius (~20 pixels)
 
     // Obstacle height categories (for jumping)
-    LOW_OBSTACLE: 30,          // Can jump over (barrels, chairs)
-    MEDIUM_OBSTACLE: 60,       // Hard to jump over (tables)
-    HIGH_OBSTACLE: 100,        // Cannot jump over (walls, counters)
+    LOW_OBSTACLE: 0.6,         // Can jump over (barrels, chairs) (~30 pixels)
+    MEDIUM_OBSTACLE: 1.2,      // Hard to jump over (tables) (~60 pixels)
+    HIGH_OBSTACLE: 2.0,        // Cannot jump over (walls, counters) (~100 pixels)
 };

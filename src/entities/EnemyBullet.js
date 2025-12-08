@@ -49,6 +49,9 @@ export class EnemyBullet {
 
         this.sprite = scene.add.circle(x, y, size / 2, color);
 
+        // Set depth to render above floor and most entities
+        this.sprite.setDepth(100);
+
         // Bubble bullets have a special visual style
         if (bulletType === 'bubble') {
             this.sprite.setStrokeStyle(2, 0x87CEEB, 0.8);

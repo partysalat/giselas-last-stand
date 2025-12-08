@@ -1,4 +1,4 @@
-import { worldToScreen, screenToWorld, worldDistance2D } from '../utils/CoordinateTransform.js';
+import { worldToScreen, screenToWorld, worldDistance2D, calculateDepth } from '../utils/CoordinateTransform.js';
 import { ISOMETRIC_CONFIG } from '../config.js';
 
 export class Bullet {
@@ -11,14 +11,20 @@ export class Bullet {
         this.worldZ = worldZ;
 
         // World space velocity
-        const speed = 8; // World units per second (reduced for better visibility)
+        const speed = 15; // World units per second (increased for visible travel)
         this.velocityX = Math.cos(angle) * speed;
         this.velocityY = Math.sin(angle) * speed;
         this.velocityZ = 0; // Bullets travel horizontally (no vertical arc for now)
 
         // Convert to screen space for sprite
         const { screenX, screenY } = worldToScreen(worldX, worldY, worldZ);
-        this.sprite = scene.add.image(screenX, screenY, 'bullet');
+
+        // Use a bright circle instead of image for better visibility
+        this.sprite = scene.add.circle(screenX, screenY, 8, 0xFFFF00); // Bright yellow circle
+        this.sprite.setStrokeStyle(2, 0xFF0000, 1); // Red outline
+
+        // DEBUG: Log bullet creation
+        console.log(`Bullet created at world(${worldX.toFixed(1)}, ${worldY.toFixed(1)}, ${worldZ.toFixed(1)}) -> screen(${screenX.toFixed(0)}, ${screenY.toFixed(0)}) depth=${calculateDepth(worldY, 100).toFixed(1)}`);
 
         // NOTE: We don't use Arcade Physics for bullets anymore
         // Custom world-space physics is more accurate for isometric
@@ -27,10 +33,11 @@ export class Bullet {
         this.damage = damage;
         this.alive = true;
         this.piercing = false;
-        this.radius = 4; // Collision radius in world units
+        this.radius = 0.1; // Collision radius in world units (~5 pixels)
 
-        // Visual properties
-        this.sprite.setDepth(50); // Bullets render above most things
+        // Visual properties - use dynamic depth sorting based on world Y position
+        // Base depth 100 ensures bullets render above floor and props
+        this.sprite.setDepth(calculateDepth(this.worldY, 100));
 
         // Note: Player bullets do not collide with ANY players (no friendly fire)
         // Collision checking is handled in GameScene.checkBulletCollisions()
@@ -49,6 +56,9 @@ export class Bullet {
         // Convert to screen space and update sprite
         const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
         this.sprite.setPosition(screenX, screenY);
+
+        // Update depth for proper isometric sorting
+        this.sprite.setDepth(calculateDepth(this.worldY, 100));
 
         // Destroy if off screen (check screen bounds)
         const bounds = this.scene.cameras.main.worldView;
