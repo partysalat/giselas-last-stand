@@ -18,7 +18,7 @@ import { FortificationManager } from '../systems/FortificationManager.js';
 import { IsometricFloor } from '../systems/IsometricFloor.js';
 import { CoordinateDebug } from '../systems/CoordinateDebug.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
-import { screenToWorld } from '../utils/CoordinateTransform.js';
+import { screenToWorld, calculateDepth } from '../utils/CoordinateTransform.js';
 
 // Game states
 const GAME_STATE = {
@@ -337,6 +337,34 @@ export class GameScene extends Phaser.Scene {
 
         // Create coordinate debug system (toggle with 'I' key)
         this.coordinateDebug = new CoordinateDebug(this);
+    }
+
+    updateDepthSorting() {
+        // Update depth for all players
+        this.playerManager.players.forEach(player => {
+            if (player.sprite) {
+                player.sprite.setDepth(calculateDepth(player.worldY, 10));
+            }
+        });
+
+        // Update depth for all enemies
+        this.enemies.forEach(enemy => {
+            if (enemy.alive && enemy.sprite) {
+                enemy.sprite.setDepth(calculateDepth(enemy.worldY, 10));
+            }
+        });
+
+        // Update depth for all props
+        if (this.coverManager) {
+            this.coverManager.props.forEach(prop => {
+                if (prop.alive && prop.sprite) {
+                    prop.sprite.setDepth(calculateDepth(prop.worldY, prop.layer === 'ground' ? 5 : 7));
+                }
+            });
+        }
+
+        // Bullets stay at fixed high depth
+        // Particles and effects stay at their assigned depths
     }
 
     update(time, delta) {
@@ -823,6 +851,9 @@ export class GameScene extends Phaser.Scene {
                 this.lastInputMode = firstInputManager.getInputMode();
             }
         }
+
+        // Update depth sorting every frame for proper isometric layering
+        this.updateDepthSorting();
 
         // Update coordinate debug visualization
         if (this.coordinateDebug) {
