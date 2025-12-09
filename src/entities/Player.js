@@ -308,11 +308,39 @@ export class Player {
         // Convert target from screen space to world space (assuming ground level)
         const targetWorld = screenToWorld(targetScreenX, targetScreenY, 0);
 
-        // Calculate angle in world space
-        const baseAngle = Math.atan2(
-            targetWorld.worldY - this.worldY,
-            targetWorld.worldX - this.worldX
-        );
+        // Calculate shooting parameters based on player height
+        const isAirborne = this.worldZ > 0;
+        let baseAngle, bulletVelocityZ, bulletHasGravity;
+
+        if (isAirborne) {
+            // 3D trajectory calculation
+            const targetHeight = this.getTargetCenterHeight(targetEnemy);
+            const playerShootHeight = this.worldZ + 20; // Chest height
+
+            // Calculate 3D distances
+            const dx = targetWorld.worldX - this.worldX;
+            const dy = targetWorld.worldY - this.worldY;
+            const dz = targetHeight - playerShootHeight;
+            const distance2D = Math.sqrt(dx * dx + dy * dy);
+
+            // Calculate 3D velocity components
+            const horizontalSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
+            const velocityX = (dx / distance2D) * horizontalSpeed;
+            const velocityY = (dy / distance2D) * horizontalSpeed;
+            bulletVelocityZ = (dz / distance2D) * horizontalSpeed;
+
+            // Calculate angle for horizontal component (still needed for spread shot)
+            baseAngle = Math.atan2(dy, dx);
+            bulletHasGravity = true;
+        } else {
+            // Ground level - existing 2D calculation
+            baseAngle = Math.atan2(
+                targetWorld.worldY - this.worldY,
+                targetWorld.worldX - this.worldX
+            );
+            bulletVelocityZ = 0;
+            bulletHasGravity = false;
+        }
 
         // Calculate damage with buffs
         let damage = this.bulletDamage;
@@ -350,7 +378,9 @@ export class Player {
                 this.worldY,
                 this.worldZ + 20, // Spawn at chest height
                 angle,
-                damage
+                damage,
+                bulletVelocityZ,  // NEW: Pass Z velocity
+                bulletHasGravity  // NEW: Pass gravity flag
             );
 
             // Mark piercing bullets
