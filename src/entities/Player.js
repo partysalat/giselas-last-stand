@@ -310,7 +310,7 @@ export class Player {
 
         // Calculate shooting parameters based on player height
         const isAirborne = this.worldZ > 0;
-        let baseAngle, bulletVelocityZ;
+        let baseAngle, bulletVelocityX, bulletVelocityY, bulletVelocityZ;
 
         if (isAirborne) {
             // 3D trajectory calculation - straight line to target, no gravity
@@ -323,8 +323,10 @@ export class Player {
             const dz = targetHeight - playerShootHeight;
             const distance3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            // Calculate velocity components for straight line to target
+            // Calculate ALL velocity components for straight line to target
             const bulletSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
+            bulletVelocityX = (dx / distance3D) * bulletSpeed;
+            bulletVelocityY = (dy / distance3D) * bulletSpeed;
             bulletVelocityZ = (dz / distance3D) * bulletSpeed;
 
             // Calculate angle for horizontal component (still needed for spread shot)
@@ -335,6 +337,8 @@ export class Player {
                 targetWorld.worldY - this.worldY,
                 targetWorld.worldX - this.worldX
             );
+            bulletVelocityX = null; // Let Bullet calculate from angle
+            bulletVelocityY = null;
             bulletVelocityZ = 0;
         }
 
@@ -376,7 +380,9 @@ export class Player {
                 angle,
                 damage,
                 bulletVelocityZ,  // Vertical velocity for 3D targeting
-                false             // No gravity - straight line trajectory
+                false,            // No gravity - straight line trajectory
+                bulletVelocityX,  // Horizontal X velocity (null for 2D)
+                bulletVelocityY   // Horizontal Y velocity (null for 2D)
             );
 
             // Mark piercing bullets

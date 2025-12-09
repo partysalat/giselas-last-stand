@@ -2,7 +2,7 @@ import { worldToScreen, screenToWorld, worldDistance2D, calculateDepth } from '.
 import { ISOMETRIC_CONFIG } from '../config.js';
 
 export class Bullet {
-    constructor(scene, worldX, worldY, worldZ, angle, damage = 10, velocityZ = 0, hasGravity = false) {
+    constructor(scene, worldX, worldY, worldZ, angle, damage = 10, velocityZ = 0, hasGravity = false, velocityX = null, velocityY = null) {
         this.scene = scene;
 
         // World space coordinates
@@ -11,23 +11,16 @@ export class Bullet {
         this.worldZ = worldZ;
 
         // World space velocity
-        const speed = ISOMETRIC_CONFIG.BULLET_SPEED;
-
-        if (velocityZ !== 0) {
-            // 3D trajectory - velocityZ is already calculated for straight line to target
-            // Calculate horizontal velocities to maintain the angle, speed will be normalized in Player
-            this.velocityX = Math.cos(angle) * speed;
-            this.velocityY = Math.sin(angle) * speed;
+        // If velocityX/Y are provided (3D trajectory), use them directly
+        // Otherwise calculate from angle (2D trajectory)
+        if (velocityX !== null && velocityY !== null) {
+            // 3D trajectory - velocities already calculated for perfect aim
+            this.velocityX = velocityX;
+            this.velocityY = velocityY;
             this.velocityZ = velocityZ;
-
-            // Normalize all three components to maintain bullet speed
-            const currentSpeed = Math.sqrt(this.velocityX ** 2 + this.velocityY ** 2 + this.velocityZ ** 2);
-            const scale = speed / currentSpeed;
-            this.velocityX *= scale;
-            this.velocityY *= scale;
-            this.velocityZ *= scale;
         } else {
-            // 2D trajectory (ground level)
+            // 2D trajectory (ground level) - calculate from angle
+            const speed = ISOMETRIC_CONFIG.BULLET_SPEED;
             this.velocityX = Math.cos(angle) * speed;
             this.velocityY = Math.sin(angle) * speed;
             this.velocityZ = 0;
