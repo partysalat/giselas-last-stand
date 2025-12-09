@@ -324,7 +324,8 @@ export class Player {
             const distance3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
             // Calculate ALL velocity components for straight line to target
-            const bulletSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
+            // Use 2x speed for better feel when shooting downward
+            const bulletSpeed = ISOMETRIC_CONFIG.BULLET_SPEED * 2;
             bulletVelocityX = (dx / distance3D) * bulletSpeed;
             bulletVelocityY = (dy / distance3D) * bulletSpeed;
             bulletVelocityZ = (dz / distance3D) * bulletSpeed;
