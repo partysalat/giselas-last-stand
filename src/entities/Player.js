@@ -323,10 +323,8 @@ export class Player {
             const dz = targetHeight - playerShootHeight;
             const distance2D = Math.sqrt(dx * dx + dy * dy);
 
-            // Calculate 3D velocity components
+            // Calculate vertical velocity component
             const horizontalSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
-            const velocityX = (dx / distance2D) * horizontalSpeed;
-            const velocityY = (dy / distance2D) * horizontalSpeed;
             bulletVelocityZ = (dz / distance2D) * horizontalSpeed;
 
             // Calculate angle for horizontal component (still needed for spread shot)
