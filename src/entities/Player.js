@@ -281,32 +281,30 @@ export class Player {
 
         this.nextFire = currentTime + cooldown;
 
-        // Calculate angle to target based on type
-        let targetScreenX, targetScreenY;
+        // Get target world coordinates based on type
+        let targetWorldX, targetWorldY;
 
         if (targetEnemy.type === 'tentacle') {
             const enemy = targetEnemy.enemy;
-            const tentSprite = enemy.tentacleSprites ? enemy.tentacleSprites[targetEnemy.tentacleIndex] : null;
-            if (tentSprite) {
-                targetScreenX = tentSprite.x;
-                targetScreenY = tentSprite.y;
-            } else {
-                return; // No sprite available
-            }
+            if (!enemy) return;
+            targetWorldX = enemy.worldX;
+            targetWorldY = enemy.worldY;
         } else if (targetEnemy.type === 'enemy') {
-            targetScreenX = targetEnemy.enemy.getSprite().x;
-            targetScreenY = targetEnemy.enemy.getSprite().y;
+            const enemy = targetEnemy.enemy;
+            if (!enemy) return;
+            targetWorldX = enemy.worldX;
+            targetWorldY = enemy.worldY;
         } else if (targetEnemy.type === 'prop') {
-            targetScreenX = targetEnemy.prop.x;
-            targetScreenY = targetEnemy.prop.y;
+            const prop = targetEnemy.prop;
+            if (!prop) return;
+            targetWorldX = prop.worldX;
+            targetWorldY = prop.worldY;
         } else {
             // Legacy format: plain enemy object
-            targetScreenX = targetEnemy.getSprite().x;
-            targetScreenY = targetEnemy.getSprite().y;
+            if (!targetEnemy.worldX) return;
+            targetWorldX = targetEnemy.worldX;
+            targetWorldY = targetEnemy.worldY;
         }
-
-        // Convert target from screen space to world space (assuming ground level)
-        const targetWorld = screenToWorld(targetScreenX, targetScreenY, 0);
 
         // Calculate shooting parameters based on player height
         const isAirborne = this.worldZ > 0;
@@ -318,8 +316,8 @@ export class Player {
             const playerShootHeight = this.worldZ + 20; // Chest height
 
             // Calculate 3D distances
-            const dx = targetWorld.worldX - this.worldX;
-            const dy = targetWorld.worldY - this.worldY;
+            const dx = targetWorldX - this.worldX;
+            const dy = targetWorldY - this.worldY;
             const dz = targetHeight - playerShootHeight;
             const distance3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -330,13 +328,22 @@ export class Player {
             bulletVelocityY = (dy / distance3D) * bulletSpeed;
             bulletVelocityZ = (dz / distance3D) * bulletSpeed;
 
+            // Debug: Check actual velocity magnitude
+            const actualSpeed = Math.sqrt(bulletVelocityX ** 2 + bulletVelocityY ** 2 + bulletVelocityZ ** 2);
+            console.log('3D Shooting:', {
+                distance3D,
+                bulletSpeed,
+                velocities: { x: bulletVelocityX, y: bulletVelocityY, z: bulletVelocityZ },
+                actualSpeed
+            });
+
             // Calculate angle for horizontal component (still needed for spread shot)
             baseAngle = Math.atan2(dy, dx);
         } else {
             // Ground level - existing 2D calculation
             baseAngle = Math.atan2(
-                targetWorld.worldY - this.worldY,
-                targetWorld.worldX - this.worldX
+                targetWorldY - this.worldY,
+                targetWorldX - this.worldX
             );
             bulletVelocityX = null; // Let Bullet calculate from angle
             bulletVelocityY = null;
