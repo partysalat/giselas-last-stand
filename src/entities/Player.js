@@ -311,18 +311,32 @@ export class Player {
         let baseAngle, bulletVelocityX, bulletVelocityY, bulletVelocityZ;
 
         if (isAirborne) {
-            // When jumping: aim horizontally at target, add slight downward velocity
+            // 3D trajectory calculation with proper unit conversion
+            // worldZ is in pixels, worldX/Y are in world units
+            // Conversion: 1 world unit = 50 pixels (based on PLAYER_HEIGHT: 0.8 = ~40px)
+            const PIXELS_PER_WORLD_UNIT = 50;
+
+            const targetHeight = this.getTargetCenterHeight(targetEnemy);
+            const playerShootHeight = this.worldZ + 20; // Chest height in pixels
+
+            // Convert heights to world units
+            const targetHeightWorld = targetHeight / PIXELS_PER_WORLD_UNIT;
+            const playerHeightWorld = playerShootHeight / PIXELS_PER_WORLD_UNIT;
+
+            // Calculate 3D distances in world units
             const dx = targetWorldX - this.worldX;
             const dy = targetWorldY - this.worldY;
-            const distance2D = Math.sqrt(dx * dx + dy * dy);
+            const dz = targetHeightWorld - playerHeightWorld;
+            const distance3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            // Full speed horizontally
+            // Calculate ALL velocity components for straight line to target
             const bulletSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
-            bulletVelocityX = (dx / distance2D) * bulletSpeed;
-            bulletVelocityY = (dy / distance2D) * bulletSpeed;
+            bulletVelocityX = (dx / distance3D) * bulletSpeed;
+            bulletVelocityY = (dy / distance3D) * bulletSpeed;
 
-            // Add small downward velocity (10% of horizontal speed)
-            bulletVelocityZ = -bulletSpeed * 0.1;
+            // Convert Z velocity from world units/sec to pixels/sec for Bullet class
+            const bulletVelocityZWorld = (dz / distance3D) * bulletSpeed;
+            bulletVelocityZ = bulletVelocityZWorld * PIXELS_PER_WORLD_UNIT;
 
             // Calculate angle for horizontal component (still needed for spread shot)
             baseAngle = Math.atan2(dy, dx);
