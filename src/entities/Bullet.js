@@ -11,10 +11,19 @@ export class Bullet {
         this.worldZ = worldZ;
 
         // World space velocity
+        // When velocityZ is non-zero, scale horizontal velocity to maintain constant total speed
         const speed = ISOMETRIC_CONFIG.BULLET_SPEED;
-        this.velocityX = Math.cos(angle) * speed;
-        this.velocityY = Math.sin(angle) * speed;
-        this.velocityZ = velocityZ; // Now accepts initial Z velocity
+        if (velocityZ !== 0) {
+            // Calculate horizontal speed component for 3D trajectory
+            const horizontalSpeedRatio = Math.sqrt(1 - Math.pow(velocityZ / speed, 2));
+            this.velocityX = Math.cos(angle) * speed * horizontalSpeedRatio;
+            this.velocityY = Math.sin(angle) * speed * horizontalSpeedRatio;
+        } else {
+            // 2D trajectory (ground level)
+            this.velocityX = Math.cos(angle) * speed;
+            this.velocityY = Math.sin(angle) * speed;
+        }
+        this.velocityZ = velocityZ;
 
         // Gravity flag
         this.hasGravity = hasGravity;
