@@ -310,10 +310,10 @@ export class Player {
 
         // Calculate shooting parameters based on player height
         const isAirborne = this.worldZ > 0;
-        let baseAngle, bulletVelocityZ, bulletHasGravity;
+        let baseAngle, bulletVelocityZ;
 
         if (isAirborne) {
-            // 3D trajectory calculation
+            // 3D trajectory calculation - straight line to target, no gravity
             const targetHeight = this.getTargetCenterHeight(targetEnemy);
             const playerShootHeight = this.worldZ + 20; // Chest height
 
@@ -321,15 +321,14 @@ export class Player {
             const dx = targetWorld.worldX - this.worldX;
             const dy = targetWorld.worldY - this.worldY;
             const dz = targetHeight - playerShootHeight;
-            const distance2D = Math.sqrt(dx * dx + dy * dy);
+            const distance3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            // Calculate vertical velocity component
-            const horizontalSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
-            bulletVelocityZ = (dz / distance2D) * horizontalSpeed;
+            // Calculate velocity components for straight line to target
+            const bulletSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
+            bulletVelocityZ = (dz / distance3D) * bulletSpeed;
 
             // Calculate angle for horizontal component (still needed for spread shot)
             baseAngle = Math.atan2(dy, dx);
-            bulletHasGravity = true;
         } else {
             // Ground level - existing 2D calculation
             baseAngle = Math.atan2(
@@ -337,7 +336,6 @@ export class Player {
                 targetWorld.worldX - this.worldX
             );
             bulletVelocityZ = 0;
-            bulletHasGravity = false;
         }
 
         // Calculate damage with buffs
@@ -377,8 +375,8 @@ export class Player {
                 this.worldZ + 20, // Spawn at chest height
                 angle,
                 damage,
-                bulletVelocityZ,  // NEW: Pass Z velocity
-                bulletHasGravity  // NEW: Pass gravity flag
+                bulletVelocityZ,  // Vertical velocity for 3D targeting
+                false             // No gravity - straight line trajectory
             );
 
             // Mark piercing bullets
