@@ -557,11 +557,20 @@ export class FortificationManager {
         return this.fortificationProps.some(prop => {
             if (!prop.isAlive()) return false;
 
-            const dx = prop.worldX - worldX;
-            const dy = prop.worldY - worldY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            // Use rectangle-to-circle collision detection for more accurate checks
+            const halfWidth = prop.volumeWidth / 2;
+            const halfDepth = prop.volumeDepth / 2;
 
-            return distance < (radius + Math.max(prop.volumeWidth, prop.volumeDepth) / 2);
+            // Find the closest point on the rectangle to the circle center
+            const closestX = Math.max(prop.worldX - halfWidth, Math.min(worldX, prop.worldX + halfWidth));
+            const closestY = Math.max(prop.worldY - halfDepth, Math.min(worldY, prop.worldY + halfDepth));
+
+            // Calculate distance from circle center to closest point
+            const dx = worldX - closestX;
+            const dy = worldY - closestY;
+            const distanceSquared = dx * dx + dy * dy;
+
+            return distanceSquared < (radius * radius);
         });
     }
 
