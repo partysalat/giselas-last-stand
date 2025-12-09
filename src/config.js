@@ -90,7 +90,8 @@ export const ISOMETRIC_CONFIG = {
     WORLD_MAX_Y: 24.5,
 
     // Height configuration
-    GRAVITY: -1200,            // Downward acceleration (tune for jump feel)
+    GRAVITY: -1200,            // Player downward acceleration (tune for jump feel)
+    BULLET_GRAVITY: -400,      // Bullet gravity (lighter than player for better aim)
     JUMP_VELOCITY: 500,        // Initial upward velocity (tune for height)
     MAX_JUMP_HEIGHT: 100,
 

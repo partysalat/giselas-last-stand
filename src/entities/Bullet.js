@@ -50,9 +50,10 @@ export class Bullet {
         // Update world position
         const deltaSeconds = delta / 1000;
 
-        // Apply gravity if enabled
+        // Apply gravity if enabled (use BULLET_GRAVITY if available, otherwise GRAVITY)
         if (this.hasGravity) {
-            this.velocityZ += ISOMETRIC_CONFIG.GRAVITY * deltaSeconds;
+            const gravity = ISOMETRIC_CONFIG.BULLET_GRAVITY || ISOMETRIC_CONFIG.GRAVITY;
+            this.velocityZ += gravity * deltaSeconds;
         }
 
         this.worldX += this.velocityX * deltaSeconds;
