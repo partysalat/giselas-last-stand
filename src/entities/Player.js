@@ -311,31 +311,18 @@ export class Player {
         let baseAngle, bulletVelocityX, bulletVelocityY, bulletVelocityZ;
 
         if (isAirborne) {
-            // 3D trajectory calculation - straight line to target, no gravity
-            const targetHeight = this.getTargetCenterHeight(targetEnemy);
-            const playerShootHeight = this.worldZ + 20; // Chest height
-
-            // Calculate 3D distances
+            // When jumping: aim horizontally at target, add slight downward velocity
             const dx = targetWorldX - this.worldX;
             const dy = targetWorldY - this.worldY;
-            const dz = targetHeight - playerShootHeight;
-            const distance3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            const distance2D = Math.sqrt(dx * dx + dy * dy);
 
-            // Calculate ALL velocity components for straight line to target
-            // Use 2x speed for better feel when shooting downward
-            const bulletSpeed = ISOMETRIC_CONFIG.BULLET_SPEED * 2;
-            bulletVelocityX = (dx / distance3D) * bulletSpeed;
-            bulletVelocityY = (dy / distance3D) * bulletSpeed;
-            bulletVelocityZ = (dz / distance3D) * bulletSpeed;
+            // Full speed horizontally
+            const bulletSpeed = ISOMETRIC_CONFIG.BULLET_SPEED;
+            bulletVelocityX = (dx / distance2D) * bulletSpeed;
+            bulletVelocityY = (dy / distance2D) * bulletSpeed;
 
-            // Debug: Check actual velocity magnitude
-            const actualSpeed = Math.sqrt(bulletVelocityX ** 2 + bulletVelocityY ** 2 + bulletVelocityZ ** 2);
-            console.log('3D Shooting:', {
-                distance3D,
-                bulletSpeed,
-                velocities: { x: bulletVelocityX, y: bulletVelocityY, z: bulletVelocityZ },
-                actualSpeed
-            });
+            // Add small downward velocity (10% of horizontal speed)
+            bulletVelocityZ = -bulletSpeed * 0.1;
 
             // Calculate angle for horizontal component (still needed for spread shot)
             baseAngle = Math.atan2(dy, dx);
