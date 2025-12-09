@@ -12,7 +12,7 @@ const ENEMY_TYPES = {
         color: 0xff6600,
         radius: 0.3, // Collision radius in world units (~15 pixels)
         behavior: 'ranged_shooter',        // CHANGED for ranged combat
-        attackRange: 400,
+        attackRange: 8,                    // Changed from 400 pixels to 8 world units
         attackCooldown: 3500,              // CHANGED - 3.5 second cooldown
         shootSpeed: 250,                   // NEW
         bulletDamage: 8,                   // NEW
@@ -26,11 +26,11 @@ const ENEMY_TYPES = {
         color: 0xff9999,
         radius: 0.2, // Collision radius in world units (~10 pixels)
         behavior: 'ranged_kiter',          // CHANGED for ranged combat
-        attackRange: 350,                  // CHANGED
+        attackRange: 7,                    // Changed from 350 pixels to 7 world units
         attackCooldown: 1500,              // CHANGED - 1.5 second cooldown
         shootSpeed: 400,                   // NEW
         bulletDamage: 4,                   // NEW
-        kiteDistance: 200                  // NEW - maintain distance while shooting
+        kiteDistance: 4                    // Changed from 200 pixels to 4 world units
     },
     hermit: {
         name: 'Hermit Crab Tank',
@@ -40,7 +40,7 @@ const ENEMY_TYPES = {
         color: 0x8b4513,
         radius: 0.5, // Collision radius in world units (~25 pixels)
         behavior: 'tank',
-        attackRange: 100,
+        attackRange: 2,                    // Changed from 100 pixels to 2 world units
         attackCooldown: 2000
     },
     jellyfish: {
@@ -51,7 +51,7 @@ const ENEMY_TYPES = {
         color: 0xcc99ff,
         radius: 0.35, // Collision radius in world units (~18 pixels)
         behavior: 'teleport',
-        attackRange: 500,
+        attackRange: 10,                   // Changed from 500 pixels to 10 world units
         attackCooldown: 3000,
         teleportCooldown: 5000
     },
@@ -63,9 +63,9 @@ const ENEMY_TYPES = {
         color: 0x00ccff,
         radius: 0.25, // Collision radius in world units (~12 pixels)
         behavior: 'swoop',
-        attackRange: 600,
+        attackRange: 12,                   // Changed from 600 pixels to 12 world units
         attackCooldown: 2500,
-        swoopDistance: 300
+        swoopDistance: 6                   // Changed from 300 pixels to 6 world units
     },
     boss_iron_shell: {
         name: 'Iron Shell',
@@ -75,7 +75,7 @@ const ENEMY_TYPES = {
         color: 0x4a4a4a,
         radius: 0.9,  // Collision radius in world units (~45 pixels, 3x hermit)
         behavior: 'boss_iron_shell',
-        attackRange: 500,
+        attackRange: 10,                   // Changed from 500 pixels to 10 world units
         attackCooldown: 3000,
         isBoss: true,
         // Phase-specific properties
@@ -85,7 +85,7 @@ const ENEMY_TYPES = {
         chargeSpeed: 400,
         chargeDamage: 20,
         chargeTelegraphDuration: 500,
-        chargeDistance: 400,
+        chargeDistance: 8,                 // Changed from 400 pixels to 8 world units
         bubbleSpeed: 300,
         bubbleDamage: 12,
         bubbleCount: 3
@@ -98,7 +98,7 @@ const ENEMY_TYPES = {
         color: 0x9966cc,
         radius: 1.2,  // Collision radius in world units (~60 pixels)
         behavior: 'boss_kraken_arm',
-        attackRange: 600,
+        attackRange: 12,                   // Changed from 600 pixels to 12 world units
         attackCooldown: 4000,
         isBoss: true,
         // Tentacle properties
@@ -107,7 +107,7 @@ const ENEMY_TYPES = {
         tentacleRegenRate: 5,  // HP per second
         tentacleLength: 40,
         // Ink cloud properties
-        inkCloudRadius: 100,
+        inkCloudRadius: 2,                 // Changed from 100 pixels to 2 world units
         inkCloudDuration: 8000,
         inkCloudSlowFactor: 0.2,
         inkTrigger1: 0.6,  // 60% body HP
@@ -124,7 +124,7 @@ const ENEMY_TYPES = {
         color: 0xff4500,
         radius: 1.2,  // Collision radius in world units (~60 pixels)
         behavior: 'boss_leviathan',
-        attackRange: 700,
+        attackRange: 14,                   // Changed from 700 pixels to 14 world units
         attackCooldown: 5000,
         isBoss: true,
         // Multi-phase
@@ -136,14 +136,14 @@ const ENEMY_TYPES = {
         bulletStormCooldown: 5000,
         bulletStormSpeed: 350,
         groundPoundDamage: 30,
-        groundPoundRadius: 200,
+        groundPoundRadius: 4,              // Changed from 200 pixels to 4 world units
         groundPoundCooldown: 8000,
         chargeDamage: 25,
         chargeSpeed: 500,
         chargeCooldown: 6000,
         lightningCount: 3,
         lightningDamage: 35,
-        lightningRadius: 80,
+        lightningRadius: 1.6,              // Changed from 80 pixels to 1.6 world units
         lightningCooldown: 7000,
         tidalWaveDamage: 40,
         tidalWaveCooldown: 12000,
@@ -624,7 +624,7 @@ export class Enemy {
                 const dy = prop.worldY - testY;
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                return distance < 60;
+                return distance < 1.2;  // Changed from 60 pixels to 1.2 world units
             });
 
             if (!hasHeavyObstacle) {
@@ -879,7 +879,7 @@ export class Enemy {
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             // Slow advance toward player
-            if (distance > 40) {
+            if (distance > 5) {  // Changed from 40 to 5 world units to match other enemy types
                 let angle = Math.atan2(dy, dx);
 
                 // Apply obstacle avoidance
@@ -900,10 +900,10 @@ export class Enemy {
         // Only handle movement/teleport if not in formation
         if (!skipMovement) {
             // Check if we should teleport
-            if (time - this.lastTeleport > this.config.teleportCooldown && distance > 200) {
+            if (time - this.lastTeleport > this.config.teleportCooldown && distance > 4) {  // Changed from 200 to 4 world units
                 // Teleport closer to player (but not too close)
                 const angle = Math.atan2(dy, dx);
-                const teleportDistance = 150;
+                const teleportDistance = 3;  // Changed from 150 to 3 world units
                 const newX = this.worldX + Math.cos(angle) * teleportDistance;
                 const newY = this.worldY + Math.sin(angle) * teleportDistance;
 
@@ -968,7 +968,7 @@ export class Enemy {
                         Math.pow(this.swoopTarget.y - this.worldY, 2)
                     );
 
-                    if (targetDist < 30) {
+                    if (targetDist < 0.6) {  // Changed from 30 pixels to 0.6 world units
                         this.swoopPhase = 'rising';
                     }
                     break;
@@ -982,7 +982,7 @@ export class Enemy {
                     this.worldY += Math.sin(escapeAngle) * this.speed * deltaSeconds3;
 
                     // Return to idle after getting distance
-                    if (distance > 200) {
+                    if (distance > 4) {  // Changed from 200 to 4 world units
                         this.swoopPhase = 'idle';
                     }
                     break;
@@ -1040,8 +1040,8 @@ export class Enemy {
             leaderPos.x - playerPos.x
         );
 
-        // Position shooter 100 pixels behind tank (away from player)
-        const distance = 100;
+        // Position shooter behind tank (away from player)
+        const distance = 2;  // Changed from 100 pixels to 2 world units
         const targetX = leaderPos.x + Math.cos(angleToTank) * distance;
         const targetY = leaderPos.y + Math.sin(angleToTank) * distance;
 
@@ -1321,7 +1321,7 @@ export class Enemy {
         // Only handle movement if not in formation
         if (!skipMovement) {
             // Shooters maintain optimal distance (enhanced kiting for formation shooters)
-            if (this.role === 'shooter' && distance < 250) {
+            if (this.role === 'shooter' && distance < 5) {  // Changed from 250 pixels to 5 world units
                 // Too close - back away
                 const deltaSeconds = this.deltaSeconds;
                 this.worldX -= (dx / distance) * this.worldSpeed * 0.5 * deltaSeconds;
@@ -1484,7 +1484,7 @@ export class Enemy {
         }
 
         // Movement toward player (when not attacking)
-        if (!this.chargingAttack && distance > 100) {
+        if (!this.chargingAttack && distance > 2) {  // Changed from 100 pixels to 2 world units
             let angle = Math.atan2(dy, dx);
 
             // Apply boss obstacle handling (push light/medium props, avoid heavy)
@@ -1740,7 +1740,7 @@ export class Enemy {
             const dy = closestPlayer.worldY - targetY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < 30) {
+            if (distance < 0.6) {  // Changed from 30 pixels to 0.6 world units
                 closestPlayer.takeDamage(this.config.damage);
             }
 
@@ -1878,7 +1878,7 @@ export class Enemy {
         }
 
         // Movement
-        if (!this.attackingInProgress && distance > 150) {
+        if (!this.attackingInProgress && distance > 3) {  // Changed from 150 pixels to 3 world units
             let angle = Math.atan2(dy, dx);
 
             // Apply boss obstacle handling (push light/medium props, avoid heavy)
@@ -1919,7 +1919,7 @@ export class Enemy {
 
         // Ground Pound attack
         const groundPoundReady = (currentTime - (this.lastGroundPound || 0)) >= this.config.groundPoundCooldown;
-        if (groundPoundReady && distance < 300) {
+        if (groundPoundReady && distance < 6) {  // Changed from 300 pixels to 6 world units
             this.groundPoundAttack(playerX, playerY);
             this.lastGroundPound = currentTime;
             return;
@@ -1927,7 +1927,7 @@ export class Enemy {
 
         // Charge attack
         const chargeReady = (currentTime - (this.lastCharge || 0)) >= this.config.chargeCooldown;
-        if (chargeReady && distance > 200 && distance <= this.config.attackRange) {
+        if (chargeReady && distance > 4 && distance <= this.config.attackRange) {  // Changed from 200 pixels to 4 world units
             this.chargeAttack(playerX, playerY);
             this.lastCharge = currentTime;
             return;
