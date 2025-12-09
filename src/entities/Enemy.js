@@ -506,8 +506,8 @@ export class Enemy {
         const checkX = this.worldX + Math.cos(angle) * raycastDistance;
         const checkY = this.worldY + Math.sin(angle) * raycastDistance;
 
-        // Use very small radius (world units) for obstacle checking
-        const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY, 0.5);
+        // Use enemy's own collision radius for obstacle checking
+        const hasObstacle = this.scene.fortificationManager.checkObstacleAt(checkX, checkY, this.radius);
         if (!hasObstacle) {
             return angle; // No obstacle, use original angle
         }
@@ -526,7 +526,7 @@ export class Enemy {
             const testX = this.worldX + Math.cos(testAngle) * raycastDistance;
             const testY = this.worldY + Math.sin(testAngle) * raycastDistance;
 
-            if (!this.scene.fortificationManager.checkObstacleAt(testX, testY, 0.5)) {
+            if (!this.scene.fortificationManager.checkObstacleAt(testX, testY, this.radius)) {
                 return testAngle; // Found clear path
             }
         }
@@ -664,9 +664,15 @@ export class Enemy {
 
         // Handle formation positioning for movement
         let formationHandled = false;
-        if (this.role === 'shooter' && this.formationLeader) {
-            this.updateShooterPosition();
-            formationHandled = true;
+        if (this.role === 'shooter') {
+            if (this.formationLeader && this.formationLeader.isAlive()) {
+                this.updateShooterPosition();
+                formationHandled = true;
+            } else {
+                // Leader is dead or missing - clear shooter role
+                this.role = null;
+                this.formationLeader = null;
+            }
         } else if (this.role === 'tank' && this.formationMembers.length > 0) {
             this.updateTankPosition();
             formationHandled = true;
