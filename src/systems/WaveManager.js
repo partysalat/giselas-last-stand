@@ -730,7 +730,7 @@ export class WaveManager {
 
         selectedTypes.forEach((type, index) => {
             const pos = positions[index];
-            const cocktail = new this.scene.Cocktail(this.scene, pos.x, pos.y, type);
+            const cocktail = new this.scene.Cocktail(this.scene, pos.x, pos.y, 0, type);
             this.scene.cocktails.push(cocktail);
         });
 
