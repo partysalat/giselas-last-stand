@@ -14,7 +14,6 @@ const ENEMY_TYPES = {
         behavior: 'ranged_shooter',        // CHANGED for ranged combat
         attackRange: 8,                    // Changed from 400 pixels to 8 world units
         attackCooldown: 3500,              // CHANGED - 3.5 second cooldown
-        shootSpeed: 250,                   // NEW
         bulletDamage: 8,                   // NEW
         telegraphDuration: 400             // NEW - wind-up before shot
     },
@@ -28,7 +27,6 @@ const ENEMY_TYPES = {
         behavior: 'ranged_kiter',          // CHANGED for ranged combat
         attackRange: 7,                    // Changed from 350 pixels to 7 world units
         attackCooldown: 1500,              // CHANGED - 1.5 second cooldown
-        shootSpeed: 400,                   // NEW
         bulletDamage: 4,                   // NEW
         kiteDistance: 4                    // Changed from 200 pixels to 4 world units
     },
@@ -86,7 +84,6 @@ const ENEMY_TYPES = {
         chargeDamage: 20,
         chargeTelegraphDuration: 500,
         chargeDistance: 8,                 // Changed from 400 pixels to 8 world units
-        bubbleSpeed: 300,
         bubbleDamage: 12,
         bubbleCount: 3
     },
@@ -134,12 +131,11 @@ const ENEMY_TYPES = {
         bulletStormCount: 12,
         bulletStormDamage: 8,
         bulletStormCooldown: 5000,
-        bulletStormSpeed: 350,
         groundPoundDamage: 30,
         groundPoundRadius: 4,              // Changed from 200 pixels to 4 world units
         groundPoundCooldown: 8000,
         chargeDamage: 25,
-        chargeSpeed: 500,
+        chargeSpeed: 10,                   // World units per second (was 500 pixels / 50)
         chargeCooldown: 6000,
         lightningCount: 3,
         lightningDamage: 35,
