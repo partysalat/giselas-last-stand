@@ -284,7 +284,7 @@ export class EnvironmentProp {
             this.sprite.body.setOffset(offsetX, offsetY);
         }
 
-        this.sprite.body.setImmovable(this.weightClass === 'heavy');
+        this.sprite.body.immovable = (this.weightClass === 'heavy');
 
         // For dynamic (light) props, enable physics interactions
         if (!isStatic) {
