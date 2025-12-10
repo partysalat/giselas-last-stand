@@ -556,9 +556,9 @@ export class Enemy {
     applyBossObstacleHandling(angle) {
         if (!this.scene.fortificationManager) return angle;
 
-        const raycastDistance = 60;
-        const pushRadius = 80; // How close boss needs to be to push props
-        const pushForce = 200; // How hard to push props
+        const raycastDistance = 1.2; // World units (60 pixels / 50)
+        const pushRadius = 1.6; // World units (80 pixels / 50) - How close boss needs to be to push props
+        const pushForce = 200; // Pixels per second (screen space force)
 
         // Find props in the way
         const propsInWay = this.scene.fortificationManager.fortificationProps.filter(prop => {
@@ -805,7 +805,8 @@ export class Enemy {
             if (nearbyFortification) {
                 const fortDistance = this.distanceTo(nearbyFortification);
                 // Attack if fortification is very close (blocking path)
-                if (fortDistance < 60) {
+                // Distance is in world units (1.2 world units = ~60 pixels)
+                if (fortDistance < 1.2) {
                     this.attackFortification(nearbyFortification);
                 }
             }
@@ -852,7 +853,8 @@ export class Enemy {
             if (nearbyFortification) {
                 const fortDistance = this.distanceTo(nearbyFortification);
                 // Attack if fortification is very close (blocking path)
-                if (fortDistance < 60) {
+                // Distance is in world units (1.2 world units = ~60 pixels)
+                if (fortDistance < 1.2) {
                     this.attackFortification(nearbyFortification);
                 }
             }
@@ -878,7 +880,8 @@ export class Enemy {
             if (nearbyFortification) {
                 const fortDistance = this.distanceTo(nearbyFortification);
                 // Attack if fortification is very close (blocking path)
-                if (fortDistance < 60) {
+                // Distance is in world units (1.2 world units = ~60 pixels)
+                if (fortDistance < 1.2) {
                     this.attackFortification(nearbyFortification);
                 }
             }
@@ -1062,7 +1065,8 @@ export class Enemy {
         const dy = targetY - this.worldY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist > 10) {
+        // Only move if not at target (0.2 world units = ~10 pixels)
+        if (dist > 0.2) {
             const moveSpeed = this.config.speed;
             const deltaSeconds = this.deltaSeconds;
             this.worldX += (dx / dist) * moveSpeed * deltaSeconds;
@@ -1093,7 +1097,8 @@ export class Enemy {
         const dy = playerPos.y - this.worldY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist > 10) {
+        // Only move if not at target (0.2 world units = ~10 pixels)
+        if (dist > 0.2) {
             const moveSpeed = this.config.speed * 0.6; // 40% slower when protecting
             const deltaSeconds = this.deltaSeconds;
             this.worldX += (dx / dist) * moveSpeed * deltaSeconds;
@@ -1251,7 +1256,8 @@ export class Enemy {
             if (nearbyFortification) {
                 const fortDistance = this.distanceTo(nearbyFortification);
                 // Attack if fortification is very close (blocking path)
-                if (fortDistance < 60) {
+                // Distance is in world units (1.2 world units = ~60 pixels)
+                if (fortDistance < 1.2) {
                     this.attackFortification(nearbyFortification);
                 }
             }
@@ -2134,7 +2140,7 @@ export class Enemy {
 
             // Execute charge
             const angle = Math.atan2(playerY - this.worldY, playerX - this.worldX);
-            const chargeDistance = 400;
+            const chargeDistance = 8; // World units (400 pixels / 50)
             const targetX = this.worldX + Math.cos(angle) * chargeDistance;
             const targetY = this.worldY + Math.sin(angle) * chargeDistance;
 

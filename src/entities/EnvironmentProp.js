@@ -301,6 +301,22 @@ export class EnvironmentProp {
     }
 
     /**
+     * Getter properties for backward compatibility
+     * These alias worldWidth/Depth/Height as volumeWidth/Depth/Height
+     */
+    get volumeWidth() {
+        return this.worldWidth;
+    }
+
+    get volumeDepth() {
+        return this.worldDepth;
+    }
+
+    get volumeHeight() {
+        return this.worldHeight;
+    }
+
+    /**
      * Check if an entity collides with this prop in 3D space
      * @param {number} entityWorldX - Entity's world X position
      * @param {number} entityWorldY - Entity's world Y position

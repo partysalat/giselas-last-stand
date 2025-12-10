@@ -1538,6 +1538,21 @@ export class GameScene extends Phaser.Scene {
                 return false;
             }
 
+            // Check environment prop collision first
+            // NOTE: Bullets should hit props before hitting cover or players
+            if (this.environmentManager) {
+                const hitProp = this.environmentManager.checkBulletCollision(
+                    bullet.worldX,  // World coordinates
+                    bullet.worldY,  // World coordinates
+                    bullet.getDamage()
+                );
+
+                if (hitProp) {
+                    bullet.destroy();
+                    return false;
+                }
+            }
+
             // Check cover collision
             // NOTE: Both bullet and cover positions are in world coordinates
             if (this.coverManager) {
