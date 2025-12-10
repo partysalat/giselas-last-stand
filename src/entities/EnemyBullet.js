@@ -93,9 +93,13 @@ export class EnemyBullet {
         // Update depth for proper isometric sorting
         this.sprite.setDepth(calculateDepth(this.worldY, 100));
 
-        // Check bounds (screen bounds with margin)
-        if (screenX < -50 || screenX > 1970 ||
-            screenY < -50 || screenY > 1130) {
+        // Check bounds (use camera dimensions instead of hardcoded values)
+        const margin = 50;
+        const camera = this.scene.cameras.main;
+        if (screenX < camera.worldView.x - margin ||
+            screenX > camera.worldView.right + margin ||
+            screenY < camera.worldView.y - margin ||
+            screenY > camera.worldView.bottom + margin) {
             this.destroy();
             return;
         }

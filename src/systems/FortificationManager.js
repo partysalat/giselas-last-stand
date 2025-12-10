@@ -550,10 +550,10 @@ export class FortificationManager {
      * Check if there's an obstacle at a position
      * @param {number} worldX - World X position
      * @param {number} worldY - World Y position
-     * @param {number} radius - Check radius (default 30)
+     * @param {number} radius - Check radius in world units (default 0.6)
      * @returns {boolean} True if obstacle present
      */
-    checkObstacleAt(worldX, worldY, radius = 30) {
+    checkObstacleAt(worldX, worldY, radius = 0.6) {  // 30 pixels = 0.6 world units
         return this.fortificationProps.some(prop => {
             if (!prop.isAlive()) return false;
 

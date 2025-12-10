@@ -141,8 +141,8 @@ export class EnvironmentProp {
             const maxWorldDimension = Math.max(this.worldWidth, this.worldDepth);
 
             // Convert world units to target pixel size
-            // Base scale: 1 world unit = 50 pixels visual size
-            const targetPixelSize = maxWorldDimension * 50;
+            // Base scale: 1 world unit = PIXELS_PER_WORLD_UNIT visual size
+            const targetPixelSize = maxWorldDimension * PIXELS_PER_WORLD_UNIT;
             const baseScale = targetPixelSize / spriteSize;
 
             // Apply sprite scale multiplier from config
@@ -152,8 +152,8 @@ export class EnvironmentProp {
         } else {
             // Fallback: create rectangle using world dimensions
             // Convert to screen-space pixel size for rendering
-            const pixelWidth = this.worldWidth * 50;
-            const pixelHeight = this.worldDepth * 50;
+            const pixelWidth = this.worldWidth * PIXELS_PER_WORLD_UNIT;
+            const pixelHeight = this.worldDepth * PIXELS_PER_WORLD_UNIT;
 
             this.sprite = this.scene.add.rectangle(
                 this.x,
@@ -200,7 +200,7 @@ export class EnvironmentProp {
         if (!this.sprite) return;
 
         // Convert world position + offset to screen space
-        const barOffsetWorldZ = this.worldHeight * 50 + 10; // 10px above prop
+        const barOffsetWorldZ = (this.worldHeight * PIXELS_PER_WORLD_UNIT) + 10; // 10px above prop
         const { screenX, screenY } = worldToScreen(
             this.worldX,
             this.worldY,
@@ -208,7 +208,7 @@ export class EnvironmentProp {
         );
 
         // Health bar width based on world dimensions
-        const barWidth = this.worldWidth * 50;
+        const barWidth = this.worldWidth * PIXELS_PER_WORLD_UNIT;
         const barHeight = 6;
 
         // Background bar
@@ -261,8 +261,8 @@ export class EnvironmentProp {
         // Configure collision body using world dimensions
         // Convert world dimensions to screen-space pixel dimensions
         // Apply collision scale for looser movement feel
-        const collisionWidth = this.worldWidth * 50 * this.collisionScale;
-        const collisionDepth = this.worldDepth * 50 * this.collisionScale;
+        const collisionWidth = this.worldWidth * PIXELS_PER_WORLD_UNIT * this.collisionScale;
+        const collisionDepth = this.worldDepth * PIXELS_PER_WORLD_UNIT * this.collisionScale;
 
         // Use larger dimension for circular collision
         const collisionRadius = Math.max(collisionWidth, collisionDepth) / 2;
@@ -464,11 +464,11 @@ export class EnvironmentProp {
         // Update health bar width and color
         if (this.healthBarFill && this.healthBarBg) {
             // Update fill width based on health percentage
-            const barWidth = this.worldWidth * 50;
+            const barWidth = this.worldWidth * PIXELS_PER_WORLD_UNIT;
             this.healthBarFill.width = barWidth * healthPercent;
 
             // Recalculate screen position each frame (for moving props)
-            const barOffsetWorldZ = this.worldHeight * 50 + 10;
+            const barOffsetWorldZ = (this.worldHeight * PIXELS_PER_WORLD_UNIT) + 10;
             const { screenX, screenY } = worldToScreen(
                 this.worldX,
                 this.worldY,
@@ -1882,10 +1882,10 @@ export class EnvironmentProp {
 
         // Update health bar fill to show full health
         if (this.healthBarFill) {
-            const barWidth = this.worldWidth * 50;
+            const barWidth = this.worldWidth * PIXELS_PER_WORLD_UNIT;
             this.healthBarFill.width = barWidth;
 
-            const barOffsetWorldZ = this.worldHeight * 50 + 10;
+            const barOffsetWorldZ = (this.worldHeight * PIXELS_PER_WORLD_UNIT) + 10;
             const { screenX, screenY } = worldToScreen(
                 this.worldX,
                 this.worldY,
