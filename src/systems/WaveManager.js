@@ -721,11 +721,12 @@ export class WaveManager {
             }
         }
 
-        // Spawn at different locations near the top wall
+        // Spawn at center of the map in world coordinates
+        // World bounds: X [0-30], Y [-0.5 to 24.5], center around (15, 12)
         const positions = [
-            { x: 600, y: 350 },
-            { x: 960, y: 350 },
-            { x: 1320, y: 350 }
+            { x: 13, y: 12 },  // Left
+            { x: 15, y: 12 },  // Center
+            { x: 17, y: 12 }   // Right
         ];
 
         selectedTypes.forEach((type, index) => {
