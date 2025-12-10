@@ -18,7 +18,7 @@ import { FortificationManager } from '../systems/FortificationManager.js';
 import { IsometricFloor } from '../systems/IsometricFloor.js';
 import { CoordinateDebug } from '../systems/CoordinateDebug.js';
 import { DEFAULT_DIFFICULTY } from '../config.js';
-import { screenToWorld, calculateDepth } from '../utils/CoordinateTransform.js';
+import { screenToWorld, worldToScreen, calculateDepth } from '../utils/CoordinateTransform.js';
 
 // Game states
 const GAME_STATE = {
@@ -1539,11 +1539,11 @@ export class GameScene extends Phaser.Scene {
             }
 
             // Check cover collision
-            // NOTE: checkBulletCollision expects WORLD coordinates, not screen coordinates
+            // NOTE: Both bullet and cover positions are in world coordinates
             if (this.coverManager) {
                 const hitCover = this.coverManager.checkBulletCollision(
-                    bullet.worldX,  // Use world coordinates
-                    bullet.worldY,  // Use world coordinates
+                    bullet.worldX,  // World coordinates
+                    bullet.worldY,  // World coordinates
                     bullet.getDamage()
                 );
 

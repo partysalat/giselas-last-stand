@@ -57,13 +57,13 @@ export class CoverManager {
         return false; // Bullet not blocked
     }
 
-    damageInRadius(x, y, radius, damage, excludeCover = null) {
+    damageInRadius(worldX, worldY, radius, damage, excludeCover = null) {
         this.covers.forEach(cover => {
             if (!cover.isAlive()) return;
             if (cover === excludeCover) return;
 
-            const dx = cover.x - x;
-            const dy = cover.y - y;
+            const dx = cover.worldX - worldX;
+            const dy = cover.worldY - worldY;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < radius) {

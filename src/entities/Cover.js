@@ -1,10 +1,20 @@
+import { screenToWorld, worldToScreen } from '../utils/CoordinateTransform.js';
+
 export class Cover {
-    constructor(scene, x, y, type) {
+    constructor(scene, screenX, screenY, type) {
         this.scene = scene;
         this.type = type;  // 'table', 'bar', 'barrel', 'piano'
         this.alive = true;
-        this.x = x;
-        this.y = y;
+
+        // Store screen coordinates for sprite positioning
+        this.screenX = screenX;
+        this.screenY = screenY;
+
+        // Convert screen coordinates to world coordinates for collision detection
+        const worldPos = screenToWorld(screenX, screenY, 0);
+        this.worldX = worldPos.worldX;
+        this.worldY = worldPos.worldY;
+        this.worldZ = 0;
 
         // Config will be loaded from COVER_TYPES
         this.loadConfig();
@@ -23,21 +33,30 @@ export class Cover {
 
         this.name = config.name;
         this.maxHealth = config.maxHealth;
-        this.width = config.width;
-        this.height = config.height;
+
+        // Store screen pixel dimensions for sprite
+        this.screenWidth = config.width;
+        this.screenHeight = config.height;
+
+        // Convert dimensions to world units for collision (50 pixels ≈ 1 world unit)
+        this.worldWidth = config.width / 50;
+        this.worldHeight = config.height / 50;
+
         this.color = config.color;
         this.explosive = config.explosive || false;
-        this.explosionRadius = config.explosionRadius || 0;
+
+        // Convert explosion radius to world units
+        this.explosionRadius = config.explosionRadius ? config.explosionRadius / 50 : 0;
         this.explosionDamage = config.explosionDamage || 0;
     }
 
     createSprite() {
-        // Create rectangle sprite
+        // Create rectangle sprite using screen coordinates
         this.sprite = this.scene.add.rectangle(
-            this.x,
-            this.y,
-            this.width,
-            this.height,
+            this.screenX,
+            this.screenY,
+            this.screenWidth,
+            this.screenHeight,
             this.color
         );
         this.sprite.setStrokeStyle(3, 0x000000);
@@ -46,23 +65,23 @@ export class Cover {
         this.scene.physics.add.existing(this.sprite, true); // true = static
 
         // Enable collision on the body
-        this.sprite.body.setSize(this.width, this.height);
-        this.sprite.body.setOffset(-this.width / 2, -this.height / 2)
+        this.sprite.body.setSize(this.screenWidth, this.screenHeight);
+        this.sprite.body.setOffset(-this.screenWidth / 2, -this.screenHeight / 2)
 
         // Create health bar (initially hidden)
         this.healthBarBg = this.scene.add.rectangle(
-            this.x,
-            this.y - this.height / 2 - 10,
-            this.width,
+            this.screenX,
+            this.screenY - this.screenHeight / 2 - 10,
+            this.screenWidth,
             4,
             0x000000,
             0.5
         );
 
         this.healthBarFill = this.scene.add.rectangle(
-            this.x,
-            this.y - this.height / 2 - 10,
-            this.width,
+            this.screenX,
+            this.screenY - this.screenHeight / 2 - 10,
+            this.screenWidth,
             4,
             0x00ff00,
             0.8
@@ -169,8 +188,8 @@ export class Cover {
             const size = 4 + Math.random() * 6;
 
             const particle = this.scene.add.circle(
-                this.x,
-                this.y,
+                this.screenX,
+                this.screenY,
                 size,
                 this.color,
                 0.8
@@ -178,8 +197,8 @@ export class Cover {
 
             this.scene.tweens.add({
                 targets: particle,
-                x: this.x + Math.cos(angle) * speed,
-                y: this.y + Math.sin(angle) * speed,
+                x: this.screenX + Math.cos(angle) * speed,
+                y: this.screenY + Math.sin(angle) * speed,
                 alpha: 0,
                 duration: 400 + Math.random() * 200,
                 onComplete: () => particle.destroy()
@@ -188,11 +207,12 @@ export class Cover {
     }
 
     explode() {
-        // Create explosion visual
+        // Create explosion visual (use screen coordinates and convert radius to pixels)
+        const explosionRadiusPixels = this.explosionRadius * 50;
         const explosion = this.scene.add.circle(
-            this.x,
-            this.y,
-            this.explosionRadius,
+            this.screenX,
+            this.screenY,
+            explosionRadiusPixels,
             0xFF4500,
             0.6
         );
@@ -213,11 +233,11 @@ export class Cover {
     }
 
     damageInRadius() {
-        // Damage all living players
+        // Damage all living players (use world coordinates)
         if (this.scene.playerManager) {
             this.scene.playerManager.getLivingPlayers().forEach(player => {
-                const dx = player.getX() - this.x;
-                const dy = player.getY() - this.y;
+                const dx = player.worldX - this.worldX;
+                const dy = player.worldY - this.worldY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist < this.explosionRadius) {
@@ -226,12 +246,12 @@ export class Cover {
             });
         }
 
-        // Damage enemies
+        // Damage enemies (use world coordinates)
         this.scene.enemies.forEach(enemy => {
             if (!enemy.isAlive()) return;
 
-            const dx = enemy.getSprite().x - this.x;
-            const dy = enemy.getSprite().y - this.y;
+            const dx = enemy.worldX - this.worldX;
+            const dy = enemy.worldY - this.worldY;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < this.explosionRadius) {
@@ -239,11 +259,11 @@ export class Cover {
             }
         });
 
-        // Damage other cover objects
+        // Damage other cover objects (use world coordinates)
         if (this.scene.coverManager) {
             this.scene.coverManager.damageInRadius(
-                this.x,
-                this.y,
+                this.worldX,
+                this.worldY,
                 this.explosionRadius,
                 this.explosionDamage,
                 this // exclude self
@@ -251,18 +271,18 @@ export class Cover {
         }
     }
 
-    checkBulletCollision(bulletX, bulletY) {
+    checkBulletCollision(bulletWorldX, bulletWorldY) {
         if (!this.alive) return false;
 
-        // Simple AABB collision check
-        const halfWidth = this.width / 2;
-        const halfHeight = this.height / 2;
+        // Simple AABB collision check using world coordinates
+        const halfWidth = this.worldWidth / 2;
+        const halfHeight = this.worldHeight / 2;
 
         return (
-            bulletX >= this.x - halfWidth &&
-            bulletX <= this.x + halfWidth &&
-            bulletY >= this.y - halfHeight &&
-            bulletY <= this.y + halfHeight
+            bulletWorldX >= this.worldX - halfWidth &&
+            bulletWorldX <= this.worldX + halfWidth &&
+            bulletWorldY >= this.worldY - halfHeight &&
+            bulletWorldY <= this.worldY + halfHeight
         );
     }
 
@@ -276,10 +296,14 @@ export class Cover {
 
     getBounds() {
         return {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
+            worldX: this.worldX,
+            worldY: this.worldY,
+            worldWidth: this.worldWidth,
+            worldHeight: this.worldHeight,
+            screenX: this.screenX,
+            screenY: this.screenY,
+            screenWidth: this.screenWidth,
+            screenHeight: this.screenHeight
         };
     }
 }

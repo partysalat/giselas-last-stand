@@ -2,6 +2,7 @@ import { EnvironmentProp, PROP_TYPES } from '../entities/EnvironmentProp.js';
 import { PhysicsManager } from './PhysicsManager.js';
 import { FireSystem } from './FireSystem.js';
 import { DestructionManager } from './DestructionManager.js';
+import { screenToWorld } from '../utils/CoordinateTransform.js';
 
 /**
  * EnvironmentManager
@@ -110,10 +111,13 @@ export class EnvironmentManager {
      */
     spawnProps(layout) {
         layout.forEach(propData => {
+            // Convert screen coords to world coords
+            const { worldX, worldY } = screenToWorld(propData.x, propData.y, 0);
+
             const prop = new EnvironmentProp(
                 this.scene,
-                propData.x,
-                propData.y,
+                worldX,
+                worldY,
                 propData.type
             );
             this.props.push(prop);

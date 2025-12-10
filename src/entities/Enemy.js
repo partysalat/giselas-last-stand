@@ -382,8 +382,20 @@ export class Enemy {
 
     updateBountyVisuals() {
         if (this.isBounty && this.bountyIcon && this.spotLight) {
-            this.bountyIcon.setPosition(this.sprite.x, this.sprite.y - 30);
+            // Position above enemy in world space
+            const iconHeightWorld = 1.5; // World units above enemy
+            const { screenX, screenY } = worldToScreen(
+                this.worldX,
+                this.worldY,
+                this.worldZ + iconHeightWorld
+            );
+
+            this.bountyIcon.setPosition(screenX, screenY);
             this.spotLight.setPosition(this.sprite.x, this.sprite.y);
+
+            // Update depth for proper sorting
+            this.bountyIcon.setDepth(calculateDepth(this.worldY, 200));
+            this.spotLight.setDepth(calculateDepth(this.worldY, 5));
 
             // Pulse animation
             const pulse = Math.sin(Date.now() / 300) * 0.15 + 0.85;

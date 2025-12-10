@@ -1,3 +1,5 @@
+import { worldToScreen, calculateDepth } from '../utils/CoordinateTransform.js';
+
 // Cocktail buff configurations
 export const COCKTAIL_TYPES = {
     margarita: {
@@ -51,32 +53,59 @@ export const COCKTAIL_TYPES = {
 };
 
 export class Cocktail {
-    constructor(scene, x, y, type) {
+    constructor(scene, worldX, worldY, worldZ = 0, type) {
         this.scene = scene;
         this.type = type;
         this.config = COCKTAIL_TYPES[type];
         this.alive = true;
 
+        // World space coordinates (PRIMARY)
+        this.worldX = worldX;
+        this.worldY = worldY;
+        this.worldZ = worldZ;
+
+        // Convert to screen space for sprite
+        const { screenX, screenY } = worldToScreen(worldX, worldY, worldZ);
+
         // Create visual representation using sprite image
-        this.sprite = scene.add.image(x, y, this.config.sprite);
+        this.sprite = scene.add.image(screenX, screenY, this.config.sprite);
         this.sprite.setScale(1.2); // Scale up for better visibility
-        this.sprite.setDepth(1000); // Render above everything else
+        this.sprite.setDepth(calculateDepth(this.worldY, 1000)); // Use proper depth sorting
 
         // Add glow effect
-        this.glow = scene.add.circle(x, y, 40, this.config.color, 0.3);
-        this.glow.setDepth(999); // Glow just below sprite
+        this.glow = scene.add.circle(screenX, screenY, 40, this.config.color, 0.3);
+        this.glow.setDepth(calculateDepth(this.worldY, 999)); // Glow just below sprite
 
-        // Floating animation
-        scene.tweens.add({
-            targets: [this.sprite, this.glow],
-            y: y - 10,
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
+        // Collision radius
+        this.radius = 0.3; // World units
 
-        console.log('Cocktail created:', this.config.name, 'at', x, y);
+        // Floating animation - animate worldZ instead of screen Y
+        this.floatTime = 0;
+        this.floatSpeed = 1.5; // Hz
+        this.floatAmplitude = 0.2; // World units
+
+        console.log('Cocktail created:', this.config.name, 'at world:', worldX, worldY, worldZ);
+    }
+
+    update(delta) {
+        if (!this.alive) return;
+
+        // Update floating animation
+        this.floatTime += delta / 1000;
+        this.worldZ = Math.sin(this.floatTime * Math.PI * 2 * this.floatSpeed) * this.floatAmplitude;
+
+        // Update screen position
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+        this.sprite.setPosition(screenX, screenY);
+        this.glow.setPosition(screenX, screenY);
+
+        // Update depth every frame
+        this.sprite.setDepth(calculateDepth(this.worldY, 1000));
+        this.glow.setDepth(calculateDepth(this.worldY, 999));
+
+        // Pulse glow alpha
+        const glowAlpha = 0.3 + Math.sin(this.floatTime * Math.PI * 4) * 0.1;
+        this.glow.setAlpha(glowAlpha);
     }
 
     getSprite() {

@@ -1,4 +1,5 @@
-import { screenToWorld } from '../utils/CoordinateTransform.js';
+import { screenToWorld, worldToScreen, calculateDepth } from '../utils/CoordinateTransform.js';
+import { ISOMETRIC_CONFIG } from '../config.js';
 
 /**
  * PhysicsManager
@@ -96,13 +97,13 @@ export class PhysicsManager {
     getMovementMultiplier(weightClass) {
         switch (weightClass) {
             case 'light':
-                return 1.5; // Pushed far (100-200px from explosions)
+                return 10.0; // ~150-200px becomes 5-10 world units/sec
             case 'medium':
-                return 0.6; // Slide 30-60px
+                return 3.0;  // ~30-60px becomes 1.5-3 world units/sec
             case 'heavy':
                 return 0.0; // Immovable
             default:
-                return 1.0;
+                return 5.0;
         }
     }
 
@@ -146,43 +147,8 @@ export class PhysicsManager {
      * Convert prop from static to dynamic physics body
      */
     convertToDynamic(prop) {
-        if (!prop.sprite || !prop.sprite.body) {
-            return;
-        }
-
-        const body = prop.sprite.body;
-
-        // Already dynamic, skip
-        if (!body.immovable) {
-            return;
-        }
-
-        try {
-            // Destroy the static body and recreate as dynamic
-            this.scene.physics.world.remove(body);
-            this.scene.physics.add.existing(prop.sprite, false); // false = dynamic
-
-            // Get new body reference
-            const newBody = prop.sprite.body;
-
-            if (!newBody) {
-                return;
-            }
-
-            // Configure physics properties
-            // Note: gravity is controlled by physics world, not individual bodies
-            if (newBody.setBounce) {
-                newBody.setBounce(0.3, 0.3); // Some bounce on collision
-            }
-            if (newBody.setDrag) {
-                newBody.setDrag(200, 200); // Drag force (helps with stopping)
-            }
-            newBody.setSize(prop.width, prop.height);
-            newBody.setOffset(-prop.width / 2, -prop.height / 2);
-            newBody.immovable = false; // Use property instead of method
-        } catch (error) {
-            // Silently fail
-        }
+        // No longer needed - physics handled in world space
+        // Keep method for backward compatibility
     }
 
     /**
@@ -223,30 +189,35 @@ export class PhysicsManager {
     updatePropMovement(prop, delta) {
         const physics = prop.physicsData;
 
-        // Apply velocity to sprite body (Phaser physics works in SCREEN space)
-        if (prop.sprite && prop.sprite.body) {
-            // Use velocity property directly for arcade physics
-            prop.sprite.body.velocity.x = physics.velocityX;
-            prop.sprite.body.velocity.y = physics.velocityY;
-        }
+        // NEW: Update world position directly
+        const deltaSeconds = delta / 1000;
+        prop.worldX += physics.velocityX * deltaSeconds;
+        prop.worldY += physics.velocityY * deltaSeconds;
 
-        // Update prop SCREEN position tracking
-        prop.x = prop.sprite.x;
-        prop.y = prop.sprite.y;
+        // Convert to screen for sprite rendering
+        const { screenX, screenY } = worldToScreen(prop.worldX, prop.worldY, prop.worldZ);
+        prop.sprite.setPosition(screenX, screenY);
 
-        // Convert sprite's NEW screen position back to WORLD coordinates
-        const worldPos = screenToWorld(prop.sprite.x, prop.sprite.y, prop.worldZ);
-        prop.worldX = worldPos.worldX;
-        prop.worldY = worldPos.worldY;
+        // Update screen position tracking (for compatibility)
+        prop.x = screenX;
+        prop.y = screenY;
 
-        // Update health bar position
+        // Update health bar position in world space
         if (prop.healthBarBg && prop.healthBarFill) {
-            const healthBarY = prop.y - prop.height / 2 - 10;
-            prop.healthBarBg.y = healthBarY;
-            prop.healthBarFill.y = healthBarY;
+            const healthBarOffset = 0.5; // World units above prop
+            const pixelsPerWorldUnit = ISOMETRIC_CONFIG.PIXELS_PER_WORLD_UNIT || 50;
+            const barWorldZ = prop.worldZ + prop.volumeHeight / pixelsPerWorldUnit + healthBarOffset;
+            const barPos = worldToScreen(prop.worldX, prop.worldY, barWorldZ);
+
+            prop.healthBarBg.setPosition(barPos.screenX, barPos.screenY);
+            prop.healthBarFill.setPosition(barPos.screenX, barPos.screenY);
+
+            // Update health bar depth
+            prop.healthBarBg.setDepth(calculateDepth(prop.worldY, 1000));
+            prop.healthBarFill.setDepth(calculateDepth(prop.worldY, 1001));
 
             const healthPercent = prop.getHealthPercent();
-            prop.healthBarFill.x = prop.x - prop.width / 2 + (prop.width * healthPercent) / 2;
+            prop.healthBarFill.scaleX = healthPercent;
         }
 
         // Apply rotation if enabled
@@ -278,23 +249,14 @@ export class PhysicsManager {
         const physics = prop.physicsData;
         const speed = Math.sqrt(physics.velocityX ** 2 + physics.velocityY ** 2);
 
-        // Stopped if speed is very low
-        return speed < 5;
+        // Stopped if speed is very low (world units/sec)
+        return speed < 0.2; // Changed from 5 pixels to 0.2 world units
     }
 
     /**
      * Stop a prop and convert back to static
      */
     stopProp(prop) {
-        if (!prop.sprite || !prop.sprite.body) return;
-
-        // Set velocity to zero
-        prop.sprite.body.velocity.x = 0;
-        prop.sprite.body.velocity.y = 0;
-
-        // Convert back to static (immovable)
-        prop.sprite.body.immovable = true;
-
         // Clear physics data
         if (prop.physicsData) {
             prop.physicsData.velocityX = 0;
@@ -312,8 +274,8 @@ export class PhysicsManager {
         const physics = prop.physicsData;
         const speed = Math.sqrt(physics.velocityX ** 2 + physics.velocityY ** 2);
 
-        // Only deal damage if moving fast enough
-        if (speed < prop.impactSpeed || 50) {
+        // Only deal damage if moving fast enough (world units/sec)
+        if (speed < 2.0) {  // Changed from 50 pixels to 2 world units
             return;
         }
 
@@ -347,10 +309,10 @@ export class PhysicsManager {
                 // Deal impact damage
                 player.takeDamage(physics.impactDamage);
 
-                // Apply knockback to player
+                // Apply knockback to player (world-space angle)
                 const angle = Math.atan2(
-                    player.getY() - prop.y,
-                    player.getX() - prop.x
+                    player.worldY - prop.worldY,
+                    player.worldX - prop.worldX
                 );
                 const knockback = 100;
                 player.applyKnockback(
