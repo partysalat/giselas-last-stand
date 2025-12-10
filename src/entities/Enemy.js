@@ -79,10 +79,10 @@ const ENEMY_TYPES = {
         attackCooldown: 3000,
         isBoss: true,
         // Phase-specific properties
-        phase2Speed: 120,
+        phase2Speed: 3.5, // World units per second (faster than phase 1's 2.5)
         phase2Cooldown: 2000,
         phase2Threshold: 0.5,  // 50% HP
-        chargeSpeed: 400,
+        chargeSpeed: 8, // World units per second (400 pixels / 50)
         chargeDamage: 20,
         chargeTelegraphDuration: 500,
         chargeDistance: 8,                 // Changed from 400 pixels to 8 world units
