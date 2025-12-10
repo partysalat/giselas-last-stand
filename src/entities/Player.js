@@ -28,6 +28,10 @@ export class Player {
         // Scale down to appropriate size
         this.sprite.setScale(0.5);
 
+        // Physical dimensions (must be set before creating shadow)
+        this.height = ISOMETRIC_CONFIG.PLAYER_HEIGHT;
+        this.radius = ISOMETRIC_CONFIG.PLAYER_RADIUS;
+
         // Create shadow sprite at ground level (scaled to player size)
         const shadowWidth = this.radius * 50 * 1.5;   // 1.5x player radius in pixels
         const shadowHeight = shadowWidth * 0.5;        // Ellipse is half as tall
@@ -50,10 +54,6 @@ export class Player {
         this.speedMultiplier = 1.0;
         this.health = 100;
         this.maxHealth = 100;
-
-        // Physical dimensions
-        this.height = ISOMETRIC_CONFIG.PLAYER_HEIGHT;
-        this.radius = ISOMETRIC_CONFIG.PLAYER_RADIUS;
 
         // Jumping properties
         this.jumpVelocity = 0;
