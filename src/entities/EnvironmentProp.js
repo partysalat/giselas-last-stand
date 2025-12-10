@@ -47,23 +47,23 @@ export class EnvironmentProp {
         this.name = config.name;
         this.className = config.class;
         this.maxHealth = config.maxHealth;
-        this.width = config.width;
-        this.height = config.height;
         this.weightClass = config.weightClass;
         this.color = config.color;
         this.blocksBullets = config.blocksBullets !== undefined ? config.blocksBullets : true;
         this.layer = config.layer || 'ground';
 
-        // Footprint properties for movement collision (isometric)
-        this.footprintWidth = config.footprintWidth || this.width * 0.5;
-        this.footprintHeight = config.footprintHeight || this.height * 0.5;
+        // World space dimensions (all gameplay uses these)
+        this.worldWidth = config.worldWidth;
+        this.worldDepth = config.worldDepth;
+        this.worldHeight = config.worldHeight;
+        this.jumpable = config.jumpable !== undefined ? config.jumpable : (this.worldHeight <= 0.6);
+
+        // Collision uses world dimensions directly with optional scaling
+        this.collisionScale = config.collisionScale || 0.7;
         this.footprintShape = config.footprintShape || 'rectangle';
 
-        // 3D volumetric properties for isometric collision
-        this.volumeWidth = config.volumeWidth || this.width;     // X dimension (world units)
-        this.volumeDepth = config.volumeDepth || this.height;    // Y dimension (world units)
-        this.volumeHeight = config.volumeHeight || 50;           // Z dimension (world units)
-        this.jumpable = config.jumpable !== undefined ? config.jumpable : (this.volumeHeight <= 40);
+        // Visual sprite scaling
+        this.spriteScale = config.spriteScale || 1.0;
 
         // Sprite properties
         this.spriteKey = config.spriteKey || null;
@@ -133,45 +133,39 @@ export class EnvironmentProp {
                 this.spriteFrame
             );
 
-            // Scale sprite to approximate collision box size while maintaining aspect ratio
-            // Sprites are 341x341, we want them to visually match the collision box
-            // Use the larger dimension (width or height) to determine scale
-            const spriteSize = 341; // Original sprite size
-            const targetScale = Math.max(this.width, this.height) / spriteSize;
+            // Scale sprite based on world dimensions
+            // Sprites are 341x341, we scale based on world width/depth
+            const spriteSize = 341;
 
-            // Apply a multiplier to make sprites larger and more visible
-            // Small/medium props get boosted more to improve visibility
-            let visualMultiplier = 1.0;
-            const maxDimension = Math.max(this.width, this.height);
+            // Use the larger world dimension to determine base scale
+            const maxWorldDimension = Math.max(this.worldWidth, this.worldDepth);
 
-            if (maxDimension <= 40) {
-                // Very small props (chairs, lamps, stools) - make them much larger
-                visualMultiplier = 3.5;
-            } else if (maxDimension <= 70) {
-                // Medium props (barrels, crates, tables) - make them larger
-                visualMultiplier = 2.5;
-            } else {
-                // Large props (counters, pianos) - make them larger too
-                visualMultiplier = 2.0;
-            }
+            // Convert world units to target pixel size
+            // Base scale: 1 world unit = 50 pixels visual size
+            const targetPixelSize = maxWorldDimension * 50;
+            const baseScale = targetPixelSize / spriteSize;
 
-            const visualScale = targetScale * visualMultiplier;
-            this.visualScale = visualScale;
+            // Apply sprite scale multiplier from config
+            const finalScale = baseScale * this.spriteScale;
 
-            this.sprite.setScale(visualScale);
+            this.sprite.setScale(finalScale);
         } else {
-            // Fallback to rectangle sprite for props without sprites
+            // Fallback: create rectangle using world dimensions
+            // Convert to screen-space pixel size for rendering
+            const pixelWidth = this.worldWidth * 50;
+            const pixelHeight = this.worldDepth * 50;
+
             this.sprite = this.scene.add.rectangle(
                 this.x,
                 this.y,
-                this.width,
-                this.height,
+                pixelWidth,
+                pixelHeight,
                 this.color
             );
 
-            // Explosive barrels get red border for visibility
+            // Explosive barrels get red border
             if (this.explosionRadius > 0) {
-                this.sprite.setStrokeStyle(5, 0xFF0000); // Thick red border
+                this.sprite.setStrokeStyle(5, 0xFF0000);
             } else {
                 this.sprite.setStrokeStyle(3, 0x000000);
             }
@@ -203,28 +197,42 @@ export class EnvironmentProp {
      * Create health bar UI elements
      */
     createHealthBar() {
+        if (!this.sprite) return;
+
+        // Convert world position + offset to screen space
+        const barOffsetWorldZ = this.worldHeight * 50 + 10; // 10px above prop
+        const { screenX, screenY } = worldToScreen(
+            this.worldX,
+            this.worldY,
+            barOffsetWorldZ
+        );
+
+        // Health bar width based on world dimensions
+        const barWidth = this.worldWidth * 50;
+        const barHeight = 6;
+
+        // Background bar
         this.healthBarBg = this.scene.add.rectangle(
-            this.x,
-            this.y - this.height / 2 - 10,
-            this.width,
-            4,
+            screenX,
+            screenY,
+            barWidth,
+            barHeight,
             0x000000,
             0.5
         );
-        this.healthBarBg.setDepth(50);
+        this.healthBarBg.setDepth(calculateDepth(this.worldY, 50));
+        this.healthBarBg.setVisible(false);
 
+        // Foreground fill bar
         this.healthBarFill = this.scene.add.rectangle(
-            this.x,
-            this.y - this.height / 2 - 10,
-            this.width,
-            4,
+            screenX,
+            screenY,
+            barWidth,
+            barHeight,
             0x00ff00,
             0.8
         );
-        this.healthBarFill.setDepth(50);
-
-        // Hide health bar initially
-        this.healthBarBg.setVisible(false);
+        this.healthBarFill.setDepth(calculateDepth(this.worldY, 51));
         this.healthBarFill.setVisible(false);
     }
 
@@ -250,19 +258,33 @@ export class EnvironmentProp {
 
         this.scene.physics.add.existing(this.sprite, isStatic);
 
-        // Configure collision body
-        // Use footprint size for physics body (not full sprite size)
-        // This creates natural isometric collision where players can walk close to tall props
-        // Calculate footprint as percentage of the scaled visual sprite
-        const footprintWidthRatio = this.footprintWidth / this.width;   // e.g., 45/80 = 0.5625
-        const footprintHeightRatio = this.footprintHeight / this.height; // e.g., 35/60 = 0.583
+        // Configure collision body using world dimensions
+        // Convert world dimensions to screen-space pixel dimensions
+        // Apply collision scale for looser movement feel
+        const collisionWidth = this.worldWidth * 50 * this.collisionScale;
+        const collisionDepth = this.worldDepth * 50 * this.collisionScale;
 
-        const physicsWidth = this.sprite.displayWidth * footprintWidthRatio;
-        const physicsHeight = this.sprite.displayHeight * footprintHeightRatio;
+        // Use larger dimension for circular collision
+        const collisionRadius = Math.max(collisionWidth, collisionDepth) / 2;
 
-        // Set the body size and let Phaser center it automatically
-        // The third parameter (true) centers the physics body on the sprite
-        this.sprite.body.setSize(physicsWidth, physicsHeight, true);
+        if (this.footprintShape === 'circle') {
+            this.sprite.body.setCircle(collisionRadius);
+
+            // Center the circle
+            const offsetX = (this.sprite.displayWidth - collisionRadius * 2) / 2;
+            const offsetY = (this.sprite.displayHeight - collisionRadius * 2) / 2;
+            this.sprite.body.setOffset(offsetX, offsetY);
+        } else {
+            // Rectangle collision
+            this.sprite.body.setSize(collisionWidth, collisionDepth);
+
+            // Center the rectangle
+            const offsetX = (this.sprite.displayWidth - collisionWidth) / 2;
+            const offsetY = (this.sprite.displayHeight - collisionDepth) / 2;
+            this.sprite.body.setOffset(offsetX, offsetY);
+        }
+
+        this.sprite.body.setImmovable(this.weightClass === 'heavy');
 
         // For dynamic (light) props, enable physics interactions
         if (!isStatic) {
@@ -293,14 +315,14 @@ export class EnvironmentProp {
             return false;
         }
 
-        // Create AABB for this prop
+        // Create AABB for this prop using world dimensions
         const box = {
             x: this.worldX,
             y: this.worldY,
             z: this.worldZ,
-            width: this.volumeWidth,
-            depth: this.volumeDepth,
-            height: this.volumeHeight
+            width: this.worldWidth,
+            depth: this.worldDepth,
+            height: this.worldHeight
         };
 
         return checkPointVsAABB(
@@ -319,7 +341,7 @@ export class EnvironmentProp {
      * @returns {boolean} True if entity is high enough to clear prop
      */
     canJumpOver(entityZ) {
-        return this.jumpable && entityZ > this.volumeHeight;
+        return this.jumpable && entityZ > this.worldHeight;
     }
 
     /**
@@ -440,14 +462,30 @@ export class EnvironmentProp {
         }
 
         // Update health bar width and color
-        if (this.healthBarFill) {
-            this.healthBarFill.width = this.width * healthPercent;
-            this.healthBarFill.x = this.x - this.width / 2 + (this.width * healthPercent) / 2;
+        if (this.healthBarFill && this.healthBarBg) {
+            // Update fill width based on health percentage
+            const barWidth = this.worldWidth * 50;
+            this.healthBarFill.width = barWidth * healthPercent;
 
-            // Color transition: green -> yellow -> red
-            if (healthPercent > 0.5) {
+            // Recalculate screen position each frame (for moving props)
+            const barOffsetWorldZ = this.worldHeight * 50 + 10;
+            const { screenX, screenY } = worldToScreen(
+                this.worldX,
+                this.worldY,
+                barOffsetWorldZ
+            );
+
+            // Update positions
+            this.healthBarBg.setPosition(screenX, screenY);
+            this.healthBarFill.setPosition(
+                screenX - (barWidth / 2) + (barWidth * healthPercent / 2),
+                screenY
+            );
+
+            // Color based on health
+            if (healthPercent > 0.6) {
                 this.healthBarFill.setFillStyle(0x00ff00, 0.8); // Green
-            } else if (healthPercent > 0.25) {
+            } else if (healthPercent > 0.3) {
                 this.healthBarFill.setFillStyle(0xffff00, 0.8); // Yellow
             } else {
                 this.healthBarFill.setFillStyle(0xff0000, 0.8); // Red
@@ -1783,10 +1821,12 @@ export class EnvironmentProp {
 
     getBounds() {
         return {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
+            worldX: this.worldX,
+            worldY: this.worldY,
+            worldZ: this.worldZ,
+            worldWidth: this.worldWidth,
+            worldDepth: this.worldDepth,
+            worldHeight: this.worldHeight
         };
     }
 
@@ -1808,9 +1848,17 @@ export class EnvironmentProp {
 
         // Update health bar fill to show full health
         if (this.healthBarFill) {
-            this.healthBarFill.width = this.width;
-            this.healthBarFill.x = this.x;
-            this.healthBarFill.setFillStyle(0x00ff00, 0.8); // Green at full health
+            const barWidth = this.worldWidth * 50;
+            this.healthBarFill.width = barWidth;
+
+            const barOffsetWorldZ = this.worldHeight * 50 + 10;
+            const { screenX, screenY } = worldToScreen(
+                this.worldX,
+                this.worldY,
+                barOffsetWorldZ
+            );
+            this.healthBarFill.setPosition(screenX, screenY);
+            this.healthBarFill.setFillStyle(0x00ff00, 0.8);
         }
     }
 }
