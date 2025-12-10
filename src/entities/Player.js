@@ -28,8 +28,10 @@ export class Player {
         // Scale down to appropriate size
         this.sprite.setScale(0.5);
 
-        // Create shadow sprite at ground level
-        this.shadow = scene.add.ellipse(screenX, screenY, 30, 15, 0x000000, 0.3);
+        // Create shadow sprite at ground level (scaled to player size)
+        const shadowWidth = this.radius * 50 * 1.5;   // 1.5x player radius in pixels
+        const shadowHeight = shadowWidth * 0.5;        // Ellipse is half as tall
+        this.shadow = scene.add.ellipse(screenX, screenY, shadowWidth, shadowHeight, 0x000000, 0.3);
         this.shadow.setDepth(1); // Below player but above floor
 
         // Set depth based on world Y position for isometric sorting
@@ -479,11 +481,12 @@ export class Player {
             this.rampShotsFired = 0;
         }
 
-        // Create aura visual
+        // Create aura visual (scaled to player size)
+        const auraRadiusPixels = (this.radius * 50) + 10;  // Player visual radius + 10px
         this.buffAura = this.scene.add.circle(
             this.sprite.x,
             this.sprite.y,
-            30,
+            auraRadiusPixels,
             cocktailConfig.color,
             0.4
         );
@@ -548,19 +551,22 @@ export class Player {
         };
 
         // Create subtle glow around player
+        const glowRadiusPixels = 0.7 * 50;  // 0.7 world units = 35 pixels, now explicit
         this.storedCocktailGlow = this.scene.add.circle(
             this.sprite.x,
             this.sprite.y,
-            35,
+            glowRadiusPixels,
             config.color,
             0.15  // Very subtle
         );
         this.storedCocktailGlow.setDepth(-1);
 
-        // Create visual indicator (small sprite above player)
+        // Create visual indicator (small sprite above player) using world Z coordinate
+        const indicatorWorldZ = this.worldZ + (this.height * 1.5);  // 1.5x player height above
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, indicatorWorldZ);
         this.storedCocktailIndicator = this.scene.add.image(
-            this.sprite.x,
-            this.sprite.y - 40,
+            screenX,
+            screenY,
             config.sprite
         );
         this.storedCocktailIndicator.setScale(0.5); // Small scale for indicator

@@ -374,7 +374,7 @@ export class Enemy {
         this.spotLight = this.scene.add.circle(
             this.sprite.x,
             this.sprite.y,
-            this.config.radius + 15,
+            (this.config.radius * 50) + 15,  // Convert world units to pixels for visual
             0xffff00,
             0.3
         );
@@ -1142,7 +1142,7 @@ export class Enemy {
         const shield = this.scene.add.circle(
             this.getSprite().x,
             this.getSprite().y,
-            this.config.radius + 10,
+            (this.config.radius * 50) + 10,  // Convert to pixels for visual
             0x00ffff,
             0.3
         );
@@ -1449,7 +1449,7 @@ export class Enemy {
                     Math.pow(closestPlayer.worldX - this.worldX, 2) +
                     Math.pow(closestPlayer.worldY - this.worldY, 2)
                 );
-                if (playerDist < this.config.radius + 30 && !this.chargeHitPlayer) {
+                if (playerDist < this.config.radius + 0.6 && !this.chargeHitPlayer) {  // Add 30 pixels = 0.6 world units
                     closestPlayer.takeDamage(this.config.chargeDamage);
                     this.chargeHitPlayer = true; // Prevent multiple hits
                 }
@@ -2152,7 +2152,7 @@ export class Enemy {
                             const dy = player.worldY - this.worldY;
                             const dist = Math.sqrt(dx * dx + dy * dy);
 
-                            if (dist < this.config.radius + 20 && !this.chargeHitPlayer) {
+                            if (dist < this.config.radius + 0.4 && !this.chargeHitPlayer) {  // Add 20 pixels = 0.4 world units
                                 player.takeDamage(this.config.chargeDamage);
                                 this.chargeHitPlayer = true;
                             }
@@ -2174,20 +2174,25 @@ export class Enemy {
         this.lightningDamageDealt = false;
 
         for (let i = 0; i < this.config.lightningCount; i++) {
-            const targetX = 300 + Math.random() * 1320;
-            const targetY = 200 + Math.random() * 680;
+            // Generate random position in world space (arena bounds 0-30, 0-25)
+            const targetWorldX = 5 + Math.random() * 20;  // Center 75% of arena
+            const targetWorldY = 3 + Math.random() * 19;
+
+            // Convert to screen space for rendering
+            const { screenX: targetX, screenY: targetY } = worldToScreen(targetWorldX, targetWorldY, 0);
 
             // Telegraph
             const telegraph = this.scene.add.circle(targetX, targetY, this.config.lightningRadius, 0xff0000, 0.3);
             telegraph.setStrokeStyle(2, 0xffff00);
 
             this.scene.time.delayedCall(1000, () => {
-                // Strike
+                // Strike - vertical beam from top to ground
+                const beamHeight = 200;  // Visual height of lightning beam in pixels
                 const lightning = this.scene.add.rectangle(
                     targetX,
-                    targetY,
+                    targetY - beamHeight / 2,  // Position at middle of beam
                     this.config.lightningRadius * 2,
-                    1080,
+                    beamHeight,
                     0xffff00,
                     0.7
                 );
@@ -2229,18 +2234,19 @@ export class Enemy {
         console.log('Leviathan: Tidal Wave!');
         this.attackingInProgress = true;
 
-        // Move to edge of arena
-        const targetEdgeX = this.worldX < 960 ? 100 : 1820;
+        // Move to edge of arena (world space)
+        const worldCenterX = 15;  // World center is at 15,12
+        const targetEdgeX = this.worldX < worldCenterX ? 2 : 28;  // Near world edges (0-30 range)
 
         this.scene.tweens.add({
             targets: this,
             worldX: targetEdgeX,
             duration: 1000,
             onComplete: () => {
-                // Create wave traveling across screen
+                // Create wave traveling across screen (world space)
                 const waveHeight = 200;
-                const waveStartX = targetEdgeX < 960 ? 0 : 1920;
-                const waveEndX = targetEdgeX < 960 ? 1920 : 0;
+                const waveStartX = targetEdgeX < worldCenterX ? 0 : 30;  // World X min/max
+                const waveEndX = targetEdgeX < worldCenterX ? 30 : 0;
 
                 const wave = this.scene.add.rectangle(
                     waveStartX,
