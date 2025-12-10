@@ -661,11 +661,17 @@ export class EnvironmentProp {
      * Create explosion effect and damage
      */
     explode() {
+        // Convert world position to screen position
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+
+        // Convert explosion radius from world units to pixels
+        const explosionRadiusPixels = this.explosionRadius * PIXELS_PER_WORLD_UNIT;
+
         // Visual explosion effect at SCREEN position
         const explosion = this.scene.add.circle(
-            this.x,
-            this.y,
-            this.explosionRadius,
+            screenX,
+            screenY,
+            explosionRadiusPixels,
             0xFF4500,
             0.6
         );
@@ -673,9 +679,9 @@ export class EnvironmentProp {
 
         // DEBUG: Show physics force radius (slightly larger, blue outline)
         const forceRadius = this.scene.add.circle(
-            this.x,
-            this.y,
-            this.explosionRadius,
+            screenX,
+            screenY,
+            explosionRadiusPixels,
             0x0000FF,
             0
         );
@@ -1168,17 +1174,19 @@ export class EnvironmentProp {
      * Create permanent dark zone where chandelier fell
      */
     createDarkZone() {
-        const impactX = this.sprite ? this.sprite.x : this.x;
-        const impactY = this.sprite ? this.sprite.y : this.y;
-        const radius = this.darkenRadius || 150;
+        // Convert world position to screen position
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
 
-        console.log(`Creating dark zone at (${impactX}, ${impactY}), radius: ${radius}`);
+        // Convert darkenRadius from world units to pixels
+        const radiusPixels = (this.darkenRadius || 3.0) * PIXELS_PER_WORLD_UNIT;
+
+        console.log(`Creating dark zone at (${screenX}, ${screenY}), radius: ${radiusPixels}px`);
 
         // Create semi-transparent dark circle
         const darkZone = this.scene.add.circle(
-            impactX,
-            impactY,
-            radius,
+            screenX,
+            screenY,
+            radiusPixels,
             0x000000,
             0.3 // 30% darker (20% as specified in design)
         );
@@ -1191,7 +1199,7 @@ export class EnvironmentProp {
         this.scene.darkZones.push(darkZone);
 
         // Optional: Add some broken chandelier debris
-        this.createChandelierDebris(impactX, impactY);
+        this.createChandelierDebris(screenX, screenY);
     }
 
     /**
@@ -1288,10 +1296,12 @@ export class EnvironmentProp {
         this.scene.enemies.forEach(enemy => {
             if (!enemy.isAlive()) return;
 
-            const dx = enemy.getSprite().x - this.x;
-            const dy = enemy.getSprite().y - this.y;
+            // Use WORLD coordinates for distance calculation
+            const dx = enemy.worldX - this.worldX;
+            const dy = enemy.worldY - this.worldY;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
+            // stunRadius is in world units
             if (dist < this.stunRadius) {
                 // Apply stun effect (if enemy has stun method)
                 if (enemy.stun) {
@@ -1308,10 +1318,13 @@ export class EnvironmentProp {
      * Show visual feedback for activation
      */
     showActivationEffect() {
+        // Convert world position to screen position
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+
         // Create expanding ring effect
         const ring = this.scene.add.circle(
-            this.x,
-            this.y,
+            screenX,
+            screenY,
             10,
             0xFFFF00,
             0
@@ -1319,10 +1332,13 @@ export class EnvironmentProp {
         ring.setStrokeStyle(4, 0xFFFF00);
         ring.setDepth(25);
 
+        // Convert radius from world units to pixels
+        const radiusPixels = (this.stunRadius || this.activationRadius || 2.0) * PIXELS_PER_WORLD_UNIT;
+
         // Animate ring expanding
         this.scene.tweens.add({
             targets: ring,
-            radius: this.stunRadius || this.activationRadius || 100,
+            radius: radiusPixels,
             alpha: { from: 0.8, to: 0 },
             duration: 400,
             onComplete: () => ring.destroy()
@@ -1651,11 +1667,17 @@ export class EnvironmentProp {
     createBlindingFlash() {
         console.log(`${this.name} destroyed - creating blinding flash!`);
 
+        // Convert world position to screen position
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+
+        // Convert flashRadius from world units to pixels
+        const flashRadiusPixels = this.flashRadius * PIXELS_PER_WORLD_UNIT;
+
         // Create bright flash visual
         const flash = this.scene.add.circle(
-            this.x,
-            this.y,
-            this.flashRadius,
+            screenX,
+            screenY,
+            flashRadiusPixels,
             0xFFFFFF,
             0.9
         );
@@ -1669,11 +1691,11 @@ export class EnvironmentProp {
             onComplete: () => flash.destroy()
         });
 
-        // Create small fire zone
+        // Create small fire zone (fireSystem uses world coordinates)
         if (this.scene.environmentManager && this.scene.environmentManager.fireSystem) {
             this.scene.environmentManager.fireSystem.createFireZone(
-                this.x,
-                this.y,
+                this.worldX,
+                this.worldY,
                 this.fireRadius,
                 this.fireDuration,
                 this.fireDamage
@@ -1681,7 +1703,7 @@ export class EnvironmentProp {
         }
 
         // TODO: Implement actual blinding effect on enemies (would need enemy system support)
-        console.log(`Flash effect would blind enemies in ${this.flashRadius}px radius for ${this.flashDuration}ms`);
+        console.log(`Flash effect would blind enemies in ${this.flashRadius} world units radius for ${this.flashDuration}ms`);
     }
 
     /**
@@ -1690,18 +1712,24 @@ export class EnvironmentProp {
     createGlassShardHazard() {
         console.log(`${this.name} destroyed - creating glass shard hazard!`);
 
+        // Convert world position to screen position
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+
+        // Convert glassShardRadius from world units to pixels
+        const glassShardRadiusPixels = this.glassShardRadius * PIXELS_PER_WORLD_UNIT;
+
         // Create glass shard visual effect
         const numShards = 8 + Math.floor(Math.random() * 8);
 
         for (let i = 0; i < numShards; i++) {
             const angle = (Math.PI * 2 * i) / numShards + Math.random() * 0.3;
-            const distance = Math.random() * this.glassShardRadius;
-            const shardX = this.x + Math.cos(angle) * distance;
-            const shardY = this.y + Math.sin(angle) * distance;
+            const distance = Math.random() * glassShardRadiusPixels;
+            const shardX = screenX + Math.cos(angle) * distance;
+            const shardY = screenY + Math.sin(angle) * distance;
 
             const shard = this.scene.add.rectangle(
-                this.x,
-                this.y,
+                screenX,
+                screenY,
                 4 + Math.random() * 6,
                 4 + Math.random() * 6,
                 0xE0FFFF, // light cyan
@@ -1731,9 +1759,9 @@ export class EnvironmentProp {
 
         // Create hazard zone indicator
         const hazardZone = this.scene.add.circle(
-            this.x,
-            this.y,
-            this.glassShardRadius,
+            screenX,
+            screenY,
+            glassShardRadiusPixels,
             0x00FFFF,
             0.15
         );
@@ -1758,11 +1786,17 @@ export class EnvironmentProp {
     spillWater() {
         console.log(`${this.name} destroyed - spilling water!`);
 
+        // Convert world position to screen position
+        const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+
+        // Convert wetZoneRadius from world units to pixels
+        const wetZoneRadiusPixels = this.wetZoneRadius * PIXELS_PER_WORLD_UNIT;
+
         // Create water spill visual
         const wetZone = this.scene.add.circle(
-            this.x,
-            this.y,
-            this.wetZoneRadius,
+            screenX,
+            screenY,
+            wetZoneRadiusPixels,
             0x4682B4, // steel blue
             0.3
         );
@@ -1773,11 +1807,11 @@ export class EnvironmentProp {
 
         for (let i = 0; i < numDroplets; i++) {
             const angle = (Math.PI * 2 * i) / numDroplets + Math.random() * 0.5;
-            const distance = Math.random() * this.wetZoneRadius;
+            const distance = Math.random() * wetZoneRadiusPixels;
 
             const droplet = this.scene.add.circle(
-                this.x,
-                this.y,
+                screenX,
+                screenY,
                 3 + Math.random() * 4,
                 0x87CEEB, // light blue
                 0.6
@@ -1786,8 +1820,8 @@ export class EnvironmentProp {
 
             this.scene.tweens.add({
                 targets: droplet,
-                x: this.x + Math.cos(angle) * distance,
-                y: this.y + Math.sin(angle) * distance,
+                x: screenX + Math.cos(angle) * distance,
+                y: screenY + Math.sin(angle) * distance,
                 alpha: 0,
                 duration: 600,
                 onComplete: () => droplet.destroy()
