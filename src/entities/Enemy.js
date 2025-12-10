@@ -922,9 +922,9 @@ export class Enemy {
                 const newX = this.worldX + Math.cos(angle) * teleportDistance;
                 const newY = this.worldY + Math.sin(angle) * teleportDistance;
 
-                // Clamp to world bounds
-                const clampedX = Math.max(50, Math.min(1870, newX));
-                const clampedY = Math.max(50, Math.min(1030, newY));
+                // Clamp to world bounds (world units: 0-30 for X, -0.5 to 24.5 for Y)
+                const clampedX = Math.max(1, Math.min(29, newX));
+                const clampedY = Math.max(0.5, Math.min(24, newY));
 
                 this.worldX = clampedX;
                 this.worldY = clampedY;
@@ -937,8 +937,8 @@ export class Enemy {
             // Float slowly toward player
             const angle = Math.atan2(dy, dx);
             const deltaSeconds = this.deltaSeconds;
-            this.worldX += Math.cos(angle) * this.speed * deltaSeconds;
-            this.worldY += Math.sin(angle) * this.speed * deltaSeconds;
+            this.worldX += Math.cos(angle) * this.worldSpeed * deltaSeconds;
+            this.worldY += Math.sin(angle) * this.worldSpeed * deltaSeconds;
         }
     }
 
@@ -955,8 +955,8 @@ export class Enemy {
                     const angle = Math.atan2(dy, dx) + Math.PI / 2;
                     // Flying fish flies over obstacles (no obstacle avoidance needed)
                     const deltaSeconds = this.deltaSeconds;
-                    this.worldX += Math.cos(angle) * this.speed * 0.6 * deltaSeconds;
-                    this.worldY += Math.sin(angle) * this.speed * 0.6 * deltaSeconds;
+                    this.worldX += Math.cos(angle) * this.worldSpeed * 0.6 * deltaSeconds;
+                    this.worldY += Math.sin(angle) * this.worldSpeed * 0.6 * deltaSeconds;
 
                     // Prepare swoop if in range
                     if (distance < this.attackRange && time - this.nextAttack > this.attackCooldown) {
@@ -973,9 +973,9 @@ export class Enemy {
                         this.swoopTarget.x - this.worldX
                     );
                     // Flying fish flies over obstacles (no obstacle avoidance needed)
-                    const deltaSeconds2 = 1/60;
-                    this.worldX += Math.cos(swoopAngle) * this.speed * 1.5 * deltaSeconds2;
-                    this.worldY += Math.sin(swoopAngle) * this.speed * 1.5 * deltaSeconds2;
+                    const deltaSeconds2 = this.deltaSeconds;
+                    this.worldX += Math.cos(swoopAngle) * this.worldSpeed * 1.5 * deltaSeconds2;
+                    this.worldY += Math.sin(swoopAngle) * this.worldSpeed * 1.5 * deltaSeconds2;
 
                     // Check if reached target
                     const targetDist = Math.sqrt(
@@ -992,9 +992,9 @@ export class Enemy {
                     // Move away from player after swoop
                     const escapeAngle = Math.atan2(dy, dx) + Math.PI;
                     // Flying fish flies over obstacles (no obstacle avoidance needed)
-                    const deltaSeconds3 = 1/60;
-                    this.worldX += Math.cos(escapeAngle) * this.speed * deltaSeconds3;
-                    this.worldY += Math.sin(escapeAngle) * this.speed * deltaSeconds3;
+                    const deltaSeconds3 = this.deltaSeconds;
+                    this.worldX += Math.cos(escapeAngle) * this.worldSpeed * deltaSeconds3;
+                    this.worldY += Math.sin(escapeAngle) * this.worldSpeed * deltaSeconds3;
 
                     // Return to idle after getting distance
                     if (distance > 4) {  // Changed from 200 to 4 world units
