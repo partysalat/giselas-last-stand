@@ -1,4 +1,4 @@
-import { worldToScreen, calculateDepth } from '../utils/CoordinateTransform.js';
+import { worldToScreen, calculateDepth, PIXELS_PER_WORLD_UNIT } from '../utils/CoordinateTransform.js';
 import { checkPointVsAABB } from '../utils/CollisionUtils.js';
 
 /**
@@ -357,8 +357,8 @@ export class EnvironmentProp {
         this.spriteBoundsDebug = this.scene.add.rectangle(
             this.x,
             this.y,
-            this.width,
-            this.height,
+            this.worldWidth * PIXELS_PER_WORLD_UNIT,
+            this.worldDepth * PIXELS_PER_WORLD_UNIT,
             0xFF0000,
             0
         );
@@ -760,8 +760,8 @@ export class EnvironmentProp {
         if (!this.alive || !this.blocksBullets) return false;
 
         // AABB collision check in WORLD space
-        const halfWidth = this.volumeWidth / 2;
-        const halfDepth = this.volumeDepth / 2;
+        const halfWidth = this.worldWidth / 2;
+        const halfDepth = this.worldDepth / 2;
 
         return (
             bulletWorldX >= this.worldX - halfWidth &&
@@ -1045,7 +1045,7 @@ export class EnvironmentProp {
         });
 
         // Visual warning effect
-        const warning = this.scene.add.circle(this.x, this.y, this.width / 2, 0xFF0000, 0);
+        const warning = this.scene.add.circle(this.x, this.y, (this.worldWidth * PIXELS_PER_WORLD_UNIT) / 2, 0xFF0000, 0);
         warning.setStrokeStyle(2, 0xFF0000);
         warning.setDepth(36);
 
@@ -1425,8 +1425,8 @@ export class EnvironmentProp {
         const numStrings = 3 + Math.floor(Math.random() * 3);
 
         for (let i = 0; i < numStrings; i++) {
-            const offsetX = (Math.random() - 0.5) * this.width;
-            const offsetY = (Math.random() - 0.5) * this.height;
+            const offsetX = (Math.random() - 0.5) * this.worldWidth * PIXELS_PER_WORLD_UNIT;
+            const offsetY = (Math.random() - 0.5) * this.worldDepth * PIXELS_PER_WORLD_UNIT;
 
             const string = this.scene.add.line(
                 this.x + offsetX,
