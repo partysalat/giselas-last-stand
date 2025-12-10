@@ -1825,112 +1825,94 @@ export const PROP_TYPES = {
         name: 'Bar Counter',
         class: 'DestructibleCover',
         maxHealth: 200,
-        width: 120,
-        height: 50,
-        volumeWidth: 2.5,       // World units (~120px / 50 = 2.4)
-        volumeDepth: 1.0,       // World units (~50px / 50 = 1.0)
-        volumeHeight: 30,      // World units (tall enough to block bullets at chest height)
+        // World dimensions (collision/gameplay)
+        worldWidth: 2.4,        // 120px / 50 = 2.4 world units
+        worldDepth: 1.0,        // 50px / 50 = 1.0 world units
+        worldHeight: 0.8,       // Chest-height cover, blocks bullets
         jumpable: false,
         weightClass: 'heavy',
         color: 0x654321,
-        footprintWidth: 40,   // 33% of 120px visual width
-        footprintHeight: 20,  // 40% of 50px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'spawnBottleDebris',
         layer: 'ground',
         spriteKey: 'interior1',
-        spriteFrame: 0  // Top-left in 3x3 grid
+        spriteFrame: 0,
+        // Visual scaling (multiplier for sprite size)
+        spriteScale: 2.0        // Make sprite 2x larger for visibility
     },
 
     piano: {
         name: 'Piano',
         class: 'DestructibleCover',
         maxHealth: 150,
-        width: 90,
-        height: 60,
-        volumeWidth: 1.8,      // World units (~90px / 50)
-        volumeDepth: 1.2,      // World units (~60px / 50)
-        volumeHeight: 30,     // World units (tall enough to block bullets)
+        worldWidth: 1.8,        // 90px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 0.8,       // Chest-height cover
         jumpable: false,
         weightClass: 'heavy',
-        color: 0x2F4F4F, // dark slate gray
-        footprintWidth: 40,   // 44% of 90px visual width
-        footprintHeight: 30,  // 50% of 60px visual height
-        footprintShape: 'rectangle',
+        color: 0x2F4F4F,
         blocksBullets: true,
         onDestroy: 'playDiscordantNotes',
         layer: 'ground',
         spriteKey: 'interior1',
-        spriteFrame: 1  // Top-center in 3x3 grid
+        spriteFrame: 1,
+        spriteScale: 2.0
     },
 
     heavyBookshelf: {
         name: 'Heavy Bookshelf',
         class: 'DestructibleCover',
         maxHealth: 180,
-        width: 100,
-        height: 40,
-        volumeWidth: 2.0,
-        volumeDepth: 0.8,
-        volumeHeight: 30,
+        worldWidth: 2.0,        // 100px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 0.8,       // Chest-height
         jumpable: false,
         weightClass: 'heavy',
-        color: 0x8B4513, // saddle brown
-        footprintWidth: 40,   // 40% of 100px visual width
-        footprintHeight: 20,  // 50% of 40px visual height
-        footprintShape: 'rectangle',
+        color: 0x8B4513,
         blocksBullets: true,
         onDestroy: 'dropBooks',
         layer: 'ground',
         spriteKey: 'interior1',
-        spriteFrame: 2  // Top-right in 3x3 grid
+        spriteFrame: 2,
+        spriteScale: 2.0
     },
 
     flippedPokerTable: {
         name: 'Flipped Poker Table',
         class: 'DestructibleCover',
         maxHealth: 120,
-        width: 100,
-        height: 60,
-        volumeWidth: 2.0,
-        volumeDepth: 1.2,
-        volumeHeight: 30,
+        worldWidth: 2.0,        // 100px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 0.8,       // Chest-height
         jumpable: false,
         weightClass: 'heavy',
-        color: 0x228B22, // forest green felt
-        footprintWidth: 45,   // 45% of 100px visual width
-        footprintHeight: 30,  // 50% of 60px visual height
-        footprintShape: 'rectangle',
+        color: 0x228B22,
         blocksBullets: true,
         interactive: true,
-        activationRadius: 50,
+        activationRadius: 1.0,  // World units (50px / 50)
         onActivate: 'flipTable',
         layer: 'ground',
         spriteKey: 'interior1',
-        spriteFrame: 3  // Middle-left in 3x3 grid
+        spriteFrame: 3,
+        spriteScale: 2.0
     },
 
     safe: {
         name: 'Safe',
         class: 'DestructibleCover',
         maxHealth: 250,
-        width: 50,
-        height: 50,
-        volumeWidth: 1.0,
-        volumeDepth: 1.0,
-        volumeHeight: 30,
+        worldWidth: 1.0,        // 50px / 50
+        worldDepth: 1.0,        // 50px / 50
+        worldHeight: 0.8,       // Chest-height
         jumpable: false,
         weightClass: 'heavy',
-        color: 0x708090, // slate gray
-        footprintWidth: 25,   // 50% of 50px visual width
-        footprintHeight: 25,  // 50% of 50px visual height
-        footprintShape: 'rectangle',
+        color: 0x708090,
         blocksBullets: true,
         onDestroy: 'dropCoins',
         layer: 'ground',
         spriteKey: 'interior1',
-        spriteFrame: 4  // Middle-center in 3x3 grid
+        spriteFrame: 4,
+        spriteScale: 2.0
     },
 
     // Light Cover
@@ -1938,110 +1920,89 @@ export const PROP_TYPES = {
         name: 'Card Table',
         class: 'DestructibleCover',
         maxHealth: 60,
-        width: 80,
-        height: 60,
-        volumeWidth: 1.6,
-        volumeDepth: 1.2,
-        volumeHeight: 30,
+        worldWidth: 1.6,        // 80px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 0.8,       // Chest-height
         jumpable: false,
         weightClass: 'light',
         color: 0x006400,
-        footprintWidth: 45,   // 56% of 80px visual width
-        footprintHeight: 35,  // 58% of 60px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 3  // Middle-left in interior2 3x3 grid
+        spriteFrame: 3,
+        spriteScale: 2.0
     },
 
     woodenChair: {
         name: 'Wooden Chair',
         class: 'PhysicsProp',
         maxHealth: 30,
-        width: 30,
-        height: 30,
-        volumeWidth: 0.6,       // World units (~30px / 50 = 0.6)
-        volumeDepth: 0.6,       // World units
-        volumeHeight: 30,      // World units (tall enough to block bullets)
+        worldWidth: 0.6,        // 30px / 50
+        worldDepth: 0.6,        // 30px / 50
+        worldHeight: 0.5,       // Low enough to jump over
         jumpable: true,
         weightClass: 'light',
         color: 0x8B4513,
-        footprintWidth: 20,   // 67% of 30px visual width
-        footprintHeight: 20,  // 67% of 30px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 5,
         impactSpeed: 100,
         friction: 0.92,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 0  // Top-left in 3x3 grid
+        spriteFrame: 0,
+        spriteScale: 3.5        // Small props get bigger multiplier
     },
 
     barrel: {
         name: 'Barrel',
         class: 'PhysicsProp',
         maxHealth: 50,
-        width: 40,
-        height: 40,
-        volumeWidth: 0.8,       // World units
-        volumeDepth: 0.8,       // World units
-        volumeHeight: 30,      // World units (tall enough to block bullets)
+        worldWidth: 0.8,        // 40px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 0.6,       // Can jump over
         jumpable: true,
         weightClass: 'medium',
         color: 0xA0522D,
-        footprintWidth: 30,   // 75% of 40px visual width
-        footprintHeight: 30,  // 75% of 40px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 10,
         impactSpeed: 80,
-        friction: 0.88,
+        friction: 0.90,
         layer: 'ground',
-        spriteKey: 'interior1',
-        spriteFrame: 7  // Bottom-center in 3x3 grid
+        spriteKey: 'interior2',
+        spriteFrame: 1,
+        spriteScale: 2.5
     },
 
     barStool: {
         name: 'Bar Stool',
         class: 'PhysicsProp',
         maxHealth: 25,
-        width: 20,
-        height: 20,
-        volumeWidth: 0.4,
-        volumeDepth: 0.4,
-        volumeHeight: 30,
+        worldWidth: 0.4,        // 20px / 50
+        worldDepth: 0.4,        // 20px / 50
+        worldHeight: 0.5,       // Jumpable
         jumpable: true,
         weightClass: 'light',
-        color: 0xA0522D, // sienna
-        footprintWidth: 15,   // 75% of 20px visual width
-        footprintHeight: 15,  // 75% of 20px visual height
-        footprintShape: 'rectangle',
+        color: 0xA0522D,
         blocksBullets: true,
         impactDamage: 3,
         impactSpeed: 120,
-        friction: 0.98, // Rolls continuously when hit
+        friction: 0.98,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 1  // Top-center in 3x3 grid
+        spriteFrame: 1,
+        spriteScale: 3.5
     },
 
     smallCrate: {
         name: 'Small Crate',
         class: 'PhysicsProp',
         maxHealth: 40,
-        width: 35,
-        height: 35,
-        volumeWidth: 0.7,
-        volumeDepth: 0.7,
-        volumeHeight: 30,
+        worldWidth: 0.7,        // 35px / 50
+        worldDepth: 0.7,        // 35px / 50
+        worldHeight: 0.5,       // Jumpable
         jumpable: true,
         weightClass: 'light',
-        color: 0xDEB887, // burlwood
-        footprintWidth: 25,   // 71% of 35px visual width
-        footprintHeight: 25,  // 71% of 35px visual height
-        footprintShape: 'rectangle',
+        color: 0xDEB887,
         blocksBullets: true,
         impactDamage: 3,
         impactSpeed: 100,
@@ -2049,30 +2010,30 @@ export const PROP_TYPES = {
         onDestroy: 'spawnSplinters',
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 2  // Top-right in 3x3 grid
+        spriteFrame: 2,
+        spriteScale: 3.5
     },
 
-    // Hazard Prop
+    // Hazard Props
     oilLamp: {
         name: 'Oil Lamp',
         class: 'HazardProp',
         maxHealth: 20,
-        width: 15,
-        height: 15,
-        volumeWidth: 0.3,
-        volumeDepth: 0.3,
-        volumeHeight: 30,
+        worldWidth: 0.3,        // 15px / 50
+        worldDepth: 0.3,        // 15px / 50
+        worldHeight: 0.5,       // Jumpable
         jumpable: true,
         weightClass: 'light',
         color: 0xFFD700,
         blocksBullets: true,
         onDestroy: 'createFireZone',
-        fireRadius: 40,
+        fireRadius: 0.8,        // 40px / 50
         fireDuration: 8000,
         fireDamage: 5,
         layer: 'table',
         spriteKey: 'interior3',
-        spriteFrame: 1  // Top-center in 3x3 grid (table lamp)
+        spriteFrame: 1,
+        spriteScale: 3.5
     },
 
     // Legacy explosive barrel for compatibility
@@ -2080,71 +2041,79 @@ export const PROP_TYPES = {
         name: 'Explosive Barrel',
         class: 'HazardProp',
         maxHealth: 50,
-        width: 40,
-        height: 40,
+        worldWidth: 0.8,        // 40px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 0.6,       // Jumpable
         weightClass: 'medium',
         color: 0x8B4513,
         blocksBullets: true,
-        explosionRadius: 200, // Increased from 60 for better physics visibility
+        explosionRadius: 4.0,   // 200px / 50
         explosionDamage: 20,
-        layer: 'ground'
+        layer: 'ground',
+        spriteScale: 2.5
     },
 
     whiskeyBarrel: {
         name: 'Whiskey Barrel',
         class: 'HazardProp',
         maxHealth: 50,
-        width: 40,
-        height: 40,
+        worldWidth: 0.8,        // 40px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 0.6,       // Jumpable
         weightClass: 'medium',
-        color: 0x8B2500, // brown with red tint
+        color: 0x8B2500,
         blocksBullets: true,
-        explosionRadius: 60,
+        explosionRadius: 1.2,   // 60px / 50
         explosionDamage: 20,
         onDestroy: 'createLiquidTrailFire',
-        fireRadius: 60,
+        fireRadius: 1.2,        // 60px / 50
         fireDuration: 10000,
         fireDamage: 5,
         layer: 'ground',
         spriteKey: 'interior3',
-        spriteFrame: 3  // Middle-left in 3x3 grid
+        spriteFrame: 3,
+        spriteScale: 2.5
     },
 
     dynamiteCrate: {
         name: 'Dynamite Crate',
         class: 'HazardProp',
         maxHealth: 80,
-        width: 50,
-        height: 50,
+        worldWidth: 1.0,        // 50px / 50
+        worldDepth: 1.0,        // 50px / 50
+        worldHeight: 0.6,       // Jumpable
         weightClass: 'medium',
-        color: 0xD2691E, // chocolate, with red TNT labels
+        color: 0xD2691E,
         blocksBullets: true,
-        explosionRadius: 100,
+        explosionRadius: 2.0,   // 100px / 50
         explosionDamage: 30,
         onDestroy: 'triggerChainExplosions',
         layer: 'ground',
         spriteKey: 'interior3',
-        spriteFrame: 4  // Middle-center in 3x3 grid
+        spriteFrame: 4,
+        spriteScale: 2.5
     },
 
     gasLantern: {
         name: 'Gas Lantern',
         class: 'HazardProp',
         maxHealth: 30,
-        width: 20,
-        height: 20,
+        worldWidth: 0.4,        // 20px / 50
+        worldDepth: 0.4,        // 20px / 50
+        worldHeight: 0.5,       // Jumpable
         weightClass: 'light',
-        color: 0xFFFFE0, // light yellow
+        color: 0xFFFFE0,
         blocksBullets: true,
         onDestroy: 'createBlindingFlash',
-        fireRadius: 30,
+        fireRadius: 0.6,        // 30px / 50
         fireDuration: 2000,
         fireDamage: 5,
-        flashRadius: 150,
+        flashRadius: 3.0,       // 150px / 50
         flashDuration: 1000,
         layer: 'table',
         spriteKey: 'interior3',
-        spriteFrame: 2  // Top-right in 3x3 grid
+        spriteFrame: 2,
+        spriteScale: 3.5
     },
 
     // Phase 4: Tactical Props
@@ -2154,17 +2123,19 @@ export const PROP_TYPES = {
         name: 'Stage Lights',
         class: 'TacticalProp',
         maxHealth: 40,
-        width: 30,
-        height: 40,
+        worldWidth: 0.6,        // 30px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 1.2,       // Ceiling-mounted, tall
         weightClass: null,
         color: 0xFFFF00,
         blocksBullets: true,
         onDestroy: 'fallAndDealDamage',
         fallDamage: 15,
-        fallRadius: 30,
+        fallRadius: 0.6,        // 30px / 50
         layer: 'ceiling',
         spriteKey: 'interior4',
-        spriteFrame: 7  // Bottom-center in 3x3 grid
+        spriteFrame: 7,
+        spriteScale: 2.0
     },
 
     // Bell Rope - activate to stun enemies
@@ -2172,74 +2143,79 @@ export const PROP_TYPES = {
         name: 'Bell Rope',
         class: 'TacticalProp',
         maxHealth: 30,
-        width: 10,
-        height: 60,
+        worldWidth: 0.2,        // 10px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 1.5,       // Very tall, ceiling-mounted
         weightClass: null,
         color: 0xCD853F,
         blocksBullets: true,
         interactive: true,
-        activationRadius: 50,
+        activationRadius: 1.0,  // 50px / 50
         onActivate: 'stunEnemies',
-        stunRadius: 600,
+        stunRadius: 12.0,       // 600px / 50
         stunDuration: 5000,
         maxUses: 3,
         cooldown: 2000,
         layer: 'ceiling',
         spriteKey: 'interior4',
-        spriteFrame: 1  // Top-center in 3x3 grid
+        spriteFrame: 1,
+        spriteScale: 2.0
     },
 
     swingingDoors: {
         name: 'Swinging Doors',
         class: 'TacticalProp',
         maxHealth: 60,
-        width: 80,
-        height: 100,
+        worldWidth: 1.6,        // 80px / 50
+        worldDepth: 2.0,        // 100px / 50
+        worldHeight: 1.2,       // Tall obstacle
         weightClass: null,
-        color: 0x8B4513, // brown
-        footprintWidth: 45,   // 56% of 80px visual width
-        footprintHeight: 60,  // 60% of 100px visual height
-        footprintShape: 'rectangle',
+        color: 0x8B4513,
         blocksBullets: true,
         onDestroy: 'autoSwingClosed',
         knockbackForce: 20,
         layer: 'ground',
         spriteKey: 'interior4',
-        spriteFrame: 0  // Top-left in 3x3 grid
+        spriteFrame: 0,
+        spriteScale: 2.0
     },
 
     stageCurtain: {
         name: 'Stage Curtain',
         class: 'TacticalProp',
         maxHealth: 40,
-        width: 100,
-        height: 120,
+        worldWidth: 2.0,        // 100px / 50
+        worldDepth: 2.4,        // 120px / 50
+        worldHeight: 1.5,       // Very tall
         weightClass: null,
-        color: 0x8B0000, // dark red
-        blocksBullets: false, // Provides concealment, not protection
+        color: 0x8B0000,
+        blocksBullets: false,
         flammable: true,
         fireSpreadMultiplier: 2.0,
         layer: 'wall',
         spriteKey: 'interior4',
-        spriteFrame: 2  // Top-right in 3x3 grid
+        spriteFrame: 2,
+        spriteScale: 2.0
     },
 
     mirror: {
         name: 'Mirror',
         class: 'TacticalProp',
         maxHealth: 50,
-        width: 40,
-        height: 60,
+        worldWidth: 0.8,        // 40px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 1.2,       // Tall wall-mounted
         weightClass: null,
-        color: 0xC0C0C0, // silver frame
+        color: 0xC0C0C0,
         blocksBullets: true,
         onDestroy: 'createGlassShardHazard',
-        glassShardRadius: 25,
+        glassShardRadius: 0.5,  // 25px / 50
         glassShardDamage: 3,
         glassShardDuration: 4000,
         layer: 'wall',
         spriteKey: 'interior4',
-        spriteFrame: 5  // Middle-right in 3x3 grid (simple mirror)
+        spriteFrame: 5,
+        spriteScale: 2.0
     },
 
     // Phase 5: Chandelier - dynamic prop with falling system
@@ -2247,17 +2223,19 @@ export const PROP_TYPES = {
         name: 'Chandelier',
         class: 'DynamicProp',
         maxHealth: 100,
-        width: 60,
-        height: 60,
+        worldWidth: 1.2,        // 60px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 1.5,       // Ceiling-mounted
         weightClass: 'heavy',
-        color: 0xFFD700, // Gold
-        blocksBullets: false, // Chandeliers don't block bullets (ceiling-mounted)
+        color: 0xFFD700,
+        blocksBullets: false,
         fallDamage: 25,
-        fallRadius: 50,
-        darkenRadius: 150,
+        fallRadius: 1.0,        // 50px / 50
+        darkenRadius: 3.0,      // 150px / 50
         layer: 'ceiling',
         spriteKey: 'interior4',
-        spriteFrame: 4  // Middle-center in 3x3 grid
+        spriteFrame: 4,
+        spriteScale: 2.0
     },
 
     // Phase 6: Boss Integration Props
@@ -2267,18 +2245,17 @@ export const PROP_TYPES = {
         name: 'Support Beam',
         class: 'StructuralProp',
         maxHealth: 300,
-        width: 30,
-        height: 150,
+        worldWidth: 0.6,        // 30px / 50
+        worldDepth: 3.0,        // 150px / 50
+        worldHeight: 2.0,       // Very tall structural element
         weightClass: null,
         color: 0x8B4513,
-        footprintWidth: 20,   // 67% of 30px visual width
-        footprintHeight: 100, // 67% of 150px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         onDestroy: 'stageTilt',
         layer: 'structure',
         spriteKey: 'interior5',
-        spriteFrame: 1  // Top-center in 3x3 grid
+        spriteFrame: 1,
+        spriteScale: 2.0
     },
 
     // Trapdoor - opens from explosions/boss attacks
@@ -2286,15 +2263,17 @@ export const PROP_TYPES = {
         name: 'Trapdoor',
         class: 'SpecialProp',
         maxHealth: Infinity,
-        width: 60,
-        height: 60,
+        worldWidth: 1.2,        // 60px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 0.0,       // Floor level
         weightClass: null,
         color: 0x654321,
         blocksBullets: false,
         interactive: false,
         layer: 'floor',
         spriteKey: 'interior5',
-        spriteFrame: 2  // Top-right in 3x3 grid (closed state)
+        spriteFrame: 2,
+        spriteScale: 2.0
     },
 
     // Phase 7: Additional Special Props
@@ -2303,21 +2282,20 @@ export const PROP_TYPES = {
         name: 'Water Trough',
         class: 'SpecialProp',
         maxHealth: 100,
-        width: 70,
-        height: 40,
+        worldWidth: 1.4,        // 70px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 0.8,       // Chest-height
         weightClass: 'heavy',
-        color: 0x4682B4, // steel blue
-        footprintWidth: 30,   // 43% of 70px visual width
-        footprintHeight: 18,  // 45% of 40px visual height
-        footprintShape: 'rectangle',
+        color: 0x4682B4,
         blocksBullets: true,
         onDestroy: 'spillWater',
-        wetZoneRadius: 80,
+        wetZoneRadius: 1.6,     // 80px / 50
         wetZoneDuration: 20000,
         electricalMultiplier: 1.5,
         layer: 'ground',
         spriteKey: 'interior5',
-        spriteFrame: 0  // Top-left in 3x3 grid
+        spriteFrame: 0,
+        spriteScale: 2.0
     },
 
     // Additional props from interior1 sprite bundle
@@ -2325,36 +2303,34 @@ export const PROP_TYPES = {
         name: 'Wooden Chest',
         class: 'DestructibleCover',
         maxHealth: 160,
-        width: 80,
-        height: 60,
+        worldWidth: 1.6,        // 80px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 0.8,       // Chest-height
         weightClass: 'heavy',
-        color: 0x8B4513, // saddle brown
-        footprintWidth: 35,   // 44% of 80px visual width
-        footprintHeight: 30,  // 50% of 60px visual height
-        footprintShape: 'rectangle',
+        color: 0x8B4513,
         blocksBullets: true,
         onDestroy: 'dropCoins',
         layer: 'ground',
         spriteKey: 'interior1',
-        spriteFrame: 6  // Bottom-left in 3x3 grid
+        spriteFrame: 6,
+        spriteScale: 2.0
     },
 
     cabinet: {
         name: 'Cabinet',
         class: 'DestructibleCover',
         maxHealth: 140,
-        width: 70,
-        height: 80,
+        worldWidth: 1.4,        // 70px / 50
+        worldDepth: 1.6,        // 80px / 50
+        worldHeight: 1.2,       // Tall obstacle
         weightClass: 'heavy',
-        color: 0x8B4513, // saddle brown
-        footprintWidth: 30,   // 43% of 70px visual width
-        footprintHeight: 35,  // 44% of 80px visual height
-        footprintShape: 'rectangle',
+        color: 0x8B4513,
         blocksBullets: true,
         onDestroy: 'spawnBottleDebris',
         layer: 'ground',
         spriteKey: 'interior1',
-        spriteFrame: 8  // Bottom-right in 3x3 grid
+        spriteFrame: 8,
+        spriteScale: 2.0
     },
 
     // Additional props from interior2 sprite bundle
@@ -2362,97 +2338,92 @@ export const PROP_TYPES = {
         name: 'Standard Barrel',
         class: 'PhysicsProp',
         maxHealth: 50,
-        width: 40,
-        height: 40,
+        worldWidth: 0.8,        // 40px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 0.6,       // Jumpable
         weightClass: 'medium',
         color: 0xA0522D,
-        footprintWidth: 30,   // 75% of 40px visual width
-        footprintHeight: 30,  // 75% of 40px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 10,
         impactSpeed: 80,
         friction: 0.88,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 4  // Middle-center in 3x3 grid
+        spriteFrame: 4,
+        spriteScale: 2.5
     },
 
     woodenBench: {
         name: 'Wooden Bench',
         class: 'PhysicsProp',
         maxHealth: 50,
-        width: 70,
-        height: 30,
+        worldWidth: 1.4,        // 70px / 50
+        worldDepth: 0.6,        // 30px / 50
+        worldHeight: 0.5,       // Jumpable
         weightClass: 'medium',
         color: 0x8B4513,
-        footprintWidth: 50,   // 71% of 70px visual width
-        footprintHeight: 22,  // 73% of 30px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 8,
         impactSpeed: 90,
         friction: 0.90,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 5  // Middle-right in 3x3 grid
+        spriteFrame: 5,
+        spriteScale: 2.5
     },
 
     smallTable: {
         name: 'Small Table',
         class: 'PhysicsProp',
         maxHealth: 40,
-        width: 40,
-        height: 40,
+        worldWidth: 0.8,        // 40px / 50
+        worldDepth: 0.8,        // 40px / 50
+        worldHeight: 0.8,       // Chest-height
         weightClass: 'light',
         color: 0x8B4513,
-        footprintWidth: 30,   // 75% of 40px visual width
-        footprintHeight: 30,  // 75% of 40px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 5,
         impactSpeed: 100,
         friction: 0.92,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 6  // Bottom-left in 3x3 grid
+        spriteFrame: 6,
+        spriteScale: 2.5
     },
 
     woodenStool: {
         name: 'Wooden Stool',
         class: 'PhysicsProp',
         maxHealth: 20,
-        width: 25,
-        height: 25,
+        worldWidth: 0.5,        // 25px / 50
+        worldDepth: 0.5,        // 25px / 50
+        worldHeight: 0.5,       // Jumpable
         weightClass: 'light',
         color: 0x8B4513,
-        footprintWidth: 18,   // 72% of 25px visual width
-        footprintHeight: 18,  // 72% of 25px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         impactDamage: 3,
         impactSpeed: 120,
         friction: 0.95,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 7  // Bottom-center in 3x3 grid
+        spriteFrame: 7,
+        spriteScale: 3.5
     },
 
     ammunitionBox: {
         name: 'Ammunition Box',
         class: 'DestructibleCover',
         maxHealth: 60,
-        width: 35,
-        height: 30,
+        worldWidth: 0.7,        // 35px / 50
+        worldDepth: 0.6,        // 30px / 50
+        worldHeight: 0.6,       // Jumpable
         weightClass: 'medium',
-        color: 0x808000, // olive
-        footprintWidth: 25,   // 71% of 35px visual width
-        footprintHeight: 22,  // 73% of 30px visual height
-        footprintShape: 'rectangle',
+        color: 0x808000,
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior2',
-        spriteFrame: 8  // Bottom-right in 3x3 grid
+        spriteFrame: 8,
+        spriteScale: 2.5
     },
 
     // Additional props from interior3 sprite bundle (hazards)
@@ -2460,90 +2431,100 @@ export const PROP_TYPES = {
         name: 'Hanging Oil Lamp',
         class: 'HazardProp',
         maxHealth: 20,
-        width: 15,
-        height: 30, // Taller due to chain
+        worldWidth: 0.3,        // 15px / 50
+        worldDepth: 0.6,        // 30px / 50 (taller due to chain)
+        worldHeight: 1.2,       // Ceiling-mounted
         weightClass: null,
         color: 0xFFD700,
-        blocksBullets: false, // Hanging from ceiling
+        blocksBullets: false,
         onDestroy: 'createFireZone',
-        fireRadius: 40,
+        fireRadius: 0.8,        // 40px / 50
         fireDuration: 8000,
         fireDamage: 5,
         layer: 'ceiling',
         spriteKey: 'interior3',
-        spriteFrame: 0  // Top-left in 3x3 grid
+        spriteFrame: 0,
+        spriteScale: 3.5
     },
 
     gunpowderKeg: {
         name: 'Gunpowder Keg',
         class: 'HazardProp',
         maxHealth: 40,
-        width: 35,
-        height: 35,
+        worldWidth: 0.7,        // 35px / 50
+        worldDepth: 0.7,        // 35px / 50
+        worldHeight: 0.6,       // Jumpable
         weightClass: 'medium',
-        color: 0x2F4F4F, // dark slate gray
+        color: 0x2F4F4F,
         blocksBullets: true,
-        explosionRadius: 80,
+        explosionRadius: 1.6,   // 80px / 50
         explosionDamage: 35,
         layer: 'ground',
         spriteKey: 'interior3',
-        spriteFrame: 5  // Middle-right in 3x3 grid
+        spriteFrame: 5,
+        spriteScale: 2.5
     },
 
     fireBrazier: {
         name: 'Fire Brazier',
         class: 'HazardProp',
         maxHealth: 60,
-        width: 30,
-        height: 30,
+        worldWidth: 0.6,        // 30px / 50
+        worldDepth: 0.6,        // 30px / 50
+        worldHeight: 0.8,       // Chest-height
         weightClass: 'medium',
-        color: 0xFF4500, // orange red
+        color: 0xFF4500,
         blocksBullets: true,
         onDestroy: 'createFireZone',
-        fireRadius: 50,
+        fireRadius: 1.0,        // 50px / 50
         fireDuration: 12000,
         fireDamage: 8,
         layer: 'ground',
         spriteKey: 'interior3',
-        spriteFrame: 6  // Bottom-left in 3x3 grid
+        spriteFrame: 6,
+        spriteScale: 2.5
     },
 
     molotovBottle: {
         name: 'Molotov Bottle',
         class: 'HazardProp',
         maxHealth: 10,
-        width: 15,
-        height: 20,
+        worldWidth: 0.3,        // 15px / 50
+        worldDepth: 0.4,        // 20px / 50
+        worldHeight: 0.5,       // Jumpable
         weightClass: 'light',
-        color: 0x8B4513, // brown
+        color: 0x8B4513,
         blocksBullets: false,
         onDestroy: 'createFireZone',
-        fireRadius: 45,
+        fireRadius: 0.9,        // 45px / 50
         fireDuration: 6000,
         fireDamage: 6,
         layer: 'table',
         spriteKey: 'interior3',
-        spriteFrame: 7  // Bottom-center in 3x3 grid
+        spriteFrame: 7,
+        spriteScale: 3.5
     },
 
     keroseneCanister: {
         name: 'Kerosene Canister',
         class: 'HazardProp',
         maxHealth: 50,
-        width: 30,
-        height: 35,
+        worldWidth: 0.6,        // 30px / 50
+        worldDepth: 0.7,        // 35px / 50
+        worldHeight: 0.6,       // Jumpable
         weightClass: 'medium',
-        color: 0xFF4500, // red orange
+        color: 0xFF4500,
         blocksBullets: true,
-        explosionRadius: 70,
+        explosionRadius: 1.4,   // 70px / 50
         explosionDamage: 25,
         onDestroy: 'createLiquidTrailFire',
-        fireRadius: 55,
+        fireRadius: 1.1,        // 55px / 50
         fireDuration: 10000,
         fireDamage: 7,
         layer: 'ground',
         spriteKey: 'interior3',
-        spriteFrame: 8  // Bottom-right in 3x3 grid
+        spriteFrame: 8,
+        spriteScale: 2.5
     },
 
     // Additional props from interior4 sprite bundle (tactical)
@@ -2551,52 +2532,55 @@ export const PROP_TYPES = {
         name: 'Ornate Mirror',
         class: 'TacticalProp',
         maxHealth: 60,
-        width: 40,
-        height: 60,
+        worldWidth: 0.8,        // 40px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 1.2,       // Wall-mounted
         weightClass: null,
-        color: 0xC0C0C0, // silver frame
+        color: 0xC0C0C0,
         blocksBullets: true,
         onDestroy: 'createGlassShardHazard',
-        glassShardRadius: 30,
+        glassShardRadius: 0.6,  // 30px / 50
         glassShardDamage: 4,
         glassShardDuration: 5000,
         layer: 'wall',
         spriteKey: 'interior4',
-        spriteFrame: 3  // Middle-left in 3x3 grid
+        spriteFrame: 3,
+        spriteScale: 2.0
     },
 
     wantedPosterBoard: {
         name: 'Wanted Poster Board',
         class: 'TacticalProp',
         maxHealth: 80,
-        width: 50,
-        height: 70,
+        worldWidth: 1.0,        // 50px / 50
+        worldDepth: 1.4,        // 70px / 50
+        worldHeight: 1.2,       // Wall-mounted
         weightClass: null,
-        color: 0x8B4513, // brown wood
+        color: 0x8B4513,
         blocksBullets: true,
         layer: 'wall',
         spriteKey: 'interior4',
-        spriteFrame: 6  // Bottom-left in 3x3 grid
+        spriteFrame: 6,
+        spriteScale: 2.0
     },
 
     spittoon: {
         name: 'Spittoon',
         class: 'PhysicsProp',
         maxHealth: 40,
-        width: 25,
-        height: 25,
+        worldWidth: 0.5,        // 25px / 50
+        worldDepth: 0.5,        // 25px / 50
+        worldHeight: 0.5,       // Jumpable
         weightClass: 'light',
-        color: 0xFFD700, // brass/gold
-        footprintWidth: 18,   // 72% of 25px visual width
-        footprintHeight: 18,  // 72% of 25px visual height
-        footprintShape: 'rectangle',
+        color: 0xFFD700,
         blocksBullets: true,
         impactDamage: 5,
         impactSpeed: 110,
-        friction: 0.85, // Rolls easily
+        friction: 0.85,
         layer: 'ground',
         spriteKey: 'interior4',
-        spriteFrame: 8  // Bottom-right in 3x3 grid
+        spriteFrame: 8,
+        spriteScale: 3.5
     },
 
     // Additional props from interior5 sprite bundle (Bundle 5: Special Props & Structural)
@@ -2605,94 +2589,100 @@ export const PROP_TYPES = {
         name: 'Trapdoor (Open)',
         class: 'SpecialProp',
         maxHealth: Infinity,
-        width: 60,
-        height: 60,
+        worldWidth: 1.2,        // 60px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 0.0,       // Floor level
         weightClass: null,
         color: 0x654321,
         blocksBullets: false,
         interactive: false,
         layer: 'floor',
         spriteKey: 'interior5',
-        spriteFrame: 3  // Middle-left in 3x3 grid
+        spriteFrame: 3,
+        spriteScale: 2.0
     },
 
     stagePlatform: {
         name: 'Stage Platform',
         class: 'StructuralProp',
         maxHealth: 200,
-        width: 80,
-        height: 60,
+        worldWidth: 1.6,        // 80px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 0.8,       // Chest-height platform
         weightClass: 'heavy',
         color: 0x8B4513,
-        footprintWidth: 55,   // 69% of 80px visual width
-        footprintHeight: 42,  // 70% of 60px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior5',
-        spriteFrame: 4  // Middle-center in 3x3 grid
+        spriteFrame: 4,
+        spriteScale: 2.0
     },
 
     hitchingPost: {
         name: 'Hitching Post',
         class: 'StructuralProp',
         maxHealth: 120,
-        width: 20,
-        height: 50,
+        worldWidth: 0.4,        // 20px / 50
+        worldDepth: 1.0,        // 50px / 50
+        worldHeight: 1.2,       // Tall obstacle
         weightClass: 'heavy',
         color: 0x8B4513,
-        footprintWidth: 12,   // 60% of 20px visual width
-        footprintHeight: 35,  // 70% of 50px visual height
-        footprintShape: 'rectangle',
         blocksBullets: true,
         layer: 'ground',
         spriteKey: 'interior5',
-        spriteFrame: 5  // Middle-right in 3x3 grid
+        spriteFrame: 5,
+        spriteScale: 2.0
     },
 
     balconyRailing: {
         name: 'Balcony Railing',
         class: 'StructuralProp',
         maxHealth: 100,
-        width: 100,
-        height: 30,
+        worldWidth: 2.0,        // 100px / 50
+        worldDepth: 0.6,        // 30px / 50
+        worldHeight: 0.8,       // Chest-height
         weightClass: 'heavy',
         color: 0x8B4513,
         blocksBullets: true,
         layer: 'wall',
         spriteKey: 'interior5',
-        spriteFrame: 6  // Bottom-left in 3x3 grid
+        spriteFrame: 6,
+        spriteScale: 2.0
     },
 
     windowIntact: {
         name: 'Window (Intact)',
         class: 'TacticalProp',
         maxHealth: 40,
-        width: 50,
-        height: 60,
+        worldWidth: 1.0,        // 50px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 1.2,       // Wall-mounted
         weightClass: null,
-        color: 0x8B4513, // brown frame
+        color: 0x8B4513,
         blocksBullets: true,
         onDestroy: 'createGlassShardHazard',
-        glassShardRadius: 25,
+        glassShardRadius: 0.5,  // 25px / 50
         glassShardDamage: 3,
         glassShardDuration: 4000,
         layer: 'wall',
         spriteKey: 'interior5',
-        spriteFrame: 7  // Bottom-center in 3x3 grid
+        spriteFrame: 7,
+        spriteScale: 2.0
     },
 
     windowBroken: {
         name: 'Window (Broken)',
         class: 'StructuralProp',
         maxHealth: 20,
-        width: 50,
-        height: 60,
+        worldWidth: 1.0,        // 50px / 50
+        worldDepth: 1.2,        // 60px / 50
+        worldHeight: 1.2,       // Wall-mounted
         weightClass: null,
-        color: 0x8B4513, // brown frame
-        blocksBullets: false, // Already broken
+        color: 0x8B4513,
+        blocksBullets: false,
         layer: 'wall',
         spriteKey: 'interior5',
-        spriteFrame: 8  // Bottom-right in 3x3 grid
+        spriteFrame: 8,
+        spriteScale: 2.0
     }
 };
