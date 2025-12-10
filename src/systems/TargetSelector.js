@@ -164,12 +164,13 @@ export class TargetSelector {
             if (enemy.type === 'boss_kraken_arm' && enemy.tentacleSprites) {
                 enemy.tentacleSprites.forEach((sprite, index) => {
                     if (sprite && enemy.tentacles[index] && enemy.tentacles[index].alive) {
+                        const tentacle = enemy.tentacles[index];
                         targets.push({
                             type: 'tentacle',
                             enemy: enemy,
                             tentacleIndex: index,
-                            x: sprite.x,  // TODO: tentacles may need world coords too
-                            y: sprite.y,
+                            x: tentacle.worldX || enemy.worldX,
+                            y: tentacle.worldY || enemy.worldY,
                             label: `Tentacle ${index + 1}`
                         });
                     }

@@ -105,7 +105,7 @@ const ENEMY_TYPES = {
         tentacleHealth: 80,
         tentacleCount: 4,
         tentacleRegenRate: 5,  // HP per second
-        tentacleLength: 40,
+        tentacleLength: 3,  // World units (was 40, now ~150 pixels)
         // Ink cloud properties
         inkCloudRadius: 2,                 // Changed from 100 pixels to 2 world units
         inkCloudDuration: 8000,
@@ -1634,10 +1634,17 @@ export class Enemy {
                 const wobble = Math.sin(currentTime / 500 + i) * 0.3;
                 const angle = baseAngle + wobble;
 
-                this.tentacleSprites[i].setPosition(
-                    this.worldX + Math.cos(angle) * this.config.tentacleLength,
-                    this.worldY + Math.sin(angle) * this.config.tentacleLength
-                );
+                // Calculate tentacle world position
+                const tentacleWorldX = this.worldX + Math.cos(angle) * this.config.tentacleLength;
+                const tentacleWorldY = this.worldY + Math.sin(angle) * this.config.tentacleLength;
+
+                // Store world coordinates for targeting
+                tentacle.worldX = tentacleWorldX;
+                tentacle.worldY = tentacleWorldY;
+
+                // Convert to screen coordinates for sprite positioning
+                const { screenX, screenY } = worldToScreen(tentacleWorldX, tentacleWorldY, this.worldZ);
+                this.tentacleSprites[i].setPosition(screenX, screenY);
 
                 // Regeneration
                 if (tentacle.health < tentacle.maxHealth) {

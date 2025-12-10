@@ -299,8 +299,11 @@ export class Player {
         if (targetEnemy.type === 'tentacle') {
             const enemy = targetEnemy.enemy;
             if (!enemy) return;
-            targetWorldX = enemy.worldX;
-            targetWorldY = enemy.worldY;
+            // Get tentacle's actual world position from stored coordinates
+            const tentacle = enemy.tentacles[targetEnemy.tentacleIndex];
+            if (!tentacle) return;
+            targetWorldX = tentacle.worldX || enemy.worldX;
+            targetWorldY = tentacle.worldY || enemy.worldY;
         } else if (targetEnemy.type === 'enemy') {
             const enemy = targetEnemy.enemy;
             if (!enemy) return;
