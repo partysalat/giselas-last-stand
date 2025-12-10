@@ -1,3 +1,5 @@
+import { PIXELS_PER_WORLD_UNIT } from './utils/CoordinateTransform.js';
+
 export const gameConfig = {
     type: Phaser.AUTO,
     width: 1920,
@@ -90,7 +92,7 @@ export const ISOMETRIC_CONFIG = {
     WORLD_MAX_Y: 24.5,
 
     // Height configuration
-    PIXELS_PER_WORLD_UNIT: 50, // 1 world unit = 50 pixels in Z direction
+    PIXELS_PER_WORLD_UNIT,     // 1 world unit = 50 pixels in Z direction (imported from CoordinateTransform)
     GRAVITY: -1200,            // Player downward acceleration (tune for jump feel)
     BULLET_GRAVITY: -400,      // Bullet gravity (lighter than player for better aim)
     JUMP_VELOCITY: 500,        // Initial upward velocity (tune for height)

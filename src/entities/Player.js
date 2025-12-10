@@ -1,4 +1,4 @@
-import { worldToScreen, screenToWorld, calculateDepth } from '../utils/CoordinateTransform.js';
+import { worldToScreen, screenToWorld, calculateDepth, PIXELS_PER_WORLD_UNIT } from '../utils/CoordinateTransform.js';
 import { ISOMETRIC_CONFIG } from '../config.js';
 
 export class Player {
@@ -323,8 +323,7 @@ export class Player {
         if (isAirborne) {
             // 3D trajectory calculation with proper unit conversion
             // worldZ is in pixels, worldX/Y are in world units
-            // Conversion: 1 world unit = 50 pixels (based on PLAYER_HEIGHT: 0.8 = ~40px)
-            const PIXELS_PER_WORLD_UNIT = 50;
+            // PIXELS_PER_WORLD_UNIT imported from CoordinateTransform.js
 
             const targetHeight = this.getTargetCenterHeight(targetEnemy);
             const playerShootHeight = this.worldZ + 20; // Chest height in pixels
