@@ -72,12 +72,13 @@ export class Cocktail {
         this.sprite.setScale(1.2); // Scale up for better visibility
         this.sprite.setDepth(calculateDepth(this.worldY, 1000)); // Use proper depth sorting
 
-        // Add glow effect
-        this.glow = scene.add.circle(screenX, screenY, 40, this.config.color, 0.3);
+        // Add glow effect (scaled to collision radius)
+        const glowRadiusPixels = this.config.radius * 50 * 1.5;  // 1.5x collision radius
+        this.glow = scene.add.circle(screenX, screenY, glowRadiusPixels, this.config.color, 0.3);
         this.glow.setDepth(calculateDepth(this.worldY, 999)); // Glow just below sprite
 
-        // Collision radius
-        this.radius = 0.3; // World units
+        // Collision radius (defined in config)
+        this.radius = this.config.radius; // World units (typically 0.3)
 
         // Floating animation - animate worldZ instead of screen Y
         this.floatTime = 0;

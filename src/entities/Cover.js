@@ -34,19 +34,20 @@ export class Cover {
         this.name = config.name;
         this.maxHealth = config.maxHealth;
 
-        // Store screen pixel dimensions for sprite
-        this.screenWidth = config.width;
-        this.screenHeight = config.height;
+        // World space dimensions (all gameplay uses these)
+        this.worldWidth = config.worldWidth;
+        this.worldDepth = config.worldDepth;
+        this.worldHeight = config.worldHeight;
 
-        // Convert dimensions to world units for collision (50 pixels ≈ 1 world unit)
-        this.worldWidth = config.width / 50;
-        this.worldHeight = config.height / 50;
+        // Convert to screen pixel dimensions for sprite rendering
+        this.screenWidth = this.worldWidth * 50;
+        this.screenHeight = this.worldDepth * 50;
 
         this.color = config.color;
         this.explosive = config.explosive || false;
 
-        // Convert explosion radius to world units
-        this.explosionRadius = config.explosionRadius ? config.explosionRadius / 50 : 0;
+        // Explosion radius already in world units
+        this.explosionRadius = config.explosionRadius || 0;
         this.explosionDamage = config.explosionDamage || 0;
     }
 
@@ -313,32 +314,36 @@ export const COVER_TYPES = {
     table: {
         name: 'Wooden Table',
         maxHealth: 100,
-        width: 80,
-        height: 40,
-        color: 0x8B4513  // Brown
+        worldWidth: 1.6,      // 80/50 = 1.6 world units
+        worldDepth: 0.8,      // 40/50 = 0.8 world units
+        worldHeight: 0.8,     // Chest-height cover
+        color: 0x8B4513       // Brown
     },
     bar: {
         name: 'Bar Counter',
         maxHealth: 200,
-        width: 120,
-        height: 50,
-        color: 0x654321  // Dark brown
+        worldWidth: 2.4,      // 120/50 = 2.4 world units
+        worldDepth: 1.0,      // 50/50 = 1.0 world units
+        worldHeight: 0.8,     // Chest-height cover
+        color: 0x654321       // Dark brown
     },
     barrel: {
         name: 'Barrel',
         maxHealth: 50,
-        width: 40,
-        height: 40,
-        color: 0xA0522D,  // Sienna brown
+        worldWidth: 0.8,      // 40/50 = 0.8 world units
+        worldDepth: 0.8,      // 40/50 = 0.8 world units
+        worldHeight: 0.6,     // Can jump over
+        color: 0xA0522D,      // Sienna brown
         explosive: true,
-        explosionRadius: 60,
+        explosionRadius: 1.2, // 60/50 = 1.2 world units
         explosionDamage: 20
     },
     piano: {
         name: 'Piano',
         maxHealth: 150,
-        width: 90,
-        height: 60,
-        color: 0x2F4F4F  // Dark slate gray
+        worldWidth: 1.8,      // 90/50 = 1.8 world units
+        worldDepth: 1.2,      // 60/50 = 1.2 world units
+        worldHeight: 0.8,     // Chest-height cover
+        color: 0x2F4F4F       // Dark slate gray
     }
 };
