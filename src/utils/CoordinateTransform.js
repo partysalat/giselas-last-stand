@@ -20,6 +20,12 @@ export const TILE_HEIGHT_HALF = TILE_HEIGHT / 2; // 16
 // This affects movement speed feel - adjust after testing
 export const WORLD_SCALE = 1.0;
 
+// Conversion between pixels and world units
+// Used for converting legacy pixel-based dimensions to world units
+export const PIXELS_PER_WORLD_UNIT = 50; // 1 world unit = 50 pixels
+export const worldUnitsFromPixels = (pixels) => pixels / PIXELS_PER_WORLD_UNIT;
+export const pixelsFromWorldUnits = (worldUnits) => worldUnits * PIXELS_PER_WORLD_UNIT;
+
 // Screen origin offset to center the isometric view
 // Viewport is 1920x1080, center at (960, 540)
 // World center (15, 12) should map to screen center
