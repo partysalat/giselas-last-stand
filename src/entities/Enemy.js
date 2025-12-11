@@ -486,6 +486,26 @@ export class Enemy {
     }
 
     /**
+     * Check if enemy would collide with any prop at given position
+     * @param {number} newWorldX - New world X position
+     * @param {number} newWorldY - New world Y position
+     * @returns {boolean} True if collision detected
+     */
+    checkPropCollision(newWorldX, newWorldY) {
+        if (!this.scene.fortificationManager || !this.scene.fortificationManager.fortificationProps) return false;
+
+        const props = this.scene.fortificationManager.fortificationProps;
+        for (const prop of props) {
+            // Check 3D collision at new position
+            // Enemies have standard dimensions: radius ~0.5, height ~1.0
+            if (prop.checkCollision3D(newWorldX, newWorldY, this.worldZ || 0, this.radius || 0.5, this.height || 1.0)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Attack a fortification prop
      * @param {EnvironmentProp} prop
      */
@@ -749,8 +769,28 @@ export class Enemy {
             const moveX = (dx / distance) * this.worldSpeed * deltaSeconds;
             const moveY = (dy / distance) * this.worldSpeed * deltaSeconds;
 
-            this.worldX += moveX;
-            this.worldY += moveY;
+            // Calculate new position
+            const newWorldX = this.worldX + moveX;
+            const newWorldY = this.worldY + moveY;
+
+            // Check collision with environment props
+            let collided = false;
+            if (this.scene.environmentManager) {
+                const props = this.scene.environmentManager.getProps();
+                for (const prop of props) {
+                    // Check 3D collision at new position (enemies have standard dimensions)
+                    if (prop.checkCollision3D(newWorldX, newWorldY, this.worldZ || 0, this.radius || 0.5, this.height || 1.0)) {
+                        collided = true;
+                        break;
+                    }
+                }
+            }
+
+            // Only apply movement if no collision
+            if (!collided) {
+                this.worldX = newWorldX;
+                this.worldY = newWorldY;
+            }
 
             // Update sprite direction based on world-space movement
             if (this.useDirectionalSprites) {
@@ -821,8 +861,16 @@ export class Enemy {
                 if (distance < optimalDistance - 50) {
                     // Too close - back away
                     const deltaSeconds = this.deltaSeconds;
-                    this.worldX -= (dx / distance) * this.config.speed * 0.5 * deltaSeconds;
-                    this.worldY -= (dy / distance) * this.config.speed * 0.5 * deltaSeconds;
+                    const moveX = -(dx / distance) * this.config.speed * 0.5 * deltaSeconds;
+                    const moveY = -(dy / distance) * this.config.speed * 0.5 * deltaSeconds;
+
+                    // Check collision before moving
+                    const newWorldX = this.worldX + moveX;
+                    const newWorldY = this.worldY + moveY;
+                    if (!this.checkPropCollision(newWorldX, newWorldY)) {
+                        this.worldX = newWorldX;
+                        this.worldY = newWorldY;
+                    }
                     return;
                 }
             }
@@ -836,8 +884,16 @@ export class Enemy {
                 angle = this.applyObstacleAvoidance(angle);
 
                 const deltaSeconds = this.deltaSeconds;
-                this.worldX += Math.cos(angle) * this.worldSpeed * deltaSeconds;
-                this.worldY += Math.sin(angle) * this.worldSpeed * deltaSeconds;
+                const moveX = Math.cos(angle) * this.worldSpeed * deltaSeconds;
+                const moveY = Math.sin(angle) * this.worldSpeed * deltaSeconds;
+
+                // Check collision before moving
+                const newWorldX = this.worldX + moveX;
+                const newWorldY = this.worldY + moveY;
+                if (!this.checkPropCollision(newWorldX, newWorldY)) {
+                    this.worldX = newWorldX;
+                    this.worldY = newWorldY;
+                }
             }
         }
     }
@@ -864,8 +920,16 @@ export class Enemy {
             // Dart quickly toward player
             const angle = Math.atan2(dy, dx);
             const deltaSeconds = this.deltaSeconds;
-            this.worldX += Math.cos(angle) * this.speed * deltaSeconds;
-            this.worldY += Math.sin(angle) * this.speed * deltaSeconds;
+            const moveX = Math.cos(angle) * this.speed * deltaSeconds;
+            const moveY = Math.sin(angle) * this.speed * deltaSeconds;
+
+            // Check collision before moving
+            const newWorldX = this.worldX + moveX;
+            const newWorldY = this.worldY + moveY;
+            if (!this.checkPropCollision(newWorldX, newWorldY)) {
+                this.worldX = newWorldX;
+                this.worldY = newWorldY;
+            }
         }
     }
 

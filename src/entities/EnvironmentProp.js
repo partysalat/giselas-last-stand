@@ -326,8 +326,9 @@ export class EnvironmentProp {
      * @returns {boolean} True if collision detected
      */
     checkCollision3D(entityWorldX, entityWorldY, entityWorldZ, entityRadius, entityHeight) {
-        // Don't collide with non-physical props
-        if (!this.sprite.body) {
+        // Check if prop should block movement
+        // Skip collision for ceiling/floor props only
+        if (this.layer === 'ceiling' || this.layer === 'floor') {
             return false;
         }
 

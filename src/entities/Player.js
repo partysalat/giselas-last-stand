@@ -131,10 +131,33 @@ export class Player {
         // Apply speed multiplier (for ink cloud slow effect)
         const effectiveSpeed = this.speed * this.speedMultiplier;
 
-        // Update world position
+        // Update world position with collision detection
         const deltaSeconds = delta / 1000;
-        this.worldX += worldVelX * effectiveSpeed * deltaSeconds;
-        this.worldY += worldVelY * effectiveSpeed * deltaSeconds;
+        const moveX = worldVelX * effectiveSpeed * deltaSeconds;
+        const moveY = worldVelY * effectiveSpeed * deltaSeconds;
+
+        // Calculate new position
+        const newWorldX = this.worldX + moveX;
+        const newWorldY = this.worldY + moveY;
+
+        // Check collision with environment props
+        let collided = false;
+        if (this.scene.fortificationManager && this.scene.fortificationManager.fortificationProps) {
+            const props = this.scene.fortificationManager.fortificationProps;
+            for (const prop of props) {
+                // Check 3D collision at new position
+                if (prop.checkCollision3D(newWorldX, newWorldY, this.worldZ, this.radius, this.height)) {
+                    collided = true;
+                    break;
+                }
+            }
+        }
+
+        // Only apply movement if no collision
+        if (!collided) {
+            this.worldX = newWorldX;
+            this.worldY = newWorldY;
+        }
 
         // Clamp to world bounds
         this.worldX = Math.max(ISOMETRIC_CONFIG.WORLD_MIN_X, Math.min(ISOMETRIC_CONFIG.WORLD_MAX_X, this.worldX));
