@@ -1062,6 +1062,10 @@ export class Enemy {
                     }
                     break;
             }
+
+            // Clamp to world bounds to prevent flying out of playable area
+            this.worldX = Math.max(1, Math.min(29, this.worldX));
+            this.worldY = Math.max(0.5, Math.min(24, this.worldY));
         }
     }
 
