@@ -778,20 +778,35 @@ export class EnvironmentProp {
      * Check if bullet collides with this prop
      * @param {number} bulletWorldX - Bullet's world X position
      * @param {number} bulletWorldY - Bullet's world Y position
+     * @param {number} bulletWorldZ - Bullet's world Z position (height, in pixels)
      */
-    checkBulletCollision(bulletWorldX, bulletWorldY) {
-        if (!this.alive || !this.blocksBullets) return false;
+    checkBulletCollision(bulletWorldX, bulletWorldY, bulletWorldZ) {
+        if (!this.alive || !this.blocksBullets) {
+            return false;
+        }
 
-        // AABB collision check in WORLD space
+        // Check HEIGHT first: bullet must be within prop's height range
+        // bulletWorldZ is in pixels, worldHeight is in world units
+        // Convert worldHeight to pixels for comparison
+        const propHeightPixels = this.worldHeight * PIXELS_PER_WORLD_UNIT;
+
+        // Bullet must be between ground level (0) and prop's top (propHeightPixels)
+        if (bulletWorldZ < 0 || bulletWorldZ > propHeightPixels) {
+            return false; // Bullet flies over or under the prop
+        }
+
+        // Check 2D AABB collision in WORLD space (X-Y plane)
         const halfWidth = this.worldWidth / 2;
         const halfDepth = this.worldDepth / 2;
 
-        return (
+        const hit = (
             bulletWorldX >= this.worldX - halfWidth &&
             bulletWorldX <= this.worldX + halfWidth &&
             bulletWorldY >= this.worldY - halfDepth &&
             bulletWorldY <= this.worldY + halfDepth
         );
+
+        return hit;
     }
 
     /**

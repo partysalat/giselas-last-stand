@@ -263,13 +263,13 @@ export class EnvironmentManager {
      * Check if a bullet collides with any prop
      * Returns true if bullet was blocked
      */
-    checkBulletCollision(bulletX, bulletY, bulletDamage) {
+    checkBulletCollision(bulletX, bulletY, bulletZ, bulletDamage) {
         for (let i = 0; i < this.props.length; i++) {
             const prop = this.props[i];
 
             if (!prop.isAlive()) continue;
 
-            if (prop.checkBulletCollision(bulletX, bulletY)) {
+            if (prop.checkBulletCollision(bulletX, bulletY, bulletZ)) {
                 // Bullet hit this prop
                 prop.takeDamage(bulletDamage);
 

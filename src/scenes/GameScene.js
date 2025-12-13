@@ -873,7 +873,42 @@ export class GameScene extends Phaser.Scene {
                 const bullet = bullets[i];
                 if (!bullet.isAlive()) continue;
 
-            // Check cover collision FIRST
+            // Check fortification prop collision FIRST
+            // NOTE: checkBulletCollision expects WORLD coordinates (X,Y,Z)
+            if (this.fortificationManager && this.fortificationManager.fortificationProps) {
+                let hitProp = false;
+                for (const prop of this.fortificationManager.fortificationProps) {
+                    if (!prop.isAlive()) continue;
+
+                    if (prop.checkBulletCollision(bullet.getWorldX(), bullet.getWorldY(), bullet.getWorldZ())) {
+                        prop.takeDamage(bullet.getDamage());
+                        hitProp = true;
+                        break;
+                    }
+                }
+
+                if (hitProp) {
+                    bullet.destroy();
+                    continue; // Skip other collision checks
+                }
+            }
+
+            // Check environment prop collision SECOND
+            if (this.environmentManager) {
+                const hitProp = this.environmentManager.checkBulletCollision(
+                    bullet.getWorldX(),
+                    bullet.getWorldY(),
+                    bullet.getWorldZ(),
+                    bullet.getDamage()
+                );
+
+                if (hitProp) {
+                    bullet.destroy();
+                    continue;
+                }
+            }
+
+            // Check cover collision (after environment props)
             // NOTE: checkBulletCollision expects WORLD coordinates, not screen coordinates
             if (this.coverManager) {
                 const hitCover = this.coverManager.checkBulletCollision(
