@@ -143,7 +143,8 @@ export class FortificationManager {
      * @returns {Array} Available spawn points
      */
     getAvailableSpawnPoints() {
-        const minDistance = 80; // Minimum distance from existing props
+        // Minimum distance in world units (1.6 world units = 80 pixels)
+        const minDistance = 1.6;
 
         return this.spawnPoints.filter(spawnPoint => {
             // Check if any fortification prop is too close (use WORLD coordinates)
