@@ -153,7 +153,7 @@ export class PhysicsManager {
 
     /**
      * Update all moving props
-     * Called every frame by EnvironmentManager
+     * Called every frame by FortificationManager
      */
     update(delta) {
         // Process each moving prop
@@ -385,11 +385,11 @@ export class PhysicsManager {
      * @param {number} force - Force magnitude
      */
     applyExplosionForce(worldX, worldY, radius, force) {
-        if (!this.scene.environmentManager) {
+        if (!this.scene.fortificationManager) {
             return;
         }
 
-        const props = this.scene.environmentManager.getPropsInRadius(worldX, worldY, radius);
+        const props = this.scene.fortificationManager.getPropsInRadius(worldX, worldY, radius);
 
         props.forEach(prop => {
             // Calculate direction from explosion center (in WORLD space)

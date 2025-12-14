@@ -1,8 +1,12 @@
 import { EnvironmentProp, PROP_TYPES } from '../entities/EnvironmentProp.js';
 import { screenToWorld, WORLD_MIN_X, WORLD_MAX_X, WORLD_MIN_Y, WORLD_MAX_Y } from '../utils/CoordinateTransform.js';
+import { PhysicsManager } from './PhysicsManager.js';
+import { FireSystem } from './FireSystem.js';
+import { DestructionManager } from './DestructionManager.js';
 
 /**
  * Manages fortification items: spawning, drag-and-drop, persistence
+ * Also manages environmental systems (fire, physics, destruction)
  */
 export class FortificationManager {
     constructor(scene) {
@@ -12,6 +16,11 @@ export class FortificationManager {
         this.dragStartX = 0;
         this.dragStartY = 0;
         this.spawnPoints = [];
+
+        // Initialize environmental systems
+        this.physicsManager = new PhysicsManager(scene);
+        this.fireSystem = new FireSystem(scene);
+        this.destructionManager = new DestructionManager(scene);
 
         console.log('FortificationManager initialized');
     }
@@ -667,5 +676,153 @@ export class FortificationManager {
             prop.destroy();
         });
         this.fortificationProps = [];
+    }
+
+    /**
+     * Update systems (fire, physics)
+     */
+    update(delta) {
+        // Update physics manager
+        this.physicsManager.update(delta);
+
+        // Update fire system
+        this.fireSystem.update(delta);
+
+        // Update each prop
+        this.fortificationProps.forEach(prop => {
+            if (prop.isAlive()) {
+                prop.update(delta);
+            }
+        });
+
+        // Clean up dead props
+        this.fortificationProps = this.fortificationProps.filter(prop => prop.isAlive());
+    }
+
+    /**
+     * Get all active props
+     */
+    getProps() {
+        return this.fortificationProps.filter(prop => prop.isAlive());
+    }
+
+    /**
+     * Get props in a specific radius (WORLD coordinates)
+     */
+    getPropsInRadius(x, y, radius) {
+        return this.fortificationProps.filter(prop => {
+            if (!prop.isAlive()) return false;
+
+            const dx = prop.worldX - x;
+            const dy = prop.worldY - y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            return dist <= radius;
+        });
+    }
+
+    /**
+     * Damage all props in a radius (WORLD coordinates)
+     */
+    damagePropsInRadius(x, y, radius, damage, excludeProp = null) {
+        this.fortificationProps.forEach(prop => {
+            if (!prop.isAlive()) return;
+            if (prop === excludeProp) return;
+
+            const dx = prop.worldX - x;
+            const dy = prop.worldY - y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < radius) {
+                prop.takeDamage(damage);
+
+                // Track damage with destruction manager
+                if (this.destructionManager) {
+                    this.destructionManager.trackDamage(prop, damage);
+                }
+            }
+        });
+    }
+
+    /**
+     * Check for player interaction with tactical props
+     * Returns the nearest interactive prop within activation radius
+     */
+    getNearbyInteractiveProp(playerWorldX, playerWorldY) {
+        let nearestProp = null;
+        let nearestDistance = Infinity;
+
+        this.fortificationProps.forEach(prop => {
+            if (!prop.isAlive() || !prop.interactive) return;
+
+            const dx = prop.worldX - playerWorldX;
+            const dy = prop.worldY - playerWorldY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            // activationRadius is in world units
+            if (dist < prop.activationRadius && dist < nearestDistance) {
+                nearestDistance = dist;
+                nearestProp = prop;
+            }
+        });
+
+        return nearestProp;
+    }
+
+    /**
+     * Activate a tactical prop
+     */
+    activateTacticalProp(prop, playerWorldX, playerWorldY) {
+        if (!prop || !prop.interactive) return false;
+        return prop.activate(playerWorldX, playerWorldY);
+    }
+
+    /**
+     * Compatibility method for old CoverManager API
+     * Returns props array in the format expected by existing code
+     */
+    getCovers() {
+        return this.getProps();
+    }
+
+    /**
+     * Compatibility method for old CoverManager API
+     * Check bullet collision (legacy signature without Z)
+     */
+    checkBulletCollision(bulletX, bulletY, bulletZOrDamage, damage) {
+        // Handle both signatures:
+        // checkBulletCollision(x, y, z, damage) - new signature with Z
+        // checkBulletCollision(x, y, damage) - legacy signature without Z
+        let bulletZ = 0;
+        let bulletDamage = damage;
+
+        if (damage === undefined) {
+            // Legacy signature: (x, y, damage)
+            bulletDamage = bulletZOrDamage;
+            bulletZ = 0;
+        } else {
+            // New signature: (x, y, z, damage)
+            bulletZ = bulletZOrDamage;
+        }
+
+        for (let i = 0; i < this.fortificationProps.length; i++) {
+            const prop = this.fortificationProps[i];
+
+            if (!prop.isAlive()) continue;
+
+            if (prop.checkBulletCollision(bulletX, bulletY, bulletZ)) {
+                // Bullet hit this prop
+                prop.takeDamage(bulletDamage);
+
+                // Track damage with destruction manager
+                if (this.destructionManager) {
+                    this.destructionManager.trackDamage(prop, bulletDamage);
+                }
+
+                return true; // Bullet was blocked
+            }
+        }
+
+        return false; // Bullet not blocked
     }
 }

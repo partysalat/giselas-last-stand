@@ -186,8 +186,8 @@ export class TargetSelector {
         const targets = [];
 
         // Add targetable props from environment manager (use WORLD coordinates)
-        if (this.scene.environmentManager) {
-            const props = this.scene.environmentManager.getProps();
+        if (this.scene.fortificationManager) {
+            const props = this.scene.fortificationManager.getProps();
             props.forEach(prop => {
                 if (!prop.isAlive()) return;
 

@@ -775,8 +775,8 @@ export class Enemy {
 
             // Check collision with environment props
             let collided = false;
-            if (this.scene.environmentManager) {
-                const props = this.scene.environmentManager.getProps();
+            if (this.scene.fortificationManager) {
+                const props = this.scene.fortificationManager.getProps();
                 for (const prop of props) {
                     // Check 3D collision at new position (enemies have standard dimensions)
                     if (prop.checkCollision3D(newWorldX, newWorldY, this.worldZ || 0, this.radius || 0.5, this.height || 1.0)) {
@@ -1680,10 +1680,10 @@ export class Enemy {
 
             console.log('Kraken at 50% HP - crushing support beam!');
 
-            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
+            if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                 // Crush a random support beam
                 const beamIndex = Math.floor(Math.random() * 3); // 0, 1, or 2
-                this.scene.environmentManager.destructionManager.handleBossEvent(
+                this.scene.fortificationManager.destructionManager.handleBossEvent(
                     'boss_kraken_arm',
                     'beamCrush',
                     { beamIndex }
@@ -1844,8 +1844,8 @@ export class Enemy {
             });
 
             // Phase 6: Trigger environmental destruction from tentacle slam
-            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-                this.scene.environmentManager.destructionManager.handleBossEvent(
+            if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+                this.scene.fortificationManager.destructionManager.handleBossEvent(
                     'boss_kraken_arm',
                     'tentacleSlam',
                     { x: targetX, y: targetY }
@@ -2033,8 +2033,8 @@ export class Enemy {
         // Phase 6: Lightning Strike (periodic environmental hazard)
         const lightningReady = (currentTime - (this.lastLightningStrike || 0)) >= 10000; // Every 10 seconds
         if (lightningReady) {
-            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-                this.scene.environmentManager.destructionManager.handleBossEvent(
+            if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+                this.scene.fortificationManager.destructionManager.handleBossEvent(
                     'boss_leviathan',
                     'lightningStrike',
                     { propIndex: 0 } // Random prop
@@ -2072,8 +2072,8 @@ export class Enemy {
         // Phase 6: Lightning Chain (Phase 2 only)
         const chainReady = (currentTime - (this.lastLightningChain || 0)) >= 8000; // Every 8 seconds
         if (chainReady) {
-            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-                this.scene.environmentManager.destructionManager.handleBossEvent(
+            if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+                this.scene.fortificationManager.destructionManager.handleBossEvent(
                     'boss_leviathan',
                     'lightningChain',
                     { x: this.worldX, y: this.worldY }
@@ -2087,8 +2087,8 @@ export class Enemy {
         if (phase2Health <= 0.7 && !this.stageLightsExploded) {
             this.stageLightsExploded = true;
 
-            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-                this.scene.environmentManager.destructionManager.handleBossEvent(
+            if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+                this.scene.fortificationManager.destructionManager.handleBossEvent(
                     'boss_leviathan',
                     'explodeLights',
                     {}
@@ -2391,8 +2391,8 @@ export class Enemy {
             arc.destroy();
 
             // Phase 6: Trigger environmental effect to knock back light props
-            if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-                this.scene.environmentManager.destructionManager.handleBossEvent(
+            if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+                this.scene.fortificationManager.destructionManager.handleBossEvent(
                     'boss_leviathan',
                     'tailSweep',
                     { x: this.worldX, y: this.worldY, angle }
@@ -2437,8 +2437,8 @@ export class Enemy {
         this.scene.cameras.main.flash(500, 100, 150, 255);
 
         // Phase 6: Electrical surge on phase transition
-        if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-            this.scene.environmentManager.destructionManager.handleBossEvent(
+        if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+            this.scene.fortificationManager.destructionManager.handleBossEvent(
                 'boss_leviathan',
                 'electricalSurge',
                 {}
@@ -2446,8 +2446,8 @@ export class Enemy {
 
             // Electrify metal props in Phase 2
             this.scene.time.delayedCall(1000, () => {
-                if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-                    this.scene.environmentManager.destructionManager.handleBossEvent(
+                if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+                    this.scene.fortificationManager.destructionManager.handleBossEvent(
                         'boss_leviathan',
                         'electrifyMetal',
                         {}

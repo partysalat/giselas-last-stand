@@ -12,7 +12,6 @@ import { BossAnnouncer } from '../systems/BossAnnouncer.js';
 import { BossHealthBar } from '../ui/BossHealthBar.js';
 import { BetweenWavesUI } from '../ui/BetweenWavesUI.js';
 import { CoverManager } from '../systems/CoverManager.js';
-import { EnvironmentManager } from '../systems/EnvironmentManager.js';
 import { WallManager } from '../systems/WallManager.js';
 import { FortificationManager } from '../systems/FortificationManager.js';
 import { IsometricFloor } from '../systems/IsometricFloor.js';
@@ -144,11 +143,8 @@ export class GameScene extends Phaser.Scene {
         // Initialize cover manager (legacy - will be replaced)
         // this.coverManager = new CoverManager(this);
 
-        // Initialize environment manager (new system)
-        this.environmentManager = new EnvironmentManager(this);
-
         // Add compatibility alias so existing code still works
-        this.coverManager = this.environmentManager;
+        this.coverManager = this.fortificationManager;
 
         // Initialize wall manager (creates saloon walls framing the play area)
         this.wallManager = new WallManager(this);
@@ -357,8 +353,8 @@ export class GameScene extends Phaser.Scene {
         });
 
         // Update depth for all props
-        if (this.coverManager) {
-            this.coverManager.props.forEach(prop => {
+        if (this.fortificationManager) {
+            this.fortificationManager.fortificationProps.forEach(prop => {
                 if (prop.alive && prop.sprite) {
                     prop.sprite.setDepth(calculateDepth(prop.worldY, prop.layer === 'ground' ? 5 : 7));
                 }
@@ -893,22 +889,7 @@ export class GameScene extends Phaser.Scene {
                 }
             }
 
-            // Check environment prop collision SECOND
-            if (this.environmentManager) {
-                const hitProp = this.environmentManager.checkBulletCollision(
-                    bullet.getWorldX(),
-                    bullet.getWorldY(),
-                    bullet.getWorldZ(),
-                    bullet.getDamage()
-                );
-
-                if (hitProp) {
-                    bullet.destroy();
-                    continue;
-                }
-            }
-
-            // Check cover collision (after environment props)
+            // Check cover collision (legacy compatibility)
             // NOTE: checkBulletCollision expects WORLD coordinates, not screen coordinates
             if (this.coverManager) {
                 const hitCover = this.coverManager.checkBulletCollision(
@@ -1573,31 +1554,17 @@ export class GameScene extends Phaser.Scene {
                 return false;
             }
 
-            // Check environment prop collision first
-            // NOTE: Bullets should hit props before hitting cover or players
-            if (this.environmentManager) {
-                const hitProp = this.environmentManager.checkBulletCollision(
+            // Check prop collision (fortification and environment props)
+            // NOTE: Bullets should hit props before hitting players
+            if (this.fortificationManager) {
+                const hitProp = this.fortificationManager.checkBulletCollision(
                     bullet.worldX,  // World coordinates
                     bullet.worldY,  // World coordinates
+                    bullet.worldZ || 0,  // World Z coordinate (height)
                     bullet.getDamage()
                 );
 
                 if (hitProp) {
-                    bullet.destroy();
-                    return false;
-                }
-            }
-
-            // Check cover collision
-            // NOTE: Both bullet and cover positions are in world coordinates
-            if (this.coverManager) {
-                const hitCover = this.coverManager.checkBulletCollision(
-                    bullet.worldX,  // World coordinates
-                    bullet.worldY,  // World coordinates
-                    bullet.getDamage()
-                );
-
-                if (hitCover) {
                     bullet.destroy();
                     return false;
                 }
@@ -1687,7 +1654,7 @@ export class GameScene extends Phaser.Scene {
      * Phase 4: Update tactical prop interaction system
      */
     updateTacticalPropInteraction() {
-        if (!this.environmentManager || !this.player) return;
+        if (!this.fortificationManager || !this.player) return;
 
         // Get first living player for interaction (single player for now)
         const livingPlayers = this.playerManager.getLivingPlayers();
@@ -1701,7 +1668,7 @@ export class GameScene extends Phaser.Scene {
         const playerY = player.getY();
 
         // Check for nearby interactive props
-        const nearbyProp = this.environmentManager.getNearbyInteractiveProp(playerX, playerY);
+        const nearbyProp = this.fortificationManager.getNearbyInteractiveProp(playerX, playerY);
 
         if (nearbyProp && nearbyProp.canActivate()) {
             // Check if player has a cocktail (if so, R key is reserved for drinking)
@@ -1724,7 +1691,7 @@ export class GameScene extends Phaser.Scene {
                 this.lastRKeyState = this.keys.R.isDown;
 
                 if (rPressed) {
-                    const activated = this.environmentManager.activateTacticalProp(nearbyProp, playerX, playerY);
+                    const activated = this.fortificationManager.activateTacticalProp(nearbyProp, playerX, playerY);
                     if (activated) {
                         console.log(`Activated ${nearbyProp.name}`);
                         // Show brief feedback

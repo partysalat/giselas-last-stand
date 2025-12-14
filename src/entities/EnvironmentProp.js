@@ -657,13 +657,13 @@ export class EnvironmentProp {
      * Create fire zone on destruction (Phase 3)
      */
     createFireZone() {
-        if (!this.scene.environmentManager || !this.scene.environmentManager.fireSystem) {
+        if (!this.scene.fortificationManager || !this.scene.fortificationManager.fireSystem) {
             console.warn('FireSystem not available - cannot create fire zone');
             return;
         }
 
         // Create fire zone using WORLD coordinates
-        this.scene.environmentManager.fireSystem.createFireZone(
+        this.scene.fortificationManager.fireSystem.createFireZone(
             this.worldX,
             this.worldY,
             this.fireRadius,
@@ -722,8 +722,8 @@ export class EnvironmentProp {
         });
 
         // Phase 2: Apply explosion force to nearby props (use WORLD coordinates)
-        if (this.scene.environmentManager && this.scene.environmentManager.physicsManager) {
-            this.scene.environmentManager.physicsManager.applyExplosionForce(
+        if (this.scene.fortificationManager && this.scene.fortificationManager.physicsManager) {
+            this.scene.fortificationManager.physicsManager.applyExplosionForce(
                 this.worldX,
                 this.worldY,
                 this.explosionRadius,
@@ -769,8 +769,8 @@ export class EnvironmentProp {
         }
 
         // Damage other props via environment manager (pass WORLD coordinates)
-        if (this.scene.environmentManager) {
-            this.scene.environmentManager.damagePropsInRadius(worldX, worldY, radius, damage, this);
+        if (this.scene.fortificationManager) {
+            this.scene.fortificationManager.damagePropsInRadius(worldX, worldY, radius, damage, this);
         }
     }
 
@@ -1632,8 +1632,8 @@ export class EnvironmentProp {
         }
 
         // Create fire zone at destruction point
-        if (this.scene.environmentManager && this.scene.environmentManager.fireSystem) {
-            this.scene.environmentManager.fireSystem.createFireZone(
+        if (this.scene.fortificationManager && this.scene.fortificationManager.fireSystem) {
+            this.scene.fortificationManager.fireSystem.createFireZone(
                 this.x,
                 this.y,
                 this.fireRadius,
@@ -1650,8 +1650,8 @@ export class EnvironmentProp {
                 const trailY = this.y + Math.sin(angle) * distance;
 
                 this.scene.time.delayedCall(i * 200, () => {
-                    if (this.scene.environmentManager && this.scene.environmentManager.fireSystem) {
-                        this.scene.environmentManager.fireSystem.createFireZone(
+                    if (this.scene.fortificationManager && this.scene.fortificationManager.fireSystem) {
+                        this.scene.fortificationManager.fireSystem.createFireZone(
                             trailX,
                             trailY,
                             this.fireRadius * 0.7,
@@ -1672,8 +1672,8 @@ export class EnvironmentProp {
 
         // Main explosion already handled by explode()
         // Find nearby explosive props and trigger them with delay
-        if (this.scene.environmentManager) {
-            const nearbyProps = this.scene.environmentManager.getPropsInRadius(
+        if (this.scene.fortificationManager) {
+            const nearbyProps = this.scene.fortificationManager.getPropsInRadius(
                 this.x,
                 this.y,
                 this.explosionRadius + 50
@@ -1724,8 +1724,8 @@ export class EnvironmentProp {
         });
 
         // Create small fire zone (fireSystem uses world coordinates)
-        if (this.scene.environmentManager && this.scene.environmentManager.fireSystem) {
-            this.scene.environmentManager.fireSystem.createFireZone(
+        if (this.scene.fortificationManager && this.scene.fortificationManager.fireSystem) {
+            this.scene.fortificationManager.fireSystem.createFireZone(
                 this.worldX,
                 this.worldY,
                 this.fireRadius,

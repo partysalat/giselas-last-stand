@@ -408,8 +408,8 @@ export class WaveManager {
         // }
 
         // Phase 5: Trigger environmental changes based on wave
-        if (this.scene.environmentManager && this.scene.environmentManager.destructionManager) {
-            this.scene.environmentManager.destructionManager.initializeForWave(this.currentWave);
+        if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
+            this.scene.fortificationManager.destructionManager.initializeForWave(this.currentWave);
         }
 
         // Check if this is a boss wave

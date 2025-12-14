@@ -324,8 +324,8 @@ export class DestructionManager {
                     console.log(`Kraken tentacle slam at (${data.x}, ${data.y})`);
 
                     // Destroy props in radius
-                    if (this.scene.environmentManager) {
-                        this.scene.environmentManager.damagePropsInRadius(data.x, data.y, 60, 999);
+                    if (this.scene.fortificationManager) {
+                        this.scene.fortificationManager.damagePropsInRadius(data.x, data.y, 60, 999);
                     }
 
                     // 30% chance to open trapdoor
@@ -419,9 +419,9 @@ export class DestructionManager {
      * Crush a support beam (Kraken attack)
      */
     crushSupportBeam(beamIndex) {
-        if (!this.scene.environmentManager) return;
+        if (!this.scene.fortificationManager) return;
 
-        const supportBeams = this.scene.environmentManager.props.filter(p => p.type === 'supportBeam' && p.isAlive());
+        const supportBeams = this.scene.fortificationManager.fortificationProps.filter(p => p.type === 'supportBeam' && p.isAlive());
 
         if (beamIndex >= 0 && beamIndex < supportBeams.length) {
             const beam = supportBeams[beamIndex];
@@ -472,9 +472,9 @@ export class DestructionManager {
      * Ignite all oil lamps (Leviathan electrical surge)
      */
     igniteAllOilLamps() {
-        if (!this.scene.environmentManager) return;
+        if (!this.scene.fortificationManager) return;
 
-        const oilLamps = this.scene.environmentManager.props.filter(p => p.type === 'oilLamp' && p.isAlive());
+        const oilLamps = this.scene.fortificationManager.fortificationProps.filter(p => p.type === 'oilLamp' && p.isAlive());
 
         oilLamps.forEach(lamp => {
             // Destroy lamp to trigger fire zone creation
@@ -488,9 +488,9 @@ export class DestructionManager {
      * Knock back all lightweight props (Leviathan tail sweep)
      */
     knockbackLightProps(x, y, angle) {
-        if (!this.scene.environmentManager || !this.scene.environmentManager.physicsManager) return;
+        if (!this.scene.fortificationManager || !this.scene.fortificationManager.physicsManager) return;
 
-        const lightProps = this.scene.environmentManager.props.filter(p =>
+        const lightProps = this.scene.fortificationManager.fortificationProps.filter(p =>
             p.weightClass === 'light' && p.isAlive()
         );
 
@@ -522,9 +522,9 @@ export class DestructionManager {
      * Strike a random prop with lightning (Leviathan)
      */
     strikeRandomProp() {
-        if (!this.scene.environmentManager) return;
+        if (!this.scene.fortificationManager) return;
 
-        const aliveProps = this.scene.environmentManager.props.filter(p =>
+        const aliveProps = this.scene.fortificationManager.fortificationProps.filter(p =>
             p.isAlive() && p.type !== 'chandelier'
         );
 
@@ -555,12 +555,12 @@ export class DestructionManager {
      * Electrify all metal props (Leviathan Phase 2)
      */
     electrifyMetalProps() {
-        if (!this.scene.environmentManager) return;
+        if (!this.scene.fortificationManager) return;
 
         // Piano, safe, mirrors, barrels are considered "metal" for this effect
         const metalTypes = ['barrel', 'barCounter'];
 
-        const metalProps = this.scene.environmentManager.props.filter(p =>
+        const metalProps = this.scene.fortificationManager.fortificationProps.filter(p =>
             metalTypes.includes(p.type) && p.isAlive()
         );
 
@@ -593,10 +593,10 @@ export class DestructionManager {
      * Create lightning chain effect (Leviathan Phase 2)
      */
     createLightningChain(startX, startY) {
-        if (!this.scene.environmentManager) return;
+        if (!this.scene.fortificationManager) return;
 
         const metalTypes = ['barrel', 'barCounter'];
-        const metalProps = this.scene.environmentManager.props.filter(p =>
+        const metalProps = this.scene.fortificationManager.fortificationProps.filter(p =>
             metalTypes.includes(p.type) && p.isAlive()
         );
 
@@ -653,9 +653,9 @@ export class DestructionManager {
      * Explode all stage lights in sequence (Leviathan Phase 2)
      */
     explodeStageLights() {
-        if (!this.scene.environmentManager) return;
+        if (!this.scene.fortificationManager) return;
 
-        const lights = this.scene.environmentManager.props.filter(p => p.type === 'stageLights' && p.isAlive());
+        const lights = this.scene.fortificationManager.fortificationProps.filter(p => p.type === 'stageLights' && p.isAlive());
 
         lights.forEach((light, index) => {
             // Stagger explosions

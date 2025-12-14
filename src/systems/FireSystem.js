@@ -274,10 +274,10 @@ export class FireSystem {
      * Phase 3.5 feature - currently disabled
      */
     checkFireSpread(fireZone) {
-        if (!this.scene.environmentManager) return;
+        if (!this.scene.fortificationManager) return;
 
         // Get props in fire zone radius
-        const nearbyProps = this.scene.environmentManager.getPropsInRadius(
+        const nearbyProps = this.scene.fortificationManager.getPropsInRadius(
             fireZone.x,
             fireZone.y,
             fireZone.radius
