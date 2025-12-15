@@ -36,10 +36,10 @@ export class Player {
         const shadowWidth = this.radius * 50 * 1.5;   // 1.5x player radius in pixels
         const shadowHeight = shadowWidth * 0.5;        // Ellipse is half as tall
         this.shadow = scene.add.ellipse(screenX, screenY, shadowWidth, shadowHeight, 0x000000, 0.3);
-        this.shadow.setDepth(1); // Below player but above floor
+        this.shadow.setDepth(calculateDepth(this.worldY, 1000)); // Ground level
 
         // Set depth based on world Y position for isometric sorting
-        this.sprite.setDepth(calculateDepth(this.worldY, 10));
+        this.sprite.setDepth(calculateDepth(this.worldY, 1100));
 
         scene.physics.add.existing(this.sprite);
 
@@ -178,10 +178,10 @@ export class Player {
         // Update shadow at ground level (worldZ = 0)
         const shadowPos = worldToScreen(this.worldX, this.worldY, 0);
         this.shadow.setPosition(shadowPos.screenX, shadowPos.screenY);
-        this.shadow.setDepth(calculateDepth(this.worldY, 0)); // Ground level depth
+        this.shadow.setDepth(calculateDepth(this.worldY, 1000)); // Ground level depth
 
         // Update depth for proper isometric sorting
-        this.sprite.setDepth(calculateDepth(this.worldY, 10));
+        this.sprite.setDepth(calculateDepth(this.worldY, 1100));
 
         // Update bullets
         this.bullets = this.bullets.filter(bullet => {
@@ -195,7 +195,7 @@ export class Player {
         // Update buff aura position
         if (this.buffAura) {
             this.buffAura.setPosition(this.sprite.x, this.sprite.y);
-            this.buffAura.setDepth(calculateDepth(this.worldY, 15)); // Above player
+            this.buffAura.setDepth(calculateDepth(this.worldY, 1110)); // Above player
         }
 
         // Update stored cocktail indicator position (world space)
@@ -207,11 +207,11 @@ export class Player {
                 this.worldZ + indicatorOffset
             );
             this.storedCocktailIndicator.setPosition(indicatorPos.screenX, indicatorPos.screenY);
-            this.storedCocktailIndicator.setDepth(calculateDepth(this.worldY, 20));
+            this.storedCocktailIndicator.setDepth(calculateDepth(this.worldY, 1115));
         }
         if (this.storedCocktailGlow) {
             this.storedCocktailGlow.setPosition(this.sprite.x, this.sprite.y);
-            this.storedCocktailGlow.setDepth(calculateDepth(this.worldY, 14)); // Below aura
+            this.storedCocktailGlow.setDepth(calculateDepth(this.worldY, 1105)); // Below aura
         }
 
         // Check buff expiration

@@ -694,17 +694,18 @@ export class WaveManager {
     }
 
     spawnHealthPickup() {
-        // Spawn health pickup at random location
-        const x = 200 + Math.random() * 1520;
-        const y = 200 + Math.random() * 680;
+        // Spawn health pickup at random location in WORLD coordinates
+        // World bounds: X [0-30], Y [0-25], avoid edges (3 world units from each edge)
+        const worldX = 3 + Math.random() * 24;  // Range: 3 to 27
+        const worldY = 3 + Math.random() * 19;  // Range: 3 to 22
 
-        const pickup = new this.scene.HealthPickup(this.scene, x, y);
+        const pickup = new this.scene.HealthPickup(this.scene, worldX, worldY);
         if (!this.scene.healthPickups) {
             this.scene.healthPickups = [];
         }
         this.scene.healthPickups.push(pickup);
 
-        console.log('Health pickup spawned');
+        console.log('Health pickup spawned at world:', worldX, worldY);
     }
 
     spawnCocktails() {

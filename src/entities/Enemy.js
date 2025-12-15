@@ -246,7 +246,7 @@ export class Enemy {
         }
 
         // Set depth based on world Y position for isometric sorting
-        this.sprite.setDepth(calculateDepth(this.worldY, 10));
+        this.sprite.setDepth(calculateDepth(this.worldY, 1100));
 
         scene.physics.add.existing(this.sprite);
 
@@ -390,8 +390,8 @@ export class Enemy {
             this.spotLight.setPosition(this.sprite.x, this.sprite.y);
 
             // Update depth for proper sorting
-            this.bountyIcon.setDepth(calculateDepth(this.worldY, 200));
-            this.spotLight.setDepth(calculateDepth(this.worldY, 5));
+            this.bountyIcon.setDepth(calculateDepth(this.worldY, 1200));
+            this.spotLight.setDepth(calculateDepth(this.worldY, 1000));
 
             // Pulse animation
             const pulse = Math.sin(Date.now() / 300) * 0.15 + 0.85;
@@ -746,7 +746,7 @@ export class Enemy {
         this.sprite.setPosition(screenX, screenY);
 
         // Update depth for proper isometric sorting
-        this.sprite.setDepth(calculateDepth(this.worldY, 10));
+        this.sprite.setDepth(calculateDepth(this.worldY, 1100));
 
         // Update visual indicators
         this.updateVisuals();

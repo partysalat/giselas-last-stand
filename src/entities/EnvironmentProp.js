@@ -220,7 +220,7 @@ export class EnvironmentProp {
             0x000000,
             0.5
         );
-        this.healthBarBg.setDepth(calculateDepth(this.worldY, 50));
+        this.healthBarBg.setDepth(calculateDepth(this.worldY, 1150));
         this.healthBarBg.setVisible(false);
 
         // Foreground fill bar
@@ -232,7 +232,7 @@ export class EnvironmentProp {
             0x00ff00,
             0.8
         );
-        this.healthBarFill.setDepth(calculateDepth(this.worldY, 51));
+        this.healthBarFill.setDepth(calculateDepth(this.worldY, 1151));
         this.healthBarFill.setVisible(false);
     }
 

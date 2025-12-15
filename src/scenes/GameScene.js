@@ -338,17 +338,22 @@ export class GameScene extends Phaser.Scene {
     }
 
     updateDepthSorting() {
+        // All game entities use baseDepth around 1000 to ensure worldY-based sorting works correctly
+        // Ground layer (floor): 1000-1025
+        // Props/characters: 1100-1125
+        // Effects: Higher values
+
         // Update depth for all players
         this.playerManager.players.forEach(player => {
             if (player.sprite) {
-                player.sprite.setDepth(calculateDepth(player.worldY, 10));
+                player.sprite.setDepth(calculateDepth(player.worldY, 1100));
             }
         });
 
         // Update depth for all enemies
         this.enemies.forEach(enemy => {
             if (enemy.alive && enemy.sprite) {
-                enemy.sprite.setDepth(calculateDepth(enemy.worldY, 10));
+                enemy.sprite.setDepth(calculateDepth(enemy.worldY, 1100));
             }
         });
 
@@ -356,7 +361,8 @@ export class GameScene extends Phaser.Scene {
         if (this.fortificationManager) {
             this.fortificationManager.fortificationProps.forEach(prop => {
                 if (prop.alive && prop.sprite) {
-                    prop.sprite.setDepth(calculateDepth(prop.worldY, prop.layer === 'ground' ? 5 : 7));
+                    // Ground props (trapdoors) render below, regular props at same level as characters
+                    prop.sprite.setDepth(calculateDepth(prop.worldY, prop.layer === 'ground' ? 1000 : 1100));
                 }
             });
         }
