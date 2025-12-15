@@ -389,9 +389,7 @@ export class Enemy {
             this.bountyIcon.setPosition(screenX, screenY);
             this.spotLight.setPosition(this.sprite.x, this.sprite.y);
 
-            // Update depth for proper sorting
-            this.bountyIcon.setDepth(calculateDepth(this.worldY, 1200));
-            this.spotLight.setDepth(calculateDepth(this.worldY, 1000));
+            // Note: Depth is managed by GameScene.updateDepthSorting()
 
             // Pulse animation
             const pulse = Math.sin(Date.now() / 300) * 0.15 + 0.85;
@@ -745,8 +743,7 @@ export class Enemy {
         const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
         this.sprite.setPosition(screenX, screenY);
 
-        // Update depth for proper isometric sorting
-        this.sprite.setDepth(calculateDepth(this.worldY, 1100));
+        // Note: Depth is managed by GameScene.updateDepthSorting()
 
         // Update visual indicators
         this.updateVisuals();

@@ -343,26 +343,57 @@ export class GameScene extends Phaser.Scene {
         // Props/characters: 1100-1125
         // Effects: Higher values
 
-        // Update depth for all players
+        // Update depth for all players and their effects
         this.playerManager.players.forEach(player => {
             if (player.sprite) {
-                player.sprite.setDepth(calculateDepth(player.worldY, 1100));
+                const playerDepth = calculateDepth(player.worldY, 1100);
+                player.sprite.setDepth(playerDepth);
+                // Debug: Log first player's depth occasionally
+                if (player.playerIndex === 0 && Math.random() < 0.01) {
+                    console.log(`Player worldY: ${player.worldY.toFixed(2)}, depth: ${playerDepth}`);
+                }
+            }
+            if (player.shadow) {
+                player.shadow.setDepth(calculateDepth(player.worldY, 1000));
+            }
+            if (player.buffAura) {
+                player.buffAura.setDepth(calculateDepth(player.worldY, 1110));
+            }
+            if (player.storedCocktailGlow) {
+                player.storedCocktailGlow.setDepth(calculateDepth(player.worldY, 1105));
+            }
+            if (player.storedCocktailIndicator) {
+                player.storedCocktailIndicator.setDepth(calculateDepth(player.worldY, 1115));
             }
         });
 
-        // Update depth for all enemies
+        // Update depth for all enemies and their effects
         this.enemies.forEach(enemy => {
             if (enemy.alive && enemy.sprite) {
                 enemy.sprite.setDepth(calculateDepth(enemy.worldY, 1100));
+            }
+            if (enemy.bountyIcon) {
+                enemy.bountyIcon.setDepth(calculateDepth(enemy.worldY, 1200));
+            }
+            if (enemy.spotLight) {
+                enemy.spotLight.setDepth(calculateDepth(enemy.worldY, 1000));
             }
         });
 
         // Update depth for all props
         if (this.fortificationManager) {
-            this.fortificationManager.fortificationProps.forEach(prop => {
+            this.fortificationManager.fortificationProps.forEach((prop, index) => {
                 if (prop.alive && prop.sprite) {
-                    // Ground props (trapdoors) render below, regular props at same level as characters
-                    prop.sprite.setDepth(calculateDepth(prop.worldY, prop.layer === 'ground' ? 1000 : 1100));
+                    // Only floor props (trapdoors) render below at 1000
+                    // All other props (furniture) render at same level as characters (1100)
+                    const isFloorProp = prop.layer === 'floor';
+                    const baseDepth = isFloorProp ? 1000 : 1100;
+                    const propDepth = calculateDepth(prop.worldY, baseDepth);
+                    prop.sprite.setDepth(propDepth);
+                    // Debug: Log first few props occasionally
+                    if (index < 3 && Math.random() < 0.01) {
+                        console.log(`Prop ${prop.type} worldY: ${prop.worldY.toFixed(2)}, layer: ${prop.layer}, baseDepth: ${baseDepth}, depth: ${propDepth}`);
+                    }
                 }
             });
         }

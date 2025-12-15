@@ -182,12 +182,7 @@ export class EnvironmentProp {
         };
 
         // Calculate depth: base layer depth + Y position for isometric sorting
-        // Use the bottom of the prop sprite for proper isometric depth
-        // Props closer to bottom of screen (higher Y) render on top
-        const baseDepth = baseDepthMap[this.layer] || 5;
-        const spriteBottom = this.y + (this.sprite.displayHeight / 2);
-        const depthOffset = spriteBottom / 10;
-        this.sprite.setDepth(baseDepth + depthOffset);
+        // Note: Depth is managed by GameScene.updateDepthSorting()
 
         // Create health bar (initially hidden)
         this.createHealthBar();
@@ -870,24 +865,10 @@ export class EnvironmentProp {
     /**
      * Update sprite depth based on current Y position
      * Called when prop is moving (isometric sorting)
+     * Note: Depth is now managed by GameScene.updateDepthSorting()
      */
     updateDepth() {
-        if (!this.sprite) return;
-
-        const baseDepthMap = {
-            'floor': 2,
-            'ground': 5,
-            'wall': 4,
-            'table': 6,
-            'structure': 7,
-            'ceiling': 35
-        };
-
-        const baseDepth = baseDepthMap[this.layer] || 5;
-        const spriteBottom = this.y + (this.sprite.displayHeight / 2);
-        const depthOffset = spriteBottom / 10;
-
-        this.sprite.setDepth(baseDepth + depthOffset);
+        // No longer needed - depth is managed centrally in GameScene.updateDepthSorting()
     }
 
     /**

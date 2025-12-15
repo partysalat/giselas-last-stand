@@ -178,10 +178,7 @@ export class Player {
         // Update shadow at ground level (worldZ = 0)
         const shadowPos = worldToScreen(this.worldX, this.worldY, 0);
         this.shadow.setPosition(shadowPos.screenX, shadowPos.screenY);
-        this.shadow.setDepth(calculateDepth(this.worldY, 1000)); // Ground level depth
-
-        // Update depth for proper isometric sorting
-        this.sprite.setDepth(calculateDepth(this.worldY, 1100));
+        // Note: Depth is managed by GameScene.updateDepthSorting()
 
         // Update bullets
         this.bullets = this.bullets.filter(bullet => {
@@ -192,10 +189,10 @@ export class Player {
             return false;
         });
 
-        // Update buff aura position
+        // Update buff aura position and depth
         if (this.buffAura) {
             this.buffAura.setPosition(this.sprite.x, this.sprite.y);
-            this.buffAura.setDepth(calculateDepth(this.worldY, 1110)); // Above player
+            // Note: Depth managed by GameScene.updateDepthSorting() through player sprite
         }
 
         // Update stored cocktail indicator position (world space)
@@ -207,11 +204,11 @@ export class Player {
                 this.worldZ + indicatorOffset
             );
             this.storedCocktailIndicator.setPosition(indicatorPos.screenX, indicatorPos.screenY);
-            this.storedCocktailIndicator.setDepth(calculateDepth(this.worldY, 1115));
+            // Note: Depth managed by GameScene.updateDepthSorting()
         }
         if (this.storedCocktailGlow) {
             this.storedCocktailGlow.setPosition(this.sprite.x, this.sprite.y);
-            this.storedCocktailGlow.setDepth(calculateDepth(this.worldY, 1105)); // Below aura
+            // Note: Depth managed by GameScene.updateDepthSorting()
         }
 
         // Check buff expiration
