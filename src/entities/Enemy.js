@@ -867,6 +867,13 @@ export class Enemy {
                     if (!this.checkPropCollision(newWorldX, newWorldY)) {
                         this.worldX = newWorldX;
                         this.worldY = newWorldY;
+
+                        // Update sprite direction based on movement
+                        if (this.useDirectionalSprites) {
+                            const backDirX = -(dx / distance);
+                            const backDirY = -(dy / distance);
+                            this.updateDirection(backDirX, backDirY);
+                        }
                     }
                     return;
                 }
@@ -890,6 +897,11 @@ export class Enemy {
                 if (!this.checkPropCollision(newWorldX, newWorldY)) {
                     this.worldX = newWorldX;
                     this.worldY = newWorldY;
+
+                    // Update sprite direction based on movement
+                    if (this.useDirectionalSprites) {
+                        this.updateDirection(Math.cos(angle), Math.sin(angle));
+                    }
                 }
             }
         }
@@ -926,6 +938,11 @@ export class Enemy {
             if (!this.checkPropCollision(newWorldX, newWorldY)) {
                 this.worldX = newWorldX;
                 this.worldY = newWorldY;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(Math.cos(angle), Math.sin(angle));
+                }
             }
         }
     }
@@ -960,6 +977,11 @@ export class Enemy {
                 const deltaSeconds = this.deltaSeconds;
                 this.worldX += Math.cos(angle) * this.worldSpeed * deltaSeconds;
                 this.worldY += Math.sin(angle) * this.worldSpeed * deltaSeconds;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(Math.cos(angle), Math.sin(angle));
+                }
             }
         }
     }
@@ -996,6 +1018,11 @@ export class Enemy {
             const deltaSeconds = this.deltaSeconds;
             this.worldX += Math.cos(angle) * this.worldSpeed * deltaSeconds;
             this.worldY += Math.sin(angle) * this.worldSpeed * deltaSeconds;
+
+            // Update sprite direction based on movement
+            if (this.useDirectionalSprites) {
+                this.updateDirection(Math.cos(angle), Math.sin(angle));
+            }
         }
     }
 
@@ -1014,6 +1041,11 @@ export class Enemy {
                     const deltaSeconds = this.deltaSeconds;
                     this.worldX += Math.cos(angle) * this.worldSpeed * 0.6 * deltaSeconds;
                     this.worldY += Math.sin(angle) * this.worldSpeed * 0.6 * deltaSeconds;
+
+                    // Update sprite direction based on movement
+                    if (this.useDirectionalSprites) {
+                        this.updateDirection(Math.cos(angle), Math.sin(angle));
+                    }
 
                     // Prepare swoop if in range
                     if (distance < this.attackRange && time - this.nextAttack > this.attackCooldown) {
@@ -1034,6 +1066,11 @@ export class Enemy {
                     this.worldX += Math.cos(swoopAngle) * this.worldSpeed * 1.5 * deltaSeconds2;
                     this.worldY += Math.sin(swoopAngle) * this.worldSpeed * 1.5 * deltaSeconds2;
 
+                    // Update sprite direction based on movement
+                    if (this.useDirectionalSprites) {
+                        this.updateDirection(Math.cos(swoopAngle), Math.sin(swoopAngle));
+                    }
+
                     // Check if reached target
                     const targetDist = Math.sqrt(
                         Math.pow(this.swoopTarget.x - this.worldX, 2) +
@@ -1052,6 +1089,11 @@ export class Enemy {
                     const deltaSeconds3 = this.deltaSeconds;
                     this.worldX += Math.cos(escapeAngle) * this.worldSpeed * deltaSeconds3;
                     this.worldY += Math.sin(escapeAngle) * this.worldSpeed * deltaSeconds3;
+
+                    // Update sprite direction based on movement
+                    if (this.useDirectionalSprites) {
+                        this.updateDirection(Math.cos(escapeAngle), Math.sin(escapeAngle));
+                    }
 
                     // Return to idle after getting distance
                     if (distance > 4) {  // Changed from 200 to 4 world units
@@ -1331,8 +1373,15 @@ export class Enemy {
             if (distance < optimalDistance - 50) {
                 // Too close - back away
                 const deltaSeconds = this.deltaSeconds;
-                this.worldX -= (dx / distance) * this.worldSpeed * 0.5 * deltaSeconds;
-                this.worldY -= (dy / distance) * this.worldSpeed * 0.5 * deltaSeconds;
+                const backDirX = -(dx / distance);
+                const backDirY = -(dy / distance);
+                this.worldX += backDirX * this.worldSpeed * 0.5 * deltaSeconds;
+                this.worldY += backDirY * this.worldSpeed * 0.5 * deltaSeconds;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(backDirX, backDirY);
+                }
                 return;
             }
         }
@@ -1376,6 +1425,11 @@ export class Enemy {
                 const deltaSeconds = this.deltaSeconds;
                 this.worldX += Math.cos(angle) * this.worldSpeed * deltaSeconds;
                 this.worldY += Math.sin(angle) * this.worldSpeed * deltaSeconds;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(Math.cos(angle), Math.sin(angle));
+                }
             }
         }
     }
@@ -1403,8 +1457,15 @@ export class Enemy {
             if (this.role === 'shooter' && distance < 5) {  // Changed from 250 pixels to 5 world units
                 // Too close - back away
                 const deltaSeconds = this.deltaSeconds;
-                this.worldX -= (dx / distance) * this.worldSpeed * 0.5 * deltaSeconds;
-                this.worldY -= (dy / distance) * this.worldSpeed * 0.5 * deltaSeconds;
+                const backDirX = -(dx / distance);
+                const backDirY = -(dy / distance);
+                this.worldX += backDirX * this.worldSpeed * 0.5 * deltaSeconds;
+                this.worldY += backDirY * this.worldSpeed * 0.5 * deltaSeconds;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(backDirX, backDirY);
+                }
                 return;
             }
 
@@ -1416,12 +1477,22 @@ export class Enemy {
                 angle = this.applyObstacleAvoidance(angle);
                 this.worldX += Math.cos(angle) * this.worldSpeed * deltaSeconds;
                 this.worldY += Math.sin(angle) * this.worldSpeed * deltaSeconds;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(Math.cos(angle), Math.sin(angle));
+                }
             } else if (distance > this.config.attackRange) {
                 // Too far - move closer
                 let angle = Math.atan2(dy, dx);
                 angle = this.applyObstacleAvoidance(angle);
                 this.worldX += Math.cos(angle) * this.worldSpeed * deltaSeconds;
                 this.worldY += Math.sin(angle) * this.worldSpeed * deltaSeconds;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(Math.cos(angle), Math.sin(angle));
+                }
             } else {
                 // Good range - strafe
                 const angle = Math.atan2(dy, dx);
@@ -1431,6 +1502,11 @@ export class Enemy {
 
                 this.worldX += Math.cos(strafeAngle) * this.worldSpeed * 0.7 * deltaSeconds;
                 this.worldY += Math.sin(strafeAngle) * this.worldSpeed * 0.7 * deltaSeconds;
+
+                // Update sprite direction based on movement
+                if (this.useDirectionalSprites) {
+                    this.updateDirection(Math.cos(strafeAngle), Math.sin(strafeAngle));
+                }
             }
         }
     }
