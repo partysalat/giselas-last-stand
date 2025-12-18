@@ -236,13 +236,10 @@ export class EnvironmentProp {
      */
     setupPhysics() {
         // Don't create physics body for:
-        // - Explosive props (need to be selectable/targetable, shouldn't block movement)
-        // - Hazard props (shouldn't block movement)
         // - Ceiling-mounted props (chandeliers, hanging lamps)
         // - Floor props (trapdoors - should be passable)
-        if (this.explosionRadius > 0 ||
-            this.className === 'HazardProp' ||
-            this.layer === 'ceiling' ||
+        // NOTE: HazardProps and explosive props NOW get physics bodies so they can be pushed by explosions
+        if (this.layer === 'ceiling' ||
             this.layer === 'floor') {
             // No physics body
             return;
@@ -252,6 +249,18 @@ export class EnvironmentProp {
         const isStatic = this.weightClass === 'heavy' || this.weightClass === null;
 
         this.scene.physics.add.existing(this.sprite, isStatic);
+
+        // For hazard props (explosives, lamps): make them non-blocking (overlap-only) so they don't impede movement
+        // but can still be pushed by explosion forces
+        const isNonBlocking = this.className === 'HazardProp' || this.explosionRadius > 0 || this.fireRadius > 0;
+        if (isNonBlocking) {
+            this.sprite.body.enable = true;
+            this.sprite.body.setCollideWorldBounds(false);
+            // Don't set body as immovable even if medium weight - we want explosions to move it
+            this.sprite.body.immovable = false;
+            // Skip collision detection with other entities (will use overlap instead)
+            this.sprite.body.checkCollision.none = true;
+        }
 
         // Configure collision body using world dimensions
         // Convert world dimensions to screen-space pixel dimensions
@@ -279,7 +288,10 @@ export class EnvironmentProp {
             this.sprite.body.setOffset(offsetX, offsetY);
         }
 
-        this.sprite.body.immovable = (this.weightClass === 'heavy');
+        // Heavy props are immovable, but hazard/explosive props should always be moveable by explosions
+        if (!isNonBlocking) {
+            this.sprite.body.immovable = (this.weightClass === 'heavy');
+        }
 
         // For dynamic (light) props, enable physics interactions
         if (!isStatic) {
@@ -718,11 +730,17 @@ export class EnvironmentProp {
 
         // Phase 2: Apply explosion force to nearby props (use WORLD coordinates)
         if (this.scene.fortificationManager && this.scene.fortificationManager.physicsManager) {
+            // Scale force based on explosion size and damage
+            // Larger explosions and higher damage = stronger push on props
+            // Formula: radius * 150 + damage * 10
+            // Examples: explosiveBarrel (4.0, 20) = 800, dynamiteCrate (2.0, 30) = 600
+            const force = this.explosionRadius * 150 + this.explosionDamage * 10;
+
             this.scene.fortificationManager.physicsManager.applyExplosionForce(
                 this.worldX,
                 this.worldY,
                 this.explosionRadius,
-                600 // Force magnitude (increased for better visibility)
+                force
             );
         }
     }

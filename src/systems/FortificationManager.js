@@ -103,7 +103,12 @@ export class FortificationManager {
         spawnAt('barStool', 250, 400, false);
         spawnAt('barStool', 350, 400, false);
 
-        console.log(`Spawned ${this.fortificationProps.length} initial furniture pieces`);
+        // Phase 5: Spawn 3 chandeliers (left, center, right)
+        spawnAt('chandelier', 500, 200, false);
+        spawnAt('chandelier', 960, 250, false);
+        spawnAt('chandelier', 1420, 200, false);
+
+        console.log(`Spawned ${this.fortificationProps.length} initial furniture pieces (including chandeliers)`);
     }
 
     /**
@@ -227,6 +232,11 @@ export class FortificationManager {
 
         // Track in fortifications array
         this.fortificationProps.push(prop);
+
+        // Phase 5: Register chandeliers with DestructionManager
+        if (propType === 'chandelier' && this.destructionManager) {
+            this.destructionManager.registerChandelier(prop);
+        }
 
         console.log(`Spawned fortification prop: ${propType} at world (${worldX}, ${worldY})`);
 
@@ -784,6 +794,14 @@ export class FortificationManager {
      */
     getCovers() {
         return this.getProps();
+    }
+
+    /**
+     * Compatibility method for old CoverManager API
+     * Damage props in radius (alternative method name)
+     */
+    damageInRadius(x, y, radius, damage) {
+        return this.damagePropsInRadius(x, y, radius, damage);
     }
 
     /**

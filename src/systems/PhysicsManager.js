@@ -97,9 +97,9 @@ export class PhysicsManager {
     getMovementMultiplier(weightClass) {
         switch (weightClass) {
             case 'light':
-                return 10.0; // ~150-200px becomes 5-10 world units/sec
+                return 5.0; // Reduced from 10.0 - chairs should slide dramatically but not fly across map
             case 'medium':
-                return 3.0;  // ~30-60px becomes 1.5-3 world units/sec
+                return 3.0; // Medium props (barrels) get moderate push
             case 'heavy':
                 return 0.0; // Immovable
             default:
