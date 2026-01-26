@@ -111,7 +111,7 @@ export class BetweenWavesUI {
             fontFamily: 'Arial'
         }).setOrigin(0.5);
 
-        notificationText.setDepth(1000);
+        notificationText.setDepth(10000); // Very high depth to appear above all game objects
 
         // Fade out after 2.5 seconds (increased from 2s to ensure visibility)
         this.scene.time.delayedCall(2500, () => {
