@@ -10,6 +10,36 @@
 
 ---
 
+## Task 0: Fix Duplicate update() Method
+
+**Files:**
+- Modify: `src/systems/FortificationManager.js` (lines 551-567 and 695-711)
+
+**Problem:** FortificationManager has two `update()` methods that will conflict. The first (lines 551-567) handles prop updates and cleanup. The second (lines 695-711) does the same PLUS updates physicsManager and fireSystem.
+
+**Step 1: Remove first update() method**
+
+Delete the first `update()` method at lines 551-567 (keep only the second one at 695-711).
+
+**Step 2: Test in browser**
+
+Run: `npm start`
+Expected: Game runs normally, no errors
+Expected: Props still update correctly
+
+**Step 3: Commit**
+
+```bash
+git add src/systems/FortificationManager.js
+git commit -m "fix: remove duplicate update() method
+
+Keep only the complete update() method that handles all systems.
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
+---
+
 ## Task 1: Add Ring Configuration and Helper Method
 
 **Files:**
@@ -18,30 +48,34 @@
 
 **Step 1: Update constructor with ring configuration**
 
-In `FortificationManager.js` constructor (lines 12-26), replace the `spawnPoints` initialization:
+In `FortificationManager.js` constructor (lines 12-26), replace the `spawnPoints` initialization and drag-related properties:
 
+**Remove these lines:**
 ```javascript
-constructor(scene) {
-    this.scene = scene;
-    this.fortificationProps = []; // All props
+this.draggedProp = null;
+this.dragStartX = 0;
+this.dragStartY = 0;
+this.spawnPoints = [];
+```
 
-    // Ring-based placement system
-    this.defensiveRings = [
-        { radius: 12, waves: [1, 2, 3], propCount: 8 },      // Outer ring
-        { radius: 8, waves: [4, 5, 6], propCount: 10 },      // Middle ring
-        { radius: 5, waves: [7, 8, 9], propCount: 12 },      // Inner ring
-        { radius: 3, waves: [10, 11, 12], propCount: 8 }     // Core ring
-    ];
+**Replace with:**
+```javascript
+// Ring-based placement system
+this.defensiveRings = [
+    { radius: 12, waves: [1, 2, 3], propCount: 8 },      // Outer ring
+    { radius: 8, waves: [4, 5, 6], propCount: 10 },      // Middle ring
+    { radius: 5, waves: [7, 8, 9], propCount: 12 },      // Inner ring
+    { radius: 3, waves: [10, 11, 12], propCount: 8 }     // Core ring
+];
 
-    this.saloonCenter = { worldX: 15, worldY: 12 }; // Center of world space
+// Center of world space (15, 12 = center of 30x25 world grid)
+// Ring validation: max radius 12 from center (15,12) = edges at (3-27, 0-24) within bounds (0-30, 0-25) ✓
+this.saloonCenter = { worldX: 15, worldY: 12 };
+```
 
-    // Initialize environmental systems
-    this.physicsManager = new PhysicsManager(scene);
-    this.fireSystem = new FireSystem(scene);
-    this.destructionManager = new DestructionManager(scene);
-
-    console.log('FortificationManager initialized with ring-based placement');
-}
+**Update console log:**
+```javascript
+console.log('FortificationManager initialized with ring-based placement');
 ```
 
 **Step 2: Remove old initializeSpawnPoints method**
@@ -90,7 +124,7 @@ git commit -m "feat: add ring-based placement configuration
 
 Replace spawn points with defensive ring system. Add
 calculateRingPositions() to compute evenly-spaced positions around
-concentric rings.
+concentric rings. Remove drag-related properties from constructor.
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
@@ -226,6 +260,7 @@ spawnPropsForWave(waveNumber) {
     let spawnedCount = 0;
 
     // Spawn props at each position
+    // Note: If all positions are blocked, some props won't spawn (acceptable - player created tight defense)
     positions.forEach((pos, index) => {
         const propType = propTypes[index % propTypes.length];
 
@@ -259,7 +294,7 @@ git add src/systems/FortificationManager.js
 git commit -m "feat: add supply drop spawn methods
 
 Add triggerSupplyDrop() and spawnPropsForWave() to handle automatic
-prop placement at calculated ring positions.
+prop placement at calculated ring positions. Skips blocked positions.
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
@@ -291,8 +326,8 @@ showSupplyDropNotification() {
 
     notificationText.setDepth(1000);
 
-    // Fade out after 2 seconds
-    this.scene.time.delayedCall(2000, () => {
+    // Fade out after 2.5 seconds (increased from 2s to ensure visibility)
+    this.scene.time.delayedCall(2500, () => {
         this.scene.tweens.add({
             targets: notificationText,
             alpha: 0,
@@ -311,7 +346,7 @@ In browser console:
 game.scene.scenes[2].betweenWavesUI.showSupplyDropNotification()
 ```
 Expected: "Furniture delivered!" text appears at top-center
-Expected: Text fades out after 2 seconds and disappears
+Expected: Text fades out after 2.5 seconds and disappears
 
 **Step 3: Commit**
 
@@ -320,7 +355,7 @@ git add src/ui/BetweenWavesUI.js
 git commit -m "feat: add supply drop notification UI
 
 Add showSupplyDropNotification() to display 'Furniture delivered!'
-message that fades out after 2 seconds.
+message that fades out after 2.5 seconds.
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
@@ -330,24 +365,32 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 5: Update BetweenWavesUI Instructions
 
 **Files:**
-- Modify: `src/ui/BetweenWavesUI.js:45-58` (update instruction text)
+- Modify: `src/ui/BetweenWavesUI.js` (show method around line 70-100)
 
 **Step 1: Update instruction text in show() method**
 
-In the `show()` method (lines 88-94), replace the instruction text update:
+Find the `instructionText.setText()` call in the `show()` method (around lines 88-94).
 
+**Current text (remove this):**
 ```javascript
-// Update instructions with next wave number and items
-if (this.instructionText) {
-    this.instructionText.setText(
-        `${itemsText}\n\n` +
-        `Wave ${nextWave} incoming...\n\n` +
-        `Press SPACE when ready`
-    );
-}
+this.instructionText.setText(
+    `${itemsText}\n\n` +
+    `Drag furniture to build barricades and set traps\n\n` +
+    `Wave ${nextWave} incoming...\n\n` +
+    `Press SPACE when ready`
+);
 ```
 
-Remove the "Drag furniture to build barricades and set traps" line since dragging is no longer available.
+**Replace with:**
+```javascript
+this.instructionText.setText(
+    `${itemsText}\n\n` +
+    `Wave ${nextWave} incoming...\n\n` +
+    `Press SPACE when ready`
+);
+```
+
+The only change is removing the line: `Drag furniture to build barricades and set traps\n\n`
 
 **Step 2: Test in browser**
 
@@ -372,11 +415,13 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 6: Wire Supply Drop into GameScene
 
 **Files:**
-- Modify: `src/scenes/GameScene.js:1861-1886` (onEnterBetweenWaves method)
+- Modify: `src/scenes/GameScene.js` (onEnterBetweenWaves and onEnterWaveActive methods, initialization)
 
 **Step 1: Update onEnterBetweenWaves method**
 
-In `GameScene.js`, update the `onEnterBetweenWaves()` method (around lines 1861-1886):
+In `GameScene.js`, find the `onEnterBetweenWaves()` method (around lines 1861-1896).
+
+**Replace the entire method** with this version:
 
 ```javascript
 /**
@@ -398,12 +443,14 @@ onEnterBetweenWaves() {
         this.betweenWavesUI.show(completedWave, nextWave);
     }
 
-    // Trigger supply drop for next wave (skip wave 1, already has initial furniture)
+    // Trigger supply drop for next wave
+    // completedWave >= 1 means "after wave 1 completes" (for wave 2 and beyond)
+    // Wave 1 already has initial furniture, no drop needed
     if (this.fortificationManager && completedWave >= 1) {
         this.fortificationManager.triggerSupplyDrop(completedWave);
     }
 
-    // Spawn health pickups at even waves
+    // Spawn health pickups at even waves (NEW CODE - ADD THIS)
     if (completedWave > 0 && completedWave % 2 === 0) {
         const centerWorld = screenToWorld(960, 540, 0);
         const healthPickup = new this.HealthPickup(
@@ -415,7 +462,7 @@ onEnterBetweenWaves() {
         console.log(`Spawned health pickup at wave ${completedWave}`);
     }
 
-    // Spawn cocktail powerups at waves divisible by 3
+    // Spawn cocktail powerups at waves divisible by 3 (NEW CODE - ADD THIS)
     if (completedWave > 0 && completedWave % 3 === 0) {
         const cocktailTypes = Object.keys(this.COCKTAIL_TYPES);
         const randomType = cocktailTypes[Math.floor(Math.random() * cocktailTypes.length)];
@@ -430,33 +477,56 @@ onEnterBetweenWaves() {
         this.cocktails.push(cocktail);
         console.log(`Spawned ${randomType} cocktail at wave ${completedWave}`);
     }
+
+    // Pause enemy spawning
+    if (this.waveManager) {
+        this.waveManager.isSpawning = false;
+    }
 }
 ```
 
-Remove the `enablePropDragging()` call and the old `spawnItemsForWave()` call.
+**Changes made:**
+- Removed `enablePropDragging()` call
+- Removed old `spawnItemsForWave()` call
+- Added `triggerSupplyDrop()` call with clarified comment
+- **ADDED** health pickup spawning logic (was missing)
+- **ADDED** cocktail spawning logic (was missing)
 
-**Step 2: Remove onEnterWaveActive dragging disable call**
+**Step 2: Update onEnterWaveActive method**
 
-Find the `onEnterWaveActive()` method and remove the `disablePropDragging()` call:
+Find the `onEnterWaveActive()` method (around lines 1901-1923).
 
-Remove this line:
+**Remove this line:**
 ```javascript
 this.fortificationManager.disablePropDragging();
 ```
 
-**Step 3: Remove initialization dragging disable**
+Keep everything else in the method.
 
-In `GameScene.js` around line 134, remove:
-```javascript
-this.fortificationManager.disablePropDragging();
-```
+**Step 3: Remove initialization calls**
 
-Also remove the `initializeSpawnPoints()` call around line 131:
+In `GameScene.js` in the `create()` method, find around line 131-134:
+
+**Remove these lines:**
 ```javascript
 this.fortificationManager.initializeSpawnPoints();
 ```
 
-**Step 4: Test complete wave cycle**
+**Remove this line:**
+```javascript
+this.fortificationManager.disablePropDragging();
+```
+
+**Step 4: Add missing import**
+
+At the top of `GameScene.js`, verify this import exists (should be around line 2):
+```javascript
+import { screenToWorld } from '../utils/CoordinateTransform.js';
+```
+
+If not present, add it.
+
+**Step 5: Test complete wave cycle**
 
 Run: `npm start`
 Play game through wave 1
@@ -465,14 +535,15 @@ Expected: After 0.5s, props spawn in outer ring pattern
 Expected: Press SPACE → wave 2 starts
 Expected: No errors in console
 
-**Step 5: Commit**
+**Step 6: Commit**
 
 ```bash
 git add src/scenes/GameScene.js
 git commit -m "feat: wire supply drop into game scene
 
 Replace manual dragging calls with automatic supply drop trigger in
-onEnterBetweenWaves(). Remove dragging enable/disable calls.
+onEnterBetweenWaves(). Add health pickup and cocktail spawning logic.
+Remove dragging enable/disable and spawn point initialization calls.
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
@@ -484,31 +555,26 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 **Files:**
 - Modify: `src/systems/FortificationManager.js` (remove multiple methods)
 
-**Step 1: Remove makeDraggable method**
+**Important:** This task removes ~250 lines atomically. Do NOT use line numbers - use method names to locate code.
 
-Delete the entire `makeDraggable()` method (lines 301-326).
+**Step 1: Remove all drag-related methods**
 
-**Step 2: Remove drag event handlers**
+In `FortificationManager.js`, delete these entire methods (find by method name, NOT line number):
 
-Delete these entire methods:
-- `onDragStart()` (lines 330-369)
-- `onDrag()` (lines 373-456)
-- `onDragEnd()` (lines 460-546)
+1. **`makeDraggable(prop)`** - Makes props draggable with mouse
+2. **`onDragStart(prop, pointer, dragX, dragY)`** - Drag start handler
+3. **`onDrag(prop, pointer, dragX, dragY)`** - Drag movement handler
+4. **`onDragEnd(prop, pointer, dragX, dragY)`** - Drag end handler
+5. **`enablePropDragging()`** - Enables dragging for all props
+6. **`disablePropDragging()`** - Disables dragging for all props
+7. **`isValidPlacement(worldX, worldY, prop)`** - Validates drag placement
+8. **`addSpawnGlow(prop)`** - Adds glow effect to spawned items
+9. **`getAvailableSpawnPoints()`** - Finds available spawn points
+10. **`spawnItemsForWave(waveNumber)`** - Old wave spawn method (replaced by spawnPropsForWave)
 
-**Step 3: Remove drag helper methods**
+**Step 2: Remove glow and dragging code from spawnFortificationProp**
 
-Delete these entire methods:
-- `enablePropDragging()` (lines 656-663)
-- `disablePropDragging()` (lines 669-677)
-- `isValidPlacement()` (lines 604-633)
-
-**Step 4: Remove addSpawnGlow method**
-
-Delete the entire `addSpawnGlow()` method (lines 272-299) since new props no longer need glow effects.
-
-**Step 5: Remove glow code from spawnFortificationProp**
-
-In `spawnFortificationProp()` method, remove these lines:
+In the `spawnFortificationProp()` method, remove these lines:
 
 ```javascript
 // Add visual glow for new spawns
@@ -520,24 +586,9 @@ if (isNewSpawn) {
 this.makeDraggable(prop);
 ```
 
-**Step 6: Remove getAvailableSpawnPoints method**
+Keep the rest of the method intact.
 
-Delete the entire `getAvailableSpawnPoints()` method (lines 150-165).
-
-**Step 7: Remove spawnItemsForWave method**
-
-Delete the entire `spawnItemsForWave()` method (lines 118-144) - it's replaced by `spawnPropsForWave()`.
-
-**Step 8: Remove drag-related properties from constructor**
-
-In constructor, remove:
-```javascript
-this.draggedProp = null;
-this.dragStartX = 0;
-this.dragStartY = 0;
-```
-
-**Step 9: Test in browser**
+**Step 3: Test in browser**
 
 Run: `npm start`
 Play through multiple waves
@@ -545,7 +596,7 @@ Expected: No dragging functionality available
 Expected: Props spawn automatically in rings
 Expected: No console errors about missing methods
 
-**Step 10: Commit**
+**Step 4: Commit**
 
 ```bash
 git add src/systems/FortificationManager.js
@@ -562,12 +613,21 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ## Task 8: Update Class Documentation
 
 **Files:**
-- Modify: `src/systems/FortificationManager.js:7-10` (class docstring)
+- Modify: `src/systems/FortificationManager.js` (class docstring at top)
 
 **Step 1: Update class documentation**
 
-Update the class docstring at the top of the file:
+At the top of `FortificationManager.js` (around lines 7-10), find the class docstring:
 
+**Current:**
+```javascript
+/**
+ * Manages fortification items: spawning, drag-and-drop, persistence
+ * Also manages environmental systems (fire, physics, destruction)
+ */
+```
+
+**Replace with:**
 ```javascript
 /**
  * Manages fortification items: automatic strategic placement, persistence
@@ -575,15 +635,13 @@ Update the class docstring at the top of the file:
  */
 ```
 
-Remove "drag-and-drop" from the description.
-
 **Step 2: Commit**
 
 ```bash
 git add src/systems/FortificationManager.js
 git commit -m "docs: update FortificationManager class description
 
-Remove drag-and-drop reference from class documentation.
+Remove drag-and-drop reference, update to reflect automatic placement.
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
@@ -623,6 +681,7 @@ Play and observe prop spawning
 Verify: Props don't spawn on top of players
 Verify: Props don't spawn on top of existing props
 Verify: Props stay within world bounds
+Note: If positions are blocked, spawn count < position count is expected behavior
 
 **Step 5: Test prop persistence**
 
@@ -636,11 +695,18 @@ Verify: New wave props add to existing ones
 
 Complete a wave
 Verify: "Furniture delivered!" notification appears
-Verify: Notification fades out after 2 seconds
+Verify: Notification fades out after 2.5 seconds
 Verify: Between-waves UI doesn't mention dragging
 Verify: SPACE key starts next wave
 
-**Step 7: Document any issues**
+**Step 7: Test pickups**
+
+Play to wave 2 (even wave)
+Verify: Health pickup spawns at center
+Play to wave 3 (divisible by 3)
+Verify: Cocktail powerup spawns at center
+
+**Step 8: Document any issues**
 
 If bugs found, note them down for fixing.
 
@@ -692,9 +758,12 @@ After implementation, verify all these behaviors:
 - [ ] Damaged props stay damaged between waves
 - [ ] Destroyed props don't respawn
 - [ ] Collision and physics work correctly with new props
+- [ ] Health pickups spawn at even waves
+- [ ] Cocktail powerups spawn at waves divisible by 3
 - [ ] SPACE key still starts next wave during between-waves phase
 - [ ] No console errors about missing drag methods
 - [ ] Game flows smoothly without interruption
+- [ ] If ring positions are blocked, spawn count < position count (acceptable)
 
 ## Notes
 
@@ -704,3 +773,8 @@ After implementation, verify all these behaviors:
 - Use browser console for quick method testing
 - YAGNI: Don't add features beyond the design spec
 - DRY: Reuse existing methods like `getItemsForWave()` and `spawnFortificationProp()`
+- **Task 0 must be done first** to fix the duplicate update() method bug
+- **Task 7 uses method names, not line numbers** to avoid line drift issues
+- Saloon center (15, 12) is intentionally the world grid center
+- Ring radii validated: max 12 from (15,12) = edges (3-27, 0-24) fits in world bounds (0-30, 0-25)
+- Blocked spawn positions are acceptable - indicates tight player defense
