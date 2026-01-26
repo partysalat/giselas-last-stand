@@ -128,10 +128,7 @@ export class GameScene extends Phaser.Scene {
 
         // Initialize fortification manager
         this.fortificationManager = new FortificationManager(this);
-        this.fortificationManager.initializeSpawnPoints();
         this.fortificationManager.spawnInitialFurniture();
-        // Disable dragging initially since game starts in WAVE_ACTIVE state
-        this.fortificationManager.disablePropDragging();
 
         // Initialize boss announcer
         this.bossAnnouncer = new BossAnnouncer(this);
@@ -1858,6 +1855,9 @@ export class GameScene extends Phaser.Scene {
     /**
      * Called when entering BETWEEN_WAVES state
      */
+    /**
+     * Called when entering BETWEEN_WAVES state
+     */
     onEnterBetweenWaves() {
         console.log('Entering BETWEEN_WAVES state');
 
@@ -1869,24 +1869,44 @@ export class GameScene extends Phaser.Scene {
             this.fortificationManager.restoreAllPropsHealth();
         }
 
-        // Enable prop dragging during between-waves phase
-        if (this.fortificationManager) {
-            this.fortificationManager.enablePropDragging();
-        }
-
         // Show UI overlay with wave numbers
         if (this.betweenWavesUI) {
             this.betweenWavesUI.show(completedWave, nextWave);
         }
 
-        // Spawn fortification items for next wave (but not after wave 1)
-        // After wave 1, players already have initial furniture to work with
-        // Start spawning additional items from wave 2 onwards
-        if (this.fortificationManager && completedWave >= 2) {
-            console.log(`Spawning items for wave ${nextWave}`);
-            this.fortificationManager.spawnItemsForWave(nextWave);
-        } else if (completedWave === 1) {
-            console.log('Skipping item spawn after wave 1 - using initial furniture only');
+        // Trigger supply drop for next wave
+        // completedWave >= 1 means "after wave 1 completes" (for wave 2 and beyond)
+        // Wave 1 already has initial furniture, no drop needed
+        if (this.fortificationManager && completedWave >= 1) {
+            this.fortificationManager.triggerSupplyDrop(completedWave);
+        }
+
+        // Spawn health pickups at even waves (NEW CODE - ADD THIS)
+        if (completedWave > 0 && completedWave % 2 === 0) {
+            const centerWorld = screenToWorld(960, 540, 0);
+            const healthPickup = new this.HealthPickup(
+                this,
+                centerWorld.worldX,
+                centerWorld.worldY
+            );
+            this.healthPickups.push(healthPickup);
+            console.log(`Spawned health pickup at wave ${completedWave}`);
+        }
+
+        // Spawn cocktail powerups at waves divisible by 3 (NEW CODE - ADD THIS)
+        if (completedWave > 0 && completedWave % 3 === 0) {
+            const cocktailTypes = Object.keys(this.COCKTAIL_TYPES);
+            const randomType = cocktailTypes[Math.floor(Math.random() * cocktailTypes.length)];
+
+            const centerWorld = screenToWorld(960, 540, 0);
+            const cocktail = new this.Cocktail(
+                this,
+                centerWorld.worldX + 2,
+                centerWorld.worldY + 2,
+                randomType
+            );
+            this.cocktails.push(cocktail);
+            console.log(`Spawned ${randomType} cocktail at wave ${completedWave}`);
         }
 
         // Pause enemy spawning
@@ -1900,11 +1920,6 @@ export class GameScene extends Phaser.Scene {
      */
     onEnterWaveActive() {
         console.log('Entering WAVE_ACTIVE state');
-
-        // Disable prop dragging during active wave
-        if (this.fortificationManager) {
-            this.fortificationManager.disablePropDragging();
-        }
 
         // Hide UI overlay
         if (this.betweenWavesUI) {
