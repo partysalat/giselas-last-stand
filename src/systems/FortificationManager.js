@@ -55,6 +55,40 @@ export class FortificationManager {
     }
 
     /**
+     * Check if a position is occupied by props, players, or outside bounds
+     * @param {number} worldX - World X position
+     * @param {number} worldY - World Y position
+     * @param {number} checkRadius - Collision check radius in world units (default 1.5)
+     * @returns {boolean} True if position is occupied/invalid
+     */
+    isPositionOccupied(worldX, worldY, checkRadius = 1.5) {
+        // Check existing props
+        const hasPropNearby = this.fortificationProps.some(prop => {
+            if (!prop.isAlive()) return false;
+
+            const dx = prop.worldX - worldX;
+            const dy = prop.worldY - worldY;
+            return Math.sqrt(dx * dx + dy * dy) < checkRadius;
+        });
+
+        // Check players
+        const hasPlayerNearby = this.scene.playerManager.players.some(player => {
+            const dx = player.worldX - worldX;
+            const dy = player.worldY - worldY;
+            return Math.sqrt(dx * dx + dy * dy) < 2.0;
+        });
+
+        // Check world bounds
+        const margin = 1.0;
+        const inBounds = worldX >= WORLD_MIN_X + margin &&
+                         worldX <= WORLD_MAX_X - margin &&
+                         worldY >= WORLD_MIN_Y + margin &&
+                         worldY <= WORLD_MAX_Y - margin;
+
+        return hasPropNearby || hasPlayerNearby || !inBounds;
+    }
+
+    /**
      * Spawn initial saloon furniture in "normal" positions
      */
     spawnInitialFurniture() {
