@@ -12,59 +12,46 @@ export class FortificationManager {
     constructor(scene) {
         this.scene = scene;
         this.fortificationProps = []; // All props that can be moved
-        this.draggedProp = null;
-        this.dragStartX = 0;
-        this.dragStartY = 0;
-        this.spawnPoints = [];
+
+        // Ring-based placement system
+        this.defensiveRings = [
+            { radius: 12, waves: [1, 2, 3], propCount: 8 },      // Outer ring
+            { radius: 8, waves: [4, 5, 6], propCount: 10 },      // Middle ring
+            { radius: 5, waves: [7, 8, 9], propCount: 12 },      // Inner ring
+            { radius: 3, waves: [10, 11, 12], propCount: 8 }     // Core ring
+        ];
+
+        // Center of world space (15, 12 = center of 30x25 world grid)
+        // Ring validation: max radius 12 from center (15,12) = edges at (3-27, 0-24) within bounds (0-30, 0-25) ✓
+        this.saloonCenter = { worldX: 15, worldY: 12 };
 
         // Initialize environmental systems
         this.physicsManager = new PhysicsManager(scene);
         this.fireSystem = new FireSystem(scene);
         this.destructionManager = new DestructionManager(scene);
 
-        console.log('FortificationManager initialized');
+        console.log('FortificationManager initialized with ring-based placement');
     }
 
     /**
-     * Initialize spawn points around saloon perimeter (in WORLD coordinates)
+     * Calculate evenly-spaced positions around a defensive ring
+     * @param {Object} ring - Ring configuration { radius, propCount }
+     * @returns {Array} Array of { worldX, worldY } positions
      */
-    initializeSpawnPoints() {
-        // Convert screen coordinates to world coordinates
-        const screenSpawnPoints = [
-            // Top edge
-            { x: 300, y: 200 },   // Top-left corner
-            { x: 640, y: 200 },   // Top-left mid
-            { x: 960, y: 200 },   // Top-center
-            { x: 1280, y: 200 },  // Top-right mid
-            { x: 1620, y: 200 },  // Top-right corner
+    calculateRingPositions(ring) {
+        const positions = [];
+        const { radius, propCount } = ring;
 
-            // Right edge
-            { x: 1700, y: 440 },  // Right-mid-top
-            { x: 1700, y: 640 },  // Right-mid-bottom
+        for (let i = 0; i < propCount; i++) {
+            const angle = (i / propCount) * Math.PI * 2;
+            const worldX = this.saloonCenter.worldX + radius * Math.cos(angle);
+            const worldY = this.saloonCenter.worldY + radius * Math.sin(angle);
 
-            // Bottom edge
-            { x: 1620, y: 880 },  // Bottom-right corner
-            { x: 1280, y: 880 },  // Bottom-right mid
-            { x: 960, y: 880 },   // Bottom-center
-            { x: 640, y: 880 },   // Bottom-left mid
-            { x: 300, y: 880 },   // Bottom-left corner
+            positions.push({ worldX, worldY });
+        }
 
-            // Left edge
-            { x: 220, y: 640 },   // Left-mid-bottom
-            { x: 220, y: 440 }    // Left-mid-top
-        ];
-
-        // Convert all spawn points from SCREEN to WORLD coordinates
-        this.spawnPoints = screenSpawnPoints.map(point => {
-            const worldPos = screenToWorld(point.x, point.y, 0);
-            return {
-                worldX: worldPos.worldX,
-                worldY: worldPos.worldY,
-                active: true
-            };
-        });
-
-        console.log('Spawn points initialized:', this.spawnPoints.length);
+        console.log(`Calculated ${positions.length} positions for ring (radius ${radius})`);
+        return positions;
     }
 
     /**
