@@ -100,6 +100,32 @@ export class BetweenWavesUI {
     }
 
     /**
+     * Show "Furniture delivered!" notification
+     */
+    showSupplyDropNotification() {
+        const notificationText = this.scene.add.text(960, 150, 'Furniture delivered!', {
+            fontSize: '48px',
+            fontStyle: 'bold',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4,
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+
+        notificationText.setDepth(1000);
+
+        // Fade out after 2.5 seconds (increased from 2s to ensure visibility)
+        this.scene.time.delayedCall(2500, () => {
+            this.scene.tweens.add({
+                targets: notificationText,
+                alpha: 0,
+                duration: 500,
+                onComplete: () => notificationText.destroy()
+            });
+        });
+    }
+
+    /**
      * Hide the UI overlay
      */
     hide() {
