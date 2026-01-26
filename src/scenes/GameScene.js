@@ -1903,6 +1903,7 @@ export class GameScene extends Phaser.Scene {
                 this,
                 centerWorld.worldX + 2,
                 centerWorld.worldY + 2,
+                0,  // worldZ
                 randomType
             );
             this.cocktails.push(cocktail);
