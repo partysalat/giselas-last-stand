@@ -5,7 +5,7 @@ import { FireSystem } from './FireSystem.js';
 import { DestructionManager } from './DestructionManager.js';
 
 /**
- * Manages fortification items: spawning, drag-and-drop, persistence
+ * Manages fortification items: automatic strategic placement, persistence
  * Also manages environmental systems (fire, physics, destruction)
  */
 export class FortificationManager {
