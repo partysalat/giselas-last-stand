@@ -545,26 +545,6 @@ export class FortificationManager {
         this.draggedProp = null;
     }
 
-    /**
-     * Update fortification system
-     */
-    update(delta) {
-        // Update all fortification props
-        this.fortificationProps.forEach(prop => {
-            if (prop.update) {
-                prop.update(delta);
-            }
-        });
-
-        // Remove destroyed props
-        const beforeCount = this.fortificationProps.length;
-        this.fortificationProps = this.fortificationProps.filter(prop => prop.isAlive());
-        const afterCount = this.fortificationProps.length;
-
-        if (beforeCount !== afterCount) {
-            console.log(`Fortifications: ${beforeCount} -> ${afterCount} (${beforeCount - afterCount} destroyed)`);
-        }
-    }
 
     /**
      * Check if there's an obstacle at a position
