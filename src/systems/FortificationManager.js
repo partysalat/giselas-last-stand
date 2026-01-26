@@ -89,6 +89,66 @@ export class FortificationManager {
     }
 
     /**
+     * Trigger supply drop event for a wave
+     * @param {number} completedWaveNumber - Wave number just completed
+     */
+    triggerSupplyDrop(completedWaveNumber) {
+        const nextWave = completedWaveNumber + 1;
+
+        console.log(`Supply drop triggered for wave ${nextWave}`);
+
+        // Show notification
+        if (this.scene.betweenWavesUI && this.scene.betweenWavesUI.showSupplyDropNotification) {
+            this.scene.betweenWavesUI.showSupplyDropNotification();
+        }
+
+        // Wait 0.5 seconds, then spawn props
+        this.scene.time.delayedCall(500, () => {
+            this.spawnPropsForWave(nextWave);
+        });
+    }
+
+    /**
+     * Spawn props at ring positions for a specific wave
+     * @param {number} waveNumber - Wave number to spawn props for
+     */
+    spawnPropsForWave(waveNumber) {
+        console.log(`Spawning props for wave ${waveNumber}`);
+
+        // Find which ring applies to this wave
+        const ring = this.defensiveRings.find(r => r.waves.includes(waveNumber));
+
+        if (!ring) {
+            console.log(`No ring configuration for wave ${waveNumber}`);
+            return;
+        }
+
+        // Calculate positions
+        const positions = this.calculateRingPositions(ring);
+
+        // Get prop types for this wave
+        const propTypes = this.getItemsForWave(waveNumber);
+
+        let spawnedCount = 0;
+
+        // Spawn props at each position
+        // Note: If all positions are blocked, some props won't spawn (acceptable - player created tight defense)
+        positions.forEach((pos, index) => {
+            const propType = propTypes[index % propTypes.length];
+
+            // Check collision before spawning
+            if (!this.isPositionOccupied(pos.worldX, pos.worldY)) {
+                this.spawnFortificationProp(propType, pos.worldX, pos.worldY, false);
+                spawnedCount++;
+            } else {
+                console.log(`Position occupied at (${pos.worldX.toFixed(1)}, ${pos.worldY.toFixed(1)}), skipping spawn`);
+            }
+        });
+
+        console.log(`Spawned ${spawnedCount}/${positions.length} props for wave ${waveNumber}`);
+    }
+
+    /**
      * Spawn initial saloon furniture in "normal" positions
      */
     spawnInitialFurniture() {
