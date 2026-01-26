@@ -1881,10 +1881,10 @@ export class GameScene extends Phaser.Scene {
             this.fortificationManager.triggerSupplyDrop(completedWave);
         }
 
-        // Spawn health pickups at even waves (NEW CODE - ADD THIS)
+        // Spawn health pickups at even waves
         if (completedWave > 0 && completedWave % 2 === 0) {
             const centerWorld = screenToWorld(960, 540, 0);
-            const healthPickup = new this.HealthPickup(
+            const healthPickup = new HealthPickup(
                 this,
                 centerWorld.worldX,
                 centerWorld.worldY
@@ -1893,13 +1893,13 @@ export class GameScene extends Phaser.Scene {
             console.log(`Spawned health pickup at wave ${completedWave}`);
         }
 
-        // Spawn cocktail powerups at waves divisible by 3 (NEW CODE - ADD THIS)
+        // Spawn cocktail powerups at waves divisible by 3
         if (completedWave > 0 && completedWave % 3 === 0) {
-            const cocktailTypes = Object.keys(this.COCKTAIL_TYPES);
+            const cocktailTypes = Object.keys(COCKTAIL_TYPES);
             const randomType = cocktailTypes[Math.floor(Math.random() * cocktailTypes.length)];
 
             const centerWorld = screenToWorld(960, 540, 0);
-            const cocktail = new this.Cocktail(
+            const cocktail = new Cocktail(
                 this,
                 centerWorld.worldX + 2,
                 centerWorld.worldY + 2,
