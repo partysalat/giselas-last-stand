@@ -1,7 +1,7 @@
 import { worldToScreen, screenToWorld, calculateDepth, PIXELS_PER_WORLD_UNIT } from '../utils/CoordinateTransform.js';
 import { ISOMETRIC_CONFIG } from '../config.js';
 
-const PLAYER_TINTS = {
+export const PLAYER_TINTS = {
     blue: 0x8888ff,
     green: 0x88ff88,
     yellow: 0xffff88,
