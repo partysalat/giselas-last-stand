@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "source_character_name": "gisela",
+  "assets": [
+    {
+      "animation_name": "gisela_back_run_run_down",
+      "texture_path": "/assets/characters/gisela_back_run_run_down.png",
+      "metadata_path": "/assets/characters/gisela_back_run_run_down.spritecook.json",
+      "recognized_state": "RunDown"
+    },
+    {
+      "animation_name": "gisela_front_run_run_right",
+      "texture_path": "/assets/characters/gisela_front_run_run_right.png",
+      "metadata_path": "/assets/characters/gisela_front_run_run_right.spritecook.json",
+      "recognized_state": "RunRight"
+    },
+    {
+      "animation_name": "gisela_back_idle_death_back",
+      "texture_path": "/assets/characters/gisela_back_idle_death_back.png",
+      "metadata_path": "/assets/characters/gisela_back_idle_death_back.spritecook.json",
+      "recognized_state": "Death"
+    },
+    {
+      "animation_name": "gisela_back_idle_attack_back",
+      "texture_path": "/assets/characters/gisela_back_idle_attack_back.png",
+      "metadata_path": "/assets/characters/gisela_back_idle_attack_back.spritecook.json",
+      "recognized_state": "Attack"
+    },
+    {
+      "animation_name": "gisela_back_idle_jump_back",
+      "texture_path": "/assets/characters/gisela_back_idle_jump_back.png",
+      "metadata_path": "/assets/characters/gisela_back_idle_jump_back.spritecook.json",
+      "recognized_state": "Jump"
+    },
+    {
+      "animation_name": "gisela_back_idle_idle_back",
+      "texture_path": "/assets/characters/gisela_back_idle_idle_back.png",
+      "metadata_path": "/assets/characters/gisela_back_idle_idle_back.spritecook.json",
+      "recognized_state": "IdleUp"
+    },
+    {
+      "animation_name": "gisela_death",
+      "texture_path": "/assets/characters/gisela_death.png",
+      "metadata_path": "/assets/characters/gisela_death.spritecook.json",
+      "recognized_state": "Death"
+    },
+    {
+      "animation_name": "gisela_attack",
+      "texture_path": "/assets/characters/gisela_attack.png",
+      "metadata_path": "/assets/characters/gisela_attack.spritecook.json",
+      "recognized_state": "Attack"
+    },
+    {
+      "animation_name": "gisela_jump_front",
+      "texture_path": "/assets/characters/gisela_jump_front.png",
+      "metadata_path": "/assets/characters/gisela_jump_front.spritecook.json",
+      "recognized_state": "Jump"
+    },
+    {
+      "animation_name": "gisela_idle",
+      "texture_path": "/assets/characters/gisela_idle.png",
+      "metadata_path": "/assets/characters/gisela_idle.spritecook.json",
+      "recognized_state": "Idle"
+    }
+  ]
+}

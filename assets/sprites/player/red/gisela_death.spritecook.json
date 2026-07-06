@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "asset_kind": "animation",
+  "texture_path": "/assets/characters/gisela_death.png",
+  "animation_name": "gisela_death",
+  "animation_mode": "detailed",
+  "pixel": false,
+  "frame_width": 640,
+  "frame_height": 640,
+  "frame_count": 12,
+  "fps": 8,
+  "recognized_state": "Death"
+}

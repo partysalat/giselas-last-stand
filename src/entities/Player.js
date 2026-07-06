@@ -1,10 +1,17 @@
 import { worldToScreen, screenToWorld, calculateDepth, PIXELS_PER_WORLD_UNIT } from '../utils/CoordinateTransform.js';
 import { ISOMETRIC_CONFIG } from '../config.js';
 
+const PLAYER_TINTS = {
+    blue: 0x8888ff,
+    green: 0x88ff88,
+    yellow: 0xffff88,
+};
+
 export class Player {
     constructor(scene, worldX, worldY, worldZ = 0, color = 'red') {
         this.scene = scene;
         this.color = color;
+        this.colorTint = PLAYER_TINTS[color] ?? null;
 
         // World space coordinates (isometric 3D)
         this.worldX = worldX;
@@ -14,19 +21,18 @@ export class Player {
         // Convert to screen space for sprite creation
         const { screenX, screenY } = worldToScreen(worldX, worldY, worldZ);
 
-        // For red color, use directional sprites; others use old system
-        if (color === 'red') {
-            this.sprite = scene.add.sprite(screenX, screenY, `gisela-${color}-down`);
-            this.currentDirection = 'down'; // Track current facing direction
-            this.useDirectionalSprites = true;
-        } else {
-            this.sprite = scene.add.sprite(screenX, screenY, `gisela-${color}`);
-            this.sprite.play(`gisela-${color}-idle`);
-            this.useDirectionalSprites = false;
-        }
+        this.sprite = scene.add.sprite(screenX, screenY, 'gisela-anim-idle');
+        this.sprite.play('gisela-idle');
+        if (this.colorTint) this.sprite.setTint(this.colorTint);
 
-        // Scale down to appropriate size
-        this.sprite.setScale(0.5);
+        // Animation state tracking
+        this.currentAnim = 'gisela-idle';
+        this.lastFacingBack = false; // true when moving up/up-left/up-right
+        this.lastFlipX = false;      // true when facing right
+        this.lastShootTime = 0;
+
+        // Scale: 640px frame * 0.1 = 64px display
+        this.sprite.setScale(0.1);
 
         // Physical dimensions (must be set before creating shadow)
         this.height = ISOMETRIC_CONFIG.PLAYER_HEIGHT;
@@ -44,8 +50,8 @@ export class Player {
         scene.physics.add.existing(this.sprite);
 
         // Physics body is only used for collision detection, not movement
-        this.sprite.body.setCircle(ISOMETRIC_CONFIG.PLAYER_RADIUS);
-        this.sprite.body.setOffset(28, 28); // Center the collision circle
+        // Offset centers the dummy body within the 640x640 frame
+        this.sprite.body.setCircle(ISOMETRIC_CONFIG.PLAYER_RADIUS, 320, 320);
         // Don't use setCollideWorldBounds - we handle bounds in world space, not screen space
         this.sprite.body.setImmovable(true); // Prevents physics from moving the body
 
@@ -163,10 +169,9 @@ export class Player {
         this.worldX = Math.max(ISOMETRIC_CONFIG.WORLD_MIN_X, Math.min(ISOMETRIC_CONFIG.WORLD_MAX_X, this.worldX));
         this.worldY = Math.max(ISOMETRIC_CONFIG.WORLD_MIN_Y, Math.min(ISOMETRIC_CONFIG.WORLD_MAX_Y, this.worldY));
 
-        // Update sprite direction for red Gisela
-        if (this.useDirectionalSprites && (worldVelX !== 0 || worldVelY !== 0)) {
-            this.updateDirection(worldVelX, worldVelY);
-        }
+        // Update animation based on movement state
+        const isMoving = worldVelX !== 0 || worldVelY !== 0;
+        this.updateAnimation(worldVelX, worldVelY, isMoving);
 
         // Handle jumping physics
         this.updateJumping(keys, deltaSeconds);
@@ -312,6 +317,7 @@ export class Player {
         }
 
         this.nextFire = currentTime + cooldown;
+        this.lastShootTime = currentTime;
 
         // Get target world coordinates based on type
         let targetWorldX, targetWorldY;
@@ -461,10 +467,14 @@ export class Player {
         if (this.health < 0) this.health = 0;
         this.lastHitTime = currentTime;
 
-        // Flash sprite
+        // Flash sprite red, then restore color tint
         this.sprite.setTint(0xff0000);
         this.scene.time.delayedCall(100, () => {
-            this.sprite.clearTint();
+            if (this.colorTint) {
+                this.sprite.setTint(this.colorTint);
+            } else {
+                this.sprite.clearTint();
+            }
         });
 
         // Check for death
@@ -516,25 +526,49 @@ export class Player {
         this.buffAura.setDepth(-1);
     }
 
-    updateDirection(worldVelX, worldVelY) {
-        // Determine direction based on world-space velocity
-        // In isometric, world directions map differently to visual directions
+    playAnim(key, flipX = false) {
+        if (this.currentAnim === key && this.sprite.flipX === flipX) return;
+        this.sprite.setFlipX(flipX);
+        if (this.currentAnim !== key) {
+            this.currentAnim = key;
+            this.sprite.play(key);
+        }
+    }
 
-        let newDirection = this.currentDirection;
-
-        // Prioritize X/Y movement - choose dominant direction
-        if (Math.abs(worldVelX) > Math.abs(worldVelY)) {
-            // X-dominant movement
-            newDirection = worldVelX > 0 ? 'right' : 'left';
-        } else {
-            // Y-dominant movement
-            newDirection = worldVelY > 0 ? 'down' : 'up';
+    updateAnimation(worldVelX, worldVelY, isMoving) {
+        if (this.isDead) {
+            this.playAnim('gisela-death');
+            return;
         }
 
-        // Only change texture if direction changed
-        if (newDirection !== this.currentDirection) {
-            this.currentDirection = newDirection;
-            this.sprite.setTexture(`gisela-${this.color}-${newDirection}`);
+        if (this.isInAir) {
+            this.playAnim('gisela-jump');
+            return;
+        }
+
+        const recentlyShot = (this.scene.time.now - this.lastShootTime) < 400;
+
+        if (isMoving) {
+            // Project world velocity to screen space to determine facing direction.
+            // In this isometric layout: screenX ∝ worldX - worldY, screenY ∝ worldX + worldY
+            // Moving up on screen (screenVelY < 0) = away from camera = back-facing.
+            const screenVelX = worldVelX - worldVelY;
+            const screenVelY = worldVelX + worldVelY;
+
+            this.lastFacingBack = screenVelY < 0;
+            if (screenVelX !== 0) this.lastFlipX = screenVelX > 0;
+
+            if (this.lastFacingBack) {
+                this.playAnim('gisela-run-back', !this.lastFlipX);
+            } else {
+                this.playAnim('gisela-run-right', this.lastFlipX);
+            }
+        } else if (recentlyShot) {
+            const attackAnim = this.lastFacingBack ? 'gisela-attack-back' : 'gisela-attack-front';
+            this.playAnim(attackAnim, this.lastFacingBack ? !this.lastFlipX : this.lastFlipX);
+        } else {
+            const idleAnim = this.lastFacingBack ? 'gisela-idle-back' : 'gisela-idle';
+            this.playAnim(idleAnim, this.lastFacingBack ? !this.lastFlipX : this.lastFlipX);
         }
     }
 

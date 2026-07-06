@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "asset_kind": "animation",
+  "texture_path": "/assets/characters/gisela_front_run_run_right.png",
+  "animation_name": "gisela_front_run_run_right",
+  "animation_mode": "detailed",
+  "pixel": false,
+  "frame_width": 640,
+  "frame_height": 640,
+  "frame_count": 10,
+  "fps": 8,
+  "recognized_state": "RunRight"
+}

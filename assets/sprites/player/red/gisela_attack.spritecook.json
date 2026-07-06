@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "asset_kind": "animation",
+  "texture_path": "/assets/characters/gisela_attack.png",
+  "animation_name": "gisela_attack",
+  "animation_mode": "detailed",
+  "pixel": false,
+  "frame_width": 640,
+  "frame_height": 640,
+  "frame_count": 8,
+  "fps": 8,
+  "recognized_state": "Attack"
+}

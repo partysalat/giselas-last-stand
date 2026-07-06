@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "sourceCharacterName": "gisela",
+  "perspective": "topdown",
+  "controllerMode": "topdown3d",
+  "animationMode": "detailed",
+  "pixel": false,
+  "animations": {
+    "Idle": {
+      "texturePath": "/assets/characters/gisela_idle.png",
+      "metadataPath": "/assets/characters/gisela_idle.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "Walk": {
+      "texturePath": "/assets/characters/gisela_idle.png",
+      "metadataPath": "/assets/characters/gisela_idle.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "Run": {
+      "texturePath": "/assets/characters/gisela_idle.png",
+      "metadataPath": "/assets/characters/gisela_idle.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "Jump": {
+      "texturePath": "/assets/characters/gisela_back_idle_jump_back.png",
+      "metadataPath": "/assets/characters/gisela_back_idle_jump_back.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "Fall": {
+      "texturePath": "/assets/characters/gisela_back_idle_jump_back.png",
+      "metadataPath": "/assets/characters/gisela_back_idle_jump_back.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    }
+  },
+  "directionalAnimations": {
+    "IdleDown": {
+      "texturePath": "/assets/characters/gisela_idle.png",
+      "metadataPath": "/assets/characters/gisela_idle.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "IdleUp": {
+      "texturePath": "/assets/characters/gisela_back_idle_idle_back.png",
+      "metadataPath": "/assets/characters/gisela_back_idle_idle_back.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "IdleRight": {
+      "texturePath": "/assets/characters/gisela_idle.png",
+      "metadataPath": "/assets/characters/gisela_idle.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "WalkDown": {
+      "texturePath": "/assets/characters/gisela_back_run_run_down.png",
+      "metadataPath": "/assets/characters/gisela_back_run_run_down.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 10,
+      "fps": 8
+    },
+    "WalkUp": {
+      "texturePath": "/assets/characters/gisela_back_idle_idle_back.png",
+      "metadataPath": "/assets/characters/gisela_back_idle_idle_back.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "WalkRight": {
+      "texturePath": "/assets/characters/gisela_front_run_run_right.png",
+      "metadataPath": "/assets/characters/gisela_front_run_run_right.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 10,
+      "fps": 8
+    },
+    "RunDown": {
+      "texturePath": "/assets/characters/gisela_back_run_run_down.png",
+      "metadataPath": "/assets/characters/gisela_back_run_run_down.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 10,
+      "fps": 8
+    },
+    "RunUp": {
+      "texturePath": "/assets/characters/gisela_back_run_run_down.png",
+      "metadataPath": "/assets/characters/gisela_back_run_run_down.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 10,
+      "fps": 8
+    },
+    "RunRight": {
+      "texturePath": "/assets/characters/gisela_front_run_run_right.png",
+      "metadataPath": "/assets/characters/gisela_front_run_run_right.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 10,
+      "fps": 8
+    },
+    "Attack": {
+      "texturePath": "/assets/characters/gisela_back_idle_attack_back.png",
+      "metadataPath": "/assets/characters/gisela_back_idle_attack_back.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "Hurt": {
+      "texturePath": "/assets/characters/gisela_idle.png",
+      "metadataPath": "/assets/characters/gisela_idle.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 8,
+      "fps": 8
+    },
+    "Death": {
+      "texturePath": "/assets/characters/gisela_back_idle_death_back.png",
+      "metadataPath": "/assets/characters/gisela_back_idle_death_back.spritecook.json",
+      "animationMode": "detailed",
+      "pixel": false,
+      "frameWidth": 640,
+      "frameHeight": 640,
+      "frameCount": 12,
+      "fps": 8
+    }
+  }
+}

@@ -9,30 +9,30 @@ export class PreloadScene extends Phaser.Scene {
 
         // === PLAYER SPRITES ===
 
-        // Load directional sprites for Red Gisela (8 directions)
-        this.load.image('gisela-red-down', 'assets/sprites/player/gisela-red-down.png');
-        this.load.image('gisela-red-up', 'assets/sprites/player/gisela-red-up.png');
-        this.load.image('gisela-red-left', 'assets/sprites/player/gisela-red-left.png');
-        this.load.image('gisela-red-right', 'assets/sprites/player/gisela-red-right.png');
-        this.load.image('gisela-red-down-left', 'assets/sprites/player/gisela-red-down-left.png');
-        this.load.image('gisela-red-down-right', 'assets/sprites/player/gisela-red-down-right.png');
-        this.load.image('gisela-red-up-left', 'assets/sprites/player/gisela-red-up-left.png');
-        this.load.image('gisela-red-up-right', 'assets/sprites/player/gisela-red-up-right.png');
-
-        // Fallback: old idle sprites for other colors
-        this.load.spritesheet('gisela-blue', 'assets/sprites/player/gisela-blue-idle.png', {
-            frameWidth: 96,
-            frameHeight: 96
+        // Gisela animated sprites (all players share these textures; non-red uses tint)
+        this.load.spritesheet('gisela-anim-idle', 'assets/sprites/player/red/gisela_idle.png', {
+            frameWidth: 640, frameHeight: 640
         });
-
-        this.load.spritesheet('gisela-green', 'assets/sprites/player/gisela-green-idle.png', {
-            frameWidth: 96,
-            frameHeight: 96
+        this.load.spritesheet('gisela-anim-idle-back', 'assets/sprites/player/red/gisela_back_idle_idle_back.png', {
+            frameWidth: 640, frameHeight: 640
         });
-
-        this.load.spritesheet('gisela-yellow', 'assets/sprites/player/gisela-yellow-idle.png', {
-            frameWidth: 96,
-            frameHeight: 96
+        this.load.spritesheet('gisela-anim-run-down', 'assets/sprites/player/red/gisela_back_run_run_down.png', {
+            frameWidth: 640, frameHeight: 640
+        });
+        this.load.spritesheet('gisela-anim-run-right', 'assets/sprites/player/red/gisela_front_run_run_right.png', {
+            frameWidth: 640, frameHeight: 640
+        });
+        this.load.spritesheet('gisela-anim-attack-front', 'assets/sprites/player/red/gisela_attack.png', {
+            frameWidth: 640, frameHeight: 640
+        });
+        this.load.spritesheet('gisela-anim-attack-back', 'assets/sprites/player/red/gisela_back_idle_attack_back.png', {
+            frameWidth: 640, frameHeight: 640
+        });
+        this.load.spritesheet('gisela-anim-jump', 'assets/sprites/player/red/gisela_back_idle_jump_back.png', {
+            frameWidth: 640, frameHeight: 640
+        });
+        this.load.spritesheet('gisela-anim-death', 'assets/sprites/player/red/gisela_back_idle_death_back.png', {
+            frameWidth: 640, frameHeight: 640
         });
 
         // === ENEMY SPRITES ===
@@ -227,11 +227,47 @@ export class PreloadScene extends Phaser.Scene {
 
         // === CREATE ANIMATIONS ===
 
-        // Player animations (skip red as it uses directional sprites now)
-        // this.createPlayerAnimation('gisela-red'); // Red uses directional images
-        this.createPlayerAnimation('gisela-blue');
-        this.createPlayerAnimation('gisela-green');
-        this.createPlayerAnimation('gisela-yellow');
+        // Gisela player animations (shared across all colors; non-red players use tint)
+        this.anims.create({
+            key: 'gisela-idle',
+            frames: this.anims.generateFrameNumbers('gisela-anim-idle', { start: 0, end: 7 }),
+            frameRate: 8, repeat: -1
+        });
+        this.anims.create({
+            key: 'gisela-idle-back',
+            frames: this.anims.generateFrameNumbers('gisela-anim-idle-back', { start: 0, end: 7 }),
+            frameRate: 8, repeat: -1
+        });
+        this.anims.create({
+            key: 'gisela-run-back',
+            frames: this.anims.generateFrameNumbers('gisela-anim-run-down', { start: 0, end: 9 }),
+            frameRate: 8, repeat: -1
+        });
+        this.anims.create({
+            key: 'gisela-run-right',
+            frames: this.anims.generateFrameNumbers('gisela-anim-run-right', { start: 0, end: 9 }),
+            frameRate: 8, repeat: -1
+        });
+        this.anims.create({
+            key: 'gisela-attack-front',
+            frames: this.anims.generateFrameNumbers('gisela-anim-attack-front', { start: 0, end: 7 }),
+            frameRate: 8, repeat: -1
+        });
+        this.anims.create({
+            key: 'gisela-attack-back',
+            frames: this.anims.generateFrameNumbers('gisela-anim-attack-back', { start: 0, end: 7 }),
+            frameRate: 8, repeat: -1
+        });
+        this.anims.create({
+            key: 'gisela-jump',
+            frames: this.anims.generateFrameNumbers('gisela-anim-jump', { start: 0, end: 7 }),
+            frameRate: 8, repeat: 0
+        });
+        this.anims.create({
+            key: 'gisela-death',
+            frames: this.anims.generateFrameNumbers('gisela-anim-death', { start: 0, end: 11 }),
+            frameRate: 8, repeat: 0
+        });
 
         // Enemy animations
         this.createEnemyIdleAnimation('lobster-bandit', 2); // 2 frames
@@ -266,24 +302,6 @@ export class PreloadScene extends Phaser.Scene {
             color: '#ffffff',
             fontFamily: 'Arial'
         }).setOrigin(0.5);
-    }
-
-    createPlayerAnimation(spriteKey) {
-        // Idle animation (assuming 3 frames)
-        this.anims.create({
-            key: `${spriteKey}-idle`,
-            frames: this.anims.generateFrameNumbers(spriteKey, { start: 0, end: 2 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        // Walk animation (if you add walk sprites, uncomment this)
-        // this.anims.create({
-        //     key: `${spriteKey}-walk`,
-        //     frames: this.anims.generateFrameNumbers(`${spriteKey}-walk`, { start: 0, end: 3 }),
-        //     frameRate: 12,
-        //     repeat: -1
-        // });
     }
 
     createEnemyIdleAnimation(spriteKey, frameCount) {
