@@ -122,6 +122,7 @@ export class GameScene extends Phaser.Scene {
 
         // Set difficulty
         this.waveManager.setDifficulty(this.difficulty);
+        this.waveManager.setPlayerCount(this.playerManager.players.length);
 
         // Initialize score manager
         this.scoreManager = new ScoreManager(this);
@@ -409,14 +410,17 @@ export class GameScene extends Phaser.Scene {
         }
         this.lastVKeyState = this.keys.V.isDown;
 
-        // SPACE key: Start next wave when in BETWEEN_WAVES state
-        if (this.gameState === GAME_STATE.BETWEEN_WAVES && Phaser.Input.Keyboard.JustDown(this.keys.SPACE)) {
-            console.log('SPACE pressed - starting next wave');
-            this.setGameState(GAME_STATE.WAVE_ACTIVE);
+        // SPACE or any gamepad Start: begin next wave when in BETWEEN_WAVES state
+        if (this.gameState === GAME_STATE.BETWEEN_WAVES) {
+            const spacePressed = Phaser.Input.Keyboard.JustDown(this.keys.SPACE);
+            const gamepadStartPressed = this.playerManager && Object.values(this.playerManager.inputManagers)
+                .some(im => im.shouldStartNextWave());
 
-            // Start next wave
-            if (this.waveManager) {
-                this.waveManager.startNextWave();
+            if (spacePressed || gamepadStartPressed) {
+                this.setGameState(GAME_STATE.WAVE_ACTIVE);
+                if (this.waveManager) {
+                    this.waveManager.startNextWave();
+                }
             }
         }
 

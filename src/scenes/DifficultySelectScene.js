@@ -44,7 +44,7 @@ export class DifficultySelectScene extends Phaser.Scene {
         });
 
         // Instructions
-        this.add.text(centerX, 950, 'Press button or SPACE/ENTER to select', {
+        this.add.text(centerX, 950, 'Arrow keys / Left Stick: Navigate  |  SPACE / A / Start: Confirm', {
             fontSize: '28px',
             color: '#ffffff',
             fontFamily: 'Arial'
@@ -121,61 +121,42 @@ export class DifficultySelectScene extends Phaser.Scene {
             this.lastButtonStates = {};
         }
 
-        // Gamepad navigation
+        // Gamepad navigation — check all connected pads
         if (this.input.gamepad && this.input.gamepad.total > 0) {
-            const pad = this.input.gamepad.gamepads[0];
+            for (const pad of this.input.gamepad.gamepads) {
+                if (!pad || !pad.connected) continue;
+                const id = pad.index;
+                if (!this.lastButtonStates[id]) this.lastButtonStates[id] = {};
+                const last = this.lastButtonStates[id];
 
-            if (pad && pad.connected && pad.buttons) {
-                // Up/Down navigation (D-pad)
-                const upButton = pad.buttons[12];
-                const downButton = pad.buttons[13];
-                const aButton = pad.buttons[0];
-                const startButton = pad.buttons[9];
+                const btn = (index) => pad.buttons[index] || { pressed: false };
+                const justDown = (index) => {
+                    const pressed = btn(index).pressed;
+                    const was = last[index] || false;
+                    last[index] = pressed;
+                    return pressed && !was;
+                };
 
-                // Check D-pad up
-                if (upButton) {
-                    const wasPressed = this.lastButtonStates[12] || false;
-                    const isPressed = upButton.pressed;
-                    this.lastButtonStates[12] = isPressed;
+                // Left stick Y axis for up/down (with deadzone)
+                const stickY = pad.axes && pad.axes[1] ? pad.axes[1].value : 0;
+                const stickUp = stickY < -0.5;
+                const stickDown = stickY > 0.5;
+                const wasStickUp = last.stickUp || false;
+                const wasStickDown = last.stickDown || false;
+                last.stickUp = stickUp;
+                last.stickDown = stickDown;
 
-                    if (isPressed && !wasPressed) {
-                        this.selectedIndex = Math.max(0, this.selectedIndex - 1);
-                        this.selectDifficulty(this.selectedIndex);
-                    }
+                if ((justDown(12) || (stickUp && !wasStickUp))) {
+                    this.selectedIndex = Math.max(0, this.selectedIndex - 1);
+                    this.selectDifficulty(this.selectedIndex);
                 }
-
-                // Check D-pad down
-                if (downButton) {
-                    const wasPressed = this.lastButtonStates[13] || false;
-                    const isPressed = downButton.pressed;
-                    this.lastButtonStates[13] = isPressed;
-
-                    if (isPressed && !wasPressed) {
-                        this.selectedIndex = Math.min(2, this.selectedIndex + 1);
-                        this.selectDifficulty(this.selectedIndex);
-                    }
+                if ((justDown(13) || (stickDown && !wasStickDown))) {
+                    this.selectedIndex = Math.min(this.difficultyButtons.length - 1, this.selectedIndex + 1);
+                    this.selectDifficulty(this.selectedIndex);
                 }
-
-                // Check A button
-                if (aButton) {
-                    const wasPressed = this.lastButtonStates[0] || false;
-                    const isPressed = aButton.pressed;
-                    this.lastButtonStates[0] = isPressed;
-
-                    if (isPressed && !wasPressed) {
-                        this.confirmSelection();
-                    }
-                }
-
-                // Check START button
-                if (startButton) {
-                    const wasPressed = this.lastButtonStates[9] || false;
-                    const isPressed = startButton.pressed;
-                    this.lastButtonStates[9] = isPressed;
-
-                    if (isPressed && !wasPressed) {
-                        this.confirmSelection();
-                    }
+                if (justDown(0) || justDown(9)) {
+                    this.confirmSelection();
+                    return;
                 }
             }
         }

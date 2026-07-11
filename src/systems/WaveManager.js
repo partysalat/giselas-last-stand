@@ -24,8 +24,10 @@ export class WaveManager {
 
         // Difficulty settings
         this.difficulty = null;
+        this.playerCount = 1;
         this.difficultyMultipliers = {
             health: 1.0,
+            bossHealth: 1.0,
             damage: 1.0,
             count: 1.0
         };
@@ -68,12 +70,28 @@ export class WaveManager {
         this.difficulty = difficulty;
         this.difficultyMultipliers = {
             health: difficulty.enemyHealthMultiplier,
+            bossHealth: difficulty.enemyHealthMultiplier,
             damage: difficulty.enemyDamageMultiplier,
             count: difficulty.enemyCountMultiplier
         };
+        this.applyPlayerCountScaling();
 
         console.log('Difficulty set to:', difficulty.name);
         console.log('Multipliers:', this.difficultyMultipliers);
+    }
+
+    setPlayerCount(n) {
+        this.playerCount = Math.max(1, n);
+        this.applyPlayerCountScaling();
+        console.log(`Player count: ${this.playerCount} — boss HP x${this.playerCount}, enemy HP x${Math.sqrt(this.playerCount).toFixed(2)}`);
+    }
+
+    applyPlayerCountScaling() {
+        if (!this.difficulty) return;
+        const n = this.playerCount;
+        // Bosses scale linearly; normal enemies scale by square root (softer)
+        this.difficultyMultipliers.bossHealth = this.difficulty.enemyHealthMultiplier * n;
+        this.difficultyMultipliers.health = this.difficulty.enemyHealthMultiplier * Math.sqrt(n);
     }
 
     /**

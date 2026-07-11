@@ -13,6 +13,8 @@ export class InputManager {
         this.cycleEnemyTarget = false;  // E key - cycle enemies
         this.cyclePropTarget = false;   // Q key - cycle props
         this.activateCocktail = false;  // New flag
+        this.gamepadJump = false;
+        this.gamepadStartPressed = false;
 
         // Input mode (auto-detected)
         this.inputMode = 'keyboard'; // 'keyboard' or 'gamepad'
@@ -21,6 +23,7 @@ export class InputManager {
         this.lastL1 = false;
         this.lastR1 = false;
         this.lastXButton = false;  // For cocktail activation (X button)
+        this.lastStartButton = false;
 
         this.setupKeyboard();
         this.setupGamepad();
@@ -68,6 +71,7 @@ export class InputManager {
         this.cycleEnemyTarget = false;
         this.cyclePropTarget = false;
         this.activateCocktail = false;  // Reset activation flag
+        this.gamepadStartPressed = false;
 
         if (this.gamepad && this.gamepad.connected) {
             this.updateGamepad();
@@ -77,6 +81,8 @@ export class InputManager {
     }
 
     updateKeyboard() {
+        this.gamepadJump = false;
+
         // Movement from WASD
         this.movement.x = 0;
         this.movement.y = 0;
@@ -159,9 +165,19 @@ export class InputManager {
             this.activateCocktail = true;
         }
 
+        // A/Cross button (button 0) for jump
+        this.gamepadJump = this.gamepad.buttons[0] ? this.gamepad.buttons[0].pressed : false;
+
+        // Start/Options button (button 9)
+        const startButton = this.gamepad.buttons[9] ? this.gamepad.buttons[9].pressed : false;
+        if (startButton && !this.lastStartButton) {
+            this.gamepadStartPressed = true;
+        }
+
         this.lastL1 = L1;
         this.lastR1 = R1;
         this.lastXButton = XButton;
+        this.lastStartButton = startButton;
     }
 
     getMovement() {
@@ -192,6 +208,10 @@ export class InputManager {
         return this.activateCocktail;
     }
 
+    shouldStartNextWave() {
+        return this.gamepadStartPressed;
+    }
+
     getInputState() {
         return {
             movement: {
@@ -200,7 +220,7 @@ export class InputManager {
                 left: this.movement.x < -0.1,
                 right: this.movement.x > 0.1
             },
-            jump: this.keys.SPACE.isDown,
+            jump: this.keys.SPACE.isDown || this.gamepadJump,
             isFiring: this.isFiring
         };
     }

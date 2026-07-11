@@ -253,8 +253,11 @@ export class Enemy {
         // Physics body is only used for collision detection, not movement
         // Don't use setCollideWorldBounds - we handle bounds in world space, not screen space
 
-        // Apply difficulty multipliers to stats
-        const scaledHealth = Math.ceil(config.health * this.difficultyMultipliers.health);
+        // Apply difficulty multipliers to stats — bosses scale linearly with player count
+        const healthMultiplier = config.isBoss
+            ? this.difficultyMultipliers.bossHealth ?? this.difficultyMultipliers.health
+            : this.difficultyMultipliers.health;
+        const scaledHealth = Math.ceil(config.health * healthMultiplier);
         const scaledDamage = Math.ceil(config.damage * this.difficultyMultipliers.damage);
 
         // Enemy properties from config
