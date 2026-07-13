@@ -1,4 +1,3 @@
-import { PLAYER_TINTS } from '../entities/Player.js';
 
 export class StartScene extends Phaser.Scene {
     constructor() {
@@ -82,7 +81,8 @@ export class StartScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Crab sprite placeholder (invisible until player joins)
-        const crabSprite = this.add.sprite(x, y, 'gisela-anim-idle');
+        const color = this.colors[playerIndex];
+        const crabSprite = this.add.sprite(x, y, `gisela-${color}-idle`);
         crabSprite.setScale(0.2);
         crabSprite.setVisible(false);
 
@@ -241,9 +241,7 @@ export class StartScene extends Phaser.Scene {
         const slotIndex = this.joinedPlayers.length - 1;
         const slot = this.playerSlots[slotIndex];
         slot.crabSprite.setVisible(true);
-        slot.crabSprite.play('gisela-idle');
-        const tint = PLAYER_TINTS[color];
-        if (tint) slot.crabSprite.setTint(tint);
+        slot.crabSprite.play(`gisela-${color}-idle`);
         slot.readyText.setText('READY');
         slot.readyText.setColor('#00ff00');
         slot.joined = true;

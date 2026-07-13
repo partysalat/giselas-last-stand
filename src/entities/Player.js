@@ -11,7 +11,6 @@ export class Player {
     constructor(scene, worldX, worldY, worldZ = 0, color = 'red') {
         this.scene = scene;
         this.color = color;
-        this.colorTint = PLAYER_TINTS[color] ?? null;
 
         // World space coordinates (isometric 3D)
         this.worldX = worldX;
@@ -21,12 +20,11 @@ export class Player {
         // Convert to screen space for sprite creation
         const { screenX, screenY } = worldToScreen(worldX, worldY, worldZ);
 
-        this.sprite = scene.add.sprite(screenX, screenY, 'gisela-anim-idle');
-        this.sprite.play('gisela-idle');
-        if (this.colorTint) this.sprite.setTint(this.colorTint);
+        this.sprite = scene.add.sprite(screenX, screenY, `gisela-${color}-idle`);
+        this.sprite.play(`gisela-${color}-idle`);
 
         // Animation state tracking
-        this.currentAnim = 'gisela-idle';
+        this.currentAnim = `gisela-${color}-idle`;
         this.lastFacingBack = false; // true when moving up/up-left/up-right
         this.lastFlipX = false;      // true when facing right
         this.lastShootTime = 0;
@@ -467,14 +465,10 @@ export class Player {
         if (this.health < 0) this.health = 0;
         this.lastHitTime = currentTime;
 
-        // Flash sprite red, then restore color tint
+        // Flash sprite red, then clear tint (per-color sprites handle color)
         this.sprite.setTint(0xff0000);
         this.scene.time.delayedCall(100, () => {
-            if (this.colorTint) {
-                this.sprite.setTint(this.colorTint);
-            } else {
-                this.sprite.clearTint();
-            }
+            this.sprite.clearTint();
         });
 
         // Check for death
@@ -536,13 +530,15 @@ export class Player {
     }
 
     updateAnimation(worldVelX, worldVelY, isMoving) {
+        const c = this.color;
+
         if (this.isDead) {
-            this.playAnim('gisela-death');
+            this.playAnim(`gisela-${c}-death`);
             return;
         }
 
         if (this.isInAir) {
-            this.playAnim('gisela-jump');
+            this.playAnim(`gisela-${c}-jump`);
             return;
         }
 
@@ -559,15 +555,15 @@ export class Player {
             if (screenVelX !== 0) this.lastFlipX = screenVelX > 0;
 
             if (this.lastFacingBack) {
-                this.playAnim('gisela-run-back', !this.lastFlipX);
+                this.playAnim(`gisela-${c}-run-back`, !this.lastFlipX);
             } else {
-                this.playAnim('gisela-run-right', this.lastFlipX);
+                this.playAnim(`gisela-${c}-run-right`, this.lastFlipX);
             }
         } else if (recentlyShot) {
-            const attackAnim = this.lastFacingBack ? 'gisela-attack-back' : 'gisela-attack-front';
+            const attackAnim = this.lastFacingBack ? `gisela-${c}-attack-back` : `gisela-${c}-attack-front`;
             this.playAnim(attackAnim, this.lastFacingBack ? !this.lastFlipX : this.lastFlipX);
         } else {
-            const idleAnim = this.lastFacingBack ? 'gisela-idle-back' : 'gisela-idle';
+            const idleAnim = this.lastFacingBack ? `gisela-${c}-idle-back` : `gisela-${c}-idle`;
             this.playAnim(idleAnim, this.lastFacingBack ? !this.lastFlipX : this.lastFlipX);
         }
     }

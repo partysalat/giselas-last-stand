@@ -9,31 +9,25 @@ export class PreloadScene extends Phaser.Scene {
 
         // === PLAYER SPRITES ===
 
-        // Gisela animated sprites (all players share these textures; non-red uses tint)
-        this.load.spritesheet('gisela-anim-idle', 'assets/sprites/player/red/gisela_idle.png', {
-            frameWidth: 640, frameHeight: 640
-        });
-        this.load.spritesheet('gisela-anim-idle-back', 'assets/sprites/player/red/gisela_back_idle_idle_back.png', {
-            frameWidth: 640, frameHeight: 640
-        });
-        this.load.spritesheet('gisela-anim-run-down', 'assets/sprites/player/red/gisela_back_run_run_down.png', {
-            frameWidth: 640, frameHeight: 640
-        });
-        this.load.spritesheet('gisela-anim-run-right', 'assets/sprites/player/red/gisela_front_run_run_right.png', {
-            frameWidth: 640, frameHeight: 640
-        });
-        this.load.spritesheet('gisela-anim-attack-front', 'assets/sprites/player/red/gisela_attack.png', {
-            frameWidth: 640, frameHeight: 640
-        });
-        this.load.spritesheet('gisela-anim-attack-back', 'assets/sprites/player/red/gisela_back_idle_attack_back.png', {
-            frameWidth: 640, frameHeight: 640
-        });
-        this.load.spritesheet('gisela-anim-jump', 'assets/sprites/player/red/gisela_back_idle_jump_back.png', {
-            frameWidth: 640, frameHeight: 640
-        });
-        this.load.spritesheet('gisela-anim-death', 'assets/sprites/player/red/gisela_back_idle_death_back.png', {
-            frameWidth: 640, frameHeight: 640
-        });
+        const playerColors = ['red', 'blue', 'green', 'yellow'];
+        const playerSheets = [
+            { key: 'idle',          file: 'gisela_idle.png' },
+            { key: 'idle-back',     file: 'gisela_back_idle_idle_back.png' },
+            { key: 'run-back',      file: 'gisela_back_run_run_down.png' },
+            { key: 'run-right',     file: 'gisela_front_run_run_right.png' },
+            { key: 'attack-front',  file: 'gisela_attack.png' },
+            { key: 'attack-back',   file: 'gisela_back_idle_attack_back.png' },
+            { key: 'jump',          file: 'gisela_back_idle_jump_back.png' },
+            { key: 'death',         file: 'gisela_back_idle_death_back.png' },
+        ];
+        for (const color of playerColors) {
+            for (const { key, file } of playerSheets) {
+                this.load.spritesheet(`gisela-${color}-${key}`,
+                    `assets/sprites/player/${color}/${file}`,
+                    { frameWidth: 640, frameHeight: 640 }
+                );
+            }
+        }
 
         // === ENEMY SPRITES ===
 
@@ -227,47 +221,28 @@ export class PreloadScene extends Phaser.Scene {
 
         // === CREATE ANIMATIONS ===
 
-        // Gisela player animations (shared across all colors; non-red players use tint)
-        this.anims.create({
-            key: 'gisela-idle',
-            frames: this.anims.generateFrameNumbers('gisela-anim-idle', { start: 0, end: 7 }),
-            frameRate: 8, repeat: -1
-        });
-        this.anims.create({
-            key: 'gisela-idle-back',
-            frames: this.anims.generateFrameNumbers('gisela-anim-idle-back', { start: 0, end: 7 }),
-            frameRate: 8, repeat: -1
-        });
-        this.anims.create({
-            key: 'gisela-run-back',
-            frames: this.anims.generateFrameNumbers('gisela-anim-run-down', { start: 0, end: 9 }),
-            frameRate: 8, repeat: -1
-        });
-        this.anims.create({
-            key: 'gisela-run-right',
-            frames: this.anims.generateFrameNumbers('gisela-anim-run-right', { start: 0, end: 9 }),
-            frameRate: 8, repeat: -1
-        });
-        this.anims.create({
-            key: 'gisela-attack-front',
-            frames: this.anims.generateFrameNumbers('gisela-anim-attack-front', { start: 0, end: 7 }),
-            frameRate: 8, repeat: -1
-        });
-        this.anims.create({
-            key: 'gisela-attack-back',
-            frames: this.anims.generateFrameNumbers('gisela-anim-attack-back', { start: 0, end: 7 }),
-            frameRate: 8, repeat: -1
-        });
-        this.anims.create({
-            key: 'gisela-jump',
-            frames: this.anims.generateFrameNumbers('gisela-anim-jump', { start: 0, end: 7 }),
-            frameRate: 8, repeat: 0
-        });
-        this.anims.create({
-            key: 'gisela-death',
-            frames: this.anims.generateFrameNumbers('gisela-anim-death', { start: 0, end: 11 }),
-            frameRate: 8, repeat: 0
-        });
+        // Gisela player animations — one set per color
+        const animDefs = [
+            { key: 'idle',         end: 7,  repeat: -1 },
+            { key: 'idle-back',    end: 7,  repeat: -1 },
+            { key: 'run-back',     end: 9,  repeat: -1 },
+            { key: 'run-right',    end: 9,  repeat: -1 },
+            { key: 'attack-front', end: 7,  repeat: -1 },
+            { key: 'attack-back',  end: 7,  repeat: -1 },
+            { key: 'jump',         end: 7,  repeat: 0  },
+            { key: 'death',        end: 11, repeat: 0  },
+        ];
+        const colors = ['red', 'blue', 'green', 'yellow'];
+        for (const color of colors) {
+            for (const { key, end, repeat } of animDefs) {
+                this.anims.create({
+                    key: `gisela-${color}-${key}`,
+                    frames: this.anims.generateFrameNumbers(`gisela-${color}-${key}`, { start: 0, end }),
+                    frameRate: 8,
+                    repeat,
+                });
+            }
+        }
 
         // Enemy animations
         this.createEnemyIdleAnimation('lobster-bandit', 2); // 2 frames
