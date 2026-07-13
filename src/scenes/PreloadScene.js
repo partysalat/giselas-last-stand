@@ -18,7 +18,7 @@ export class PreloadScene extends Phaser.Scene {
             { key: 'attack-front',  file: 'gisela_attack.png' },
             { key: 'attack-back',   file: 'gisela_back_idle_attack_back.png' },
             { key: 'jump',          file: 'gisela_back_idle_jump_back.png' },
-            { key: 'death',         file: 'gisela_back_idle_death_back.png' },
+            { key: 'death',         file: 'gisela_death.png' },
         ];
         for (const color of playerColors) {
             for (const { key, file } of playerSheets) {

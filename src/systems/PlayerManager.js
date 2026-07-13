@@ -92,20 +92,22 @@ export class PlayerManager {
 
     handlePlayerDeath(player) {
         player.isDead = true;
-        // Play death animation if it exists
-        if (player.sprite.anims.exists(`gisela-${player.color}-death`)) {
-            player.sprite.play(`gisela-${player.color}-death`);
-        }
         // Disable physics
         if (player.sprite.body) {
             player.sprite.body.enable = false;
         }
-        // Fade out sprite
-        this.scene.tweens.add({
-            targets: player.sprite,
-            alpha: 0.5,
-            duration: 500
-        });
+        // Play death animation once, then hold the last frame
+        const deathKey = `gisela-${player.color}-death`;
+        if (this.scene.anims.exists(deathKey)) {
+            player.sprite.play(deathKey);
+            player.sprite.once(`animationcomplete-${deathKey}`, () => {
+                player.sprite.anims.stop();
+                const anim = this.scene.anims.get(deathKey);
+                if (anim && anim.frames.length > 0) {
+                    player.sprite.setFrame(anim.frames[anim.frames.length - 1].frame.name);
+                }
+            });
+        }
     }
 
     allPlayersDead() {

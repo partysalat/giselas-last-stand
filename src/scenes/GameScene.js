@@ -222,15 +222,6 @@ export class GameScene extends Phaser.Scene {
             fontFamily: 'Arial'
         }).setOrigin(1, 0);
 
-        // Add buff display
-        this.buffText = this.add.text(960, 1000, '', {
-            fontSize: '28px',
-            color: '#ffffff',
-            fontFamily: 'Arial',
-            stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5, 0);
-
         // Phase 4: Tactical prop interaction UI
         this.tacticalPropUI = this.add.text(960, 950, '', {
             fontSize: '24px',
@@ -1149,12 +1140,23 @@ export class GameScene extends Phaser.Scene {
         const healthFg = this.add.rectangle(x + 10, y + 25, 180, 10, 0x00ff00);
         healthFg.setOrigin(0, 0);
 
+        // Buff status text below health bar
+        const buffText = this.add.text(x + 10, y + 42, '', {
+            fontSize: '14px',
+            color: '#ffff88',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 2
+        });
+        buffText.setDepth(500);
+
         return {
             player,
             bg,
             nameText,
             healthBg,
-            healthFg
+            healthFg,
+            buffText
         };
     }
 
@@ -1320,18 +1322,17 @@ export class GameScene extends Phaser.Scene {
     }
 
     updateBuffUI() {
-        if (!this.player) {
-            this.buffText.setText('');
-            return;
-        }
-
-        const buff = this.player.getActiveBuff();
-        if (buff) {
-            const timeLeft = Math.ceil((this.player.buffEndTime - Date.now()) / 1000);
-            this.buffText.setText(`BUFF: ${buff.toUpperCase().replace('_', ' ')} (${timeLeft}s)`);
-        } else {
-            this.buffText.setText('');
-        }
+        if (!this.playerHealthBars) return;
+        this.playerHealthBars.forEach(bar => {
+            const player = bar.player;
+            const buff = player.getActiveBuff();
+            if (buff && !player.isDead) {
+                const timeLeft = Math.ceil((player.buffEndTime - Date.now()) / 1000);
+                bar.buffText.setText(`${buff.toUpperCase().replace(/_/g, ' ')} (${timeLeft}s)`);
+            } else {
+                bar.buffText.setText('');
+            }
+        });
     }
 
     updateStoredCocktailHUD() {
@@ -1867,6 +1868,13 @@ export class GameScene extends Phaser.Scene {
 
         const completedWave = this.waveManager ? this.waveManager.currentWave : 0;
         const nextWave = completedWave + 1;
+
+        // Revive any dead players for the next round
+        if (this.playerManager) {
+            this.playerManager.players.forEach(player => {
+                if (player.isDead) player.revive();
+            });
+        }
 
         // Restore health to all surviving fortification props
         if (this.fortificationManager) {

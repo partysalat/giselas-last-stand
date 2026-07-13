@@ -492,6 +492,18 @@ export class Player {
         return this.health <= 0;
     }
 
+    revive() {
+        this.isDead = false;
+        this.health = this.maxHealth;
+        this.sprite.setAlpha(1);
+        if (this.sprite.body) {
+            this.sprite.body.enable = true;
+        }
+        const c = this.color;
+        this.currentAnim = `gisela-${c}-idle`;
+        this.sprite.play(`gisela-${c}-idle`);
+    }
+
     applyBuff(cocktailConfig) {
         // Remove old buff visuals if any
         if (this.buffAura) {
