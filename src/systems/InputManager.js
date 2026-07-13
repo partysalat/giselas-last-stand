@@ -165,8 +165,8 @@ export class InputManager {
             this.activateCocktail = true;
         }
 
-        // A/Cross button (button 0) for jump
-        this.gamepadJump = this.gamepad.buttons[0] ? this.gamepad.buttons[0].pressed : false;
+        // Y button (button 3, left face) for jump
+        this.gamepadJump = this.gamepad.buttons[3] ? this.gamepad.buttons[3].pressed : false;
 
         // Start/Options button (button 9)
         const startButton = this.gamepad.buttons[9] ? this.gamepad.buttons[9].pressed : false;
