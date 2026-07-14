@@ -1119,9 +1119,12 @@ export class GameScene extends Phaser.Scene {
     }
 
     createHealthBar(x, y, player) {
+        const HUD_DEPTH = 10000;
+
         // Background
         const bg = this.add.rectangle(x, y, 200, 40, 0x000000, 0.7);
         bg.setOrigin(0, 0);
+        bg.setDepth(HUD_DEPTH);
 
         // Player name with color
         const colorTints = { red: 0xff6b6b, blue: 0x4dabf7, green: 0x51cf66, yellow: 0xffd43b };
@@ -1131,14 +1134,17 @@ export class GameScene extends Phaser.Scene {
             fontFamily: 'Arial'
         });
         nameText.setTint(colorTints[player.color]);
+        nameText.setDepth(HUD_DEPTH);
 
         // Health bar (red background)
         const healthBg = this.add.rectangle(x + 10, y + 25, 180, 10, 0x8b0000);
         healthBg.setOrigin(0, 0);
+        healthBg.setDepth(HUD_DEPTH);
 
         // Health bar (green foreground)
         const healthFg = this.add.rectangle(x + 10, y + 25, 180, 10, 0x00ff00);
         healthFg.setOrigin(0, 0);
+        healthFg.setDepth(HUD_DEPTH);
 
         // Buff status text below health bar
         const buffText = this.add.text(x + 10, y + 42, '', {
@@ -1148,7 +1154,7 @@ export class GameScene extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 2
         });
-        buffText.setDepth(500);
+        buffText.setDepth(HUD_DEPTH);
 
         return {
             player,
