@@ -263,11 +263,11 @@ export class Enemy {
         // Enemy properties from config
         this.health = scaledHealth;
         this.maxHealth = scaledHealth;
-        this.speed = config.speed * ISOMETRIC_CONFIG.ENEMY_SPEED_MULTIPLIER;
+        this.speed = config.speed * ISOMETRIC_CONFIG.ENEMY_SPEED_MULTIPLIER * (this.difficultyMultipliers.speed ?? 1.0);
         this.worldSpeed = this.speed; // Speed is already in world units per second
         this.damage = scaledDamage;
         this.attackRange = config.attackRange;
-        this.attackCooldown = config.attackCooldown;
+        this.attackCooldown = config.attackCooldown * (this.difficultyMultipliers.fireRate ?? 1.0);
         this.nextAttack = 0;
 
         // Behavior-specific properties

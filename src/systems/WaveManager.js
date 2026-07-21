@@ -72,7 +72,9 @@ export class WaveManager {
             health: difficulty.enemyHealthMultiplier,
             bossHealth: difficulty.enemyHealthMultiplier,
             damage: difficulty.enemyDamageMultiplier,
-            count: difficulty.enemyCountMultiplier
+            count: difficulty.enemyCountMultiplier,
+            fireRate: difficulty.enemyFireRateMultiplier ?? 1.0,
+            speed: difficulty.enemySpeedMultiplier ?? 1.0
         };
         this.applyPlayerCountScaling();
 

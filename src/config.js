@@ -31,6 +31,8 @@ export const DIFFICULTY_SETTINGS = {
         enemyHealthMultiplier: 0.7,
         enemyDamageMultiplier: 0.7,
         enemyCountMultiplier: 0.8,
+        enemyFireRateMultiplier: 0.7,  // cooldown * 0.7 = slower fire rate than base
+        enemySpeedMultiplier: 0.85,
         subWaveConfig: {
             startWave: 7,  // Sub-waves start at wave 7
             minSubWaves: 1,
@@ -45,6 +47,8 @@ export const DIFFICULTY_SETTINGS = {
         enemyHealthMultiplier: 1.0,
         enemyDamageMultiplier: 1.0,
         enemyCountMultiplier: 1.0,
+        enemyFireRateMultiplier: 1.0,
+        enemySpeedMultiplier: 1.0,
         subWaveConfig: {
             startWave: 4,  // Sub-waves start at wave 4
             minSubWaves: 2,
@@ -56,9 +60,11 @@ export const DIFFICULTY_SETTINGS = {
         id: 'hard',
         name: 'Hard',
         description: 'For experts - increased challenge and aggression',
-        enemyHealthMultiplier: 1.3,
-        enemyDamageMultiplier: 1.3,
+        enemyHealthMultiplier: 1.8,
+        enemyDamageMultiplier: 1.5,
         enemyCountMultiplier: 1.2,
+        enemyFireRateMultiplier: 0.55,  // cooldown * 0.55 = ~82% faster fire rate
+        enemySpeedMultiplier: 1.35,
         subWaveConfig: {
             startWave: 3,  // Sub-waves start at wave 3
             minSubWaves: 3,
