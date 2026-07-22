@@ -106,6 +106,9 @@ export class PreloadScene extends Phaser.Scene {
 
         this.load.image('environment', 'assets/sprites/environment/environment.png');
 
+        // Isometric floor tile (64x32 diamond), generated from the tiki bamboo-floor texture
+        this.load.image('iso-floor-tile', 'assets/sprites/environment/iso-floor-tile.png');
+
         // Load environment props sprite sheet - 3x3 grid of heavy cover furniture
         this.load.spritesheet('interior1', 'assets/sprites/environment/interior1.png', {
             frameWidth: 341,  // Each sprite in the 3x3 grid
@@ -144,40 +147,8 @@ export class PreloadScene extends Phaser.Scene {
         // this.load.image('bounty-poster', 'assets/ui/bounty-poster.png');
     }
 
-    generateIsometricFloorTile() {
-        // Create a 64x32 diamond-shaped tile
-        const graphics = this.add.graphics();
-
-        // Draw diamond shape
-        graphics.fillStyle(0xC9A66B, 1); // Bamboo tan
-        graphics.beginPath();
-        graphics.moveTo(32, 0);   // Top
-        graphics.lineTo(64, 16);  // Right
-        graphics.lineTo(32, 32);  // Bottom
-        graphics.lineTo(0, 16);   // Left
-        graphics.closePath();
-        graphics.fillPath();
-
-        // Add shading for depth
-        graphics.fillStyle(0xA6845A, 1); // Darker bamboo shade
-        graphics.beginPath();
-        graphics.moveTo(32, 16);  // Center
-        graphics.lineTo(64, 16);  // Right
-        graphics.lineTo(32, 32);  // Bottom
-        graphics.lineTo(0, 16);   // Left
-        graphics.closePath();
-        graphics.fillPath();
-
-        // Generate texture from graphics
-        graphics.generateTexture('iso-floor-tile', 64, 32);
-        graphics.destroy();
-    }
-
     create() {
         console.log('Assets loaded, creating animations...');
-
-        // Generate procedural textures
-        this.generateIsometricFloorTile();
 
         // === CREATE ANIMATIONS ===
 
