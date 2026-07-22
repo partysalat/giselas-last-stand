@@ -12,7 +12,6 @@ import { BossAnnouncer } from '../systems/BossAnnouncer.js';
 import { BossHealthBar } from '../ui/BossHealthBar.js';
 import { BetweenWavesUI } from '../ui/BetweenWavesUI.js';
 import { CoverManager } from '../systems/CoverManager.js';
-import { WallManager } from '../systems/WallManager.js';
 import { FortificationManager } from '../systems/FortificationManager.js';
 import { IsometricFloor } from '../systems/IsometricFloor.js';
 import { CoordinateDebug } from '../systems/CoordinateDebug.js';
@@ -144,10 +143,6 @@ export class GameScene extends Phaser.Scene {
         // Add compatibility alias so existing code still works
         this.coverManager = this.fortificationManager;
 
-        // Initialize wall manager (creates saloon walls framing the play area)
-        this.wallManager = new WallManager(this);
-        this.wallManager.createWalls();
-
         // Set physics world bounds to prevent players/enemies from going over walls
         // Top wall area is ~100px thick, so playable area starts at y=100
         const wallThickness = 100;
@@ -157,9 +152,6 @@ export class GameScene extends Phaser.Scene {
             1920 - (wallThickness * 2), // width
             1080 - (wallThickness * 2)  // height
         );
-
-        // Setup wall collisions with players
-        this.wallManager.setupPlayerCollisions(this.playerManager);
 
         // Create graphics for formation lines
         this.formationGraphics = this.add.graphics();

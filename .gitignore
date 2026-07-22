@@ -6,3 +6,5 @@ dist/
 sourceassets/
 .idea/
 tools/
+apikey.md
+*.key

@@ -1935,7 +1935,7 @@ export class EnvironmentProp {
 export const PROP_TYPES = {
     // Heavy Cover
     barCounter: {
-        name: 'Bar Counter',
+        name: 'Tiki Bar Counter',
         class: 'DestructibleCover',
         maxHealth: 200,
         // World dimensions (collision/gameplay)
@@ -1955,7 +1955,7 @@ export const PROP_TYPES = {
     },
 
     piano: {
-        name: 'Piano',
+        name: 'Ukulele Tiki Stage',
         class: 'DestructibleCover',
         maxHealth: 150,
         worldWidth: 1.8,        // 90px / 50
@@ -1973,7 +1973,7 @@ export const PROP_TYPES = {
     },
 
     heavyBookshelf: {
-        name: 'Heavy Bookshelf',
+        name: 'Bamboo Curio Shelf',
         class: 'DestructibleCover',
         maxHealth: 180,
         worldWidth: 2.0,        // 100px / 50
@@ -1991,7 +1991,7 @@ export const PROP_TYPES = {
     },
 
     flippedPokerTable: {
-        name: 'Flipped Poker Table',
+        name: 'Overturned Tiki Table',
         class: 'DestructibleCover',
         maxHealth: 120,
         worldWidth: 2.0,        // 100px / 50
@@ -2011,7 +2011,7 @@ export const PROP_TYPES = {
     },
 
     safe: {
-        name: 'Safe',
+        name: 'Tiki Idol Vault',
         class: 'DestructibleCover',
         maxHealth: 250,
         worldWidth: 1.0,        // 50px / 50
@@ -2030,7 +2030,7 @@ export const PROP_TYPES = {
 
     // Light Cover
     cardTable: {
-        name: 'Card Table',
+        name: 'Tiki Game Table',
         class: 'DestructibleCover',
         maxHealth: 60,
         worldWidth: 1.6,        // 80px / 50
@@ -2047,7 +2047,7 @@ export const PROP_TYPES = {
     },
 
     woodenChair: {
-        name: 'Wooden Chair',
+        name: 'Rattan Chair',
         class: 'PhysicsProp',
         maxHealth: 30,
         worldWidth: 0.6,        // 30px / 50
@@ -2067,7 +2067,7 @@ export const PROP_TYPES = {
     },
 
     barrel: {
-        name: 'Barrel',
+        name: 'Bamboo Barrel',
         class: 'PhysicsProp',
         maxHealth: 50,
         worldWidth: 0.8,        // 40px / 50
@@ -2087,7 +2087,7 @@ export const PROP_TYPES = {
     },
 
     barStool: {
-        name: 'Bar Stool',
+        name: 'Bamboo Stool',
         class: 'PhysicsProp',
         maxHealth: 25,
         worldWidth: 0.4,        // 20px / 50
@@ -2107,7 +2107,7 @@ export const PROP_TYPES = {
     },
 
     smallCrate: {
-        name: 'Small Crate',
+        name: 'Woven Cargo Basket',
         class: 'PhysicsProp',
         maxHealth: 40,
         worldWidth: 0.7,        // 35px / 50
@@ -2129,7 +2129,7 @@ export const PROP_TYPES = {
 
     // Hazard Props
     oilLamp: {
-        name: 'Oil Lamp',
+        name: 'Tabletop Tiki Torch',
         class: 'HazardProp',
         maxHealth: 20,
         worldWidth: 0.3,        // 15px / 50
@@ -2151,7 +2151,7 @@ export const PROP_TYPES = {
 
     // Legacy explosive barrel for compatibility
     explosiveBarrel: {
-        name: 'Explosive Barrel',
+        name: 'Volcanic Powder Barrel (Explosive)',
         class: 'HazardProp',
         maxHealth: 50,
         worldWidth: 0.8,        // 40px / 50
@@ -2167,7 +2167,7 @@ export const PROP_TYPES = {
     },
 
     whiskeyBarrel: {
-        name: 'Whiskey Barrel',
+        name: 'Rum Barrel (Explosive)',
         class: 'HazardProp',
         maxHealth: 50,
         worldWidth: 0.8,        // 40px / 50
@@ -2189,7 +2189,7 @@ export const PROP_TYPES = {
     },
 
     dynamiteCrate: {
-        name: 'Dynamite Crate',
+        name: 'Volcanic Powder Crate',
         class: 'HazardProp',
         maxHealth: 80,
         worldWidth: 1.0,        // 50px / 50
@@ -2208,7 +2208,7 @@ export const PROP_TYPES = {
     },
 
     gasLantern: {
-        name: 'Gas Lantern',
+        name: 'Bamboo Lantern',
         class: 'HazardProp',
         maxHealth: 30,
         worldWidth: 0.4,        // 20px / 50
@@ -2233,7 +2233,7 @@ export const PROP_TYPES = {
 
     // Stage Lights - shoot to drop and deal damage
     stageLights: {
-        name: 'Stage Lights',
+        name: 'Torch Rig',
         class: 'TacticalProp',
         maxHealth: 40,
         worldWidth: 0.6,        // 30px / 50
@@ -2253,7 +2253,7 @@ export const PROP_TYPES = {
 
     // Bell Rope - activate to stun enemies
     bellRope: {
-        name: 'Bell Rope',
+        name: 'Conch Shell Bell Rope',
         class: 'TacticalProp',
         maxHealth: 30,
         worldWidth: 0.2,        // 10px / 50
@@ -2276,7 +2276,7 @@ export const PROP_TYPES = {
     },
 
     swingingDoors: {
-        name: 'Swinging Doors',
+        name: 'Bamboo Beaded Curtain',
         class: 'TacticalProp',
         maxHealth: 60,
         worldWidth: 1.6,        // 80px / 50
@@ -2294,7 +2294,7 @@ export const PROP_TYPES = {
     },
 
     stageCurtain: {
-        name: 'Stage Curtain',
+        name: 'Grass Skirt Curtain',
         class: 'TacticalProp',
         maxHealth: 40,
         worldWidth: 2.0,        // 100px / 50
@@ -2312,7 +2312,7 @@ export const PROP_TYPES = {
     },
 
     mirror: {
-        name: 'Mirror',
+        name: 'Shell-Framed Mirror',
         class: 'TacticalProp',
         maxHealth: 50,
         worldWidth: 0.8,        // 40px / 50
@@ -2333,7 +2333,7 @@ export const PROP_TYPES = {
 
     // Phase 5: Chandelier - dynamic prop with falling system
     chandelier: {
-        name: 'Chandelier',
+        name: 'Bone & Shell Tiki Chandelier',
         class: 'DynamicProp',
         maxHealth: 100,
         worldWidth: 1.2,        // 60px / 50
@@ -2355,7 +2355,7 @@ export const PROP_TYPES = {
 
     // Support Beam - structural prop that can be destroyed by bosses
     supportBeam: {
-        name: 'Support Beam',
+        name: 'Bamboo Support Post',
         class: 'StructuralProp',
         maxHealth: 300,
         worldWidth: 0.6,        // 30px / 50
@@ -2373,7 +2373,7 @@ export const PROP_TYPES = {
 
     // Trapdoor - opens from explosions/boss attacks
     trapdoor: {
-        name: 'Trapdoor',
+        name: 'Thatch Cellar Hatch',
         class: 'SpecialProp',
         maxHealth: Infinity,
         worldWidth: 1.2,        // 60px / 50
@@ -2392,7 +2392,7 @@ export const PROP_TYPES = {
     // Phase 7: Additional Special Props
 
     waterTrough: {
-        name: 'Water Trough',
+        name: 'Stone Tiki Fountain',
         class: 'SpecialProp',
         maxHealth: 100,
         worldWidth: 1.4,        // 70px / 50
@@ -2413,7 +2413,7 @@ export const PROP_TYPES = {
 
     // Additional props from interior1 sprite bundle
     woodenChest: {
-        name: 'Wooden Chest',
+        name: 'Bamboo Storage Chest',
         class: 'DestructibleCover',
         maxHealth: 160,
         worldWidth: 1.6,        // 80px / 50
@@ -2430,7 +2430,7 @@ export const PROP_TYPES = {
     },
 
     cabinet: {
-        name: 'Cabinet',
+        name: 'Carved Tiki Cabinet',
         class: 'DestructibleCover',
         maxHealth: 140,
         worldWidth: 1.4,        // 70px / 50
@@ -2448,7 +2448,7 @@ export const PROP_TYPES = {
 
     // Additional props from interior2 sprite bundle
     standardBarrel: {
-        name: 'Standard Barrel',
+        name: 'Rum Barrel',
         class: 'PhysicsProp',
         maxHealth: 50,
         worldWidth: 0.8,        // 40px / 50
@@ -2467,7 +2467,7 @@ export const PROP_TYPES = {
     },
 
     woodenBench: {
-        name: 'Wooden Bench',
+        name: 'Rattan Bench',
         class: 'PhysicsProp',
         maxHealth: 50,
         worldWidth: 1.4,        // 70px / 50
@@ -2486,7 +2486,7 @@ export const PROP_TYPES = {
     },
 
     smallTable: {
-        name: 'Small Table',
+        name: 'Bamboo Side Table',
         class: 'PhysicsProp',
         maxHealth: 40,
         worldWidth: 0.8,        // 40px / 50
@@ -2505,7 +2505,7 @@ export const PROP_TYPES = {
     },
 
     woodenStool: {
-        name: 'Wooden Stool',
+        name: 'Coconut Stool',
         class: 'PhysicsProp',
         maxHealth: 20,
         worldWidth: 0.5,        // 25px / 50
@@ -2524,7 +2524,7 @@ export const PROP_TYPES = {
     },
 
     ammunitionBox: {
-        name: 'Ammunition Box',
+        name: 'Dart/Spear Crate',
         class: 'DestructibleCover',
         maxHealth: 60,
         worldWidth: 0.7,        // 35px / 50
@@ -2541,7 +2541,7 @@ export const PROP_TYPES = {
 
     // Additional props from interior3 sprite bundle (hazards)
     hangingOilLamp: {
-        name: 'Hanging Oil Lamp',
+        name: 'Hanging Tiki Torch',
         class: 'HazardProp',
         maxHealth: 20,
         worldWidth: 0.3,        // 15px / 50
@@ -2561,7 +2561,7 @@ export const PROP_TYPES = {
     },
 
     gunpowderKeg: {
-        name: 'Gunpowder Keg',
+        name: 'Black Powder Gourd Keg',
         class: 'HazardProp',
         maxHealth: 40,
         worldWidth: 0.7,        // 35px / 50
@@ -2579,7 +2579,7 @@ export const PROP_TYPES = {
     },
 
     fireBrazier: {
-        name: 'Fire Brazier',
+        name: 'Volcanic Fire Bowl',
         class: 'HazardProp',
         maxHealth: 60,
         worldWidth: 0.6,        // 30px / 50
@@ -2599,7 +2599,7 @@ export const PROP_TYPES = {
     },
 
     molotovBottle: {
-        name: 'Molotov Bottle',
+        name: 'Fire Coconut',
         class: 'HazardProp',
         maxHealth: 10,
         worldWidth: 0.3,        // 15px / 50
@@ -2619,7 +2619,7 @@ export const PROP_TYPES = {
     },
 
     keroseneCanister: {
-        name: 'Kerosene Canister',
+        name: 'Palm-Oil Canister',
         class: 'HazardProp',
         maxHealth: 50,
         worldWidth: 0.6,        // 30px / 50
@@ -2642,7 +2642,7 @@ export const PROP_TYPES = {
 
     // Additional props from interior4 sprite bundle (tactical)
     ornateMirror: {
-        name: 'Ornate Mirror',
+        name: 'Obsidian Idol Mirror',
         class: 'TacticalProp',
         maxHealth: 60,
         worldWidth: 0.8,        // 40px / 50
@@ -2662,7 +2662,7 @@ export const PROP_TYPES = {
     },
 
     wantedPosterBoard: {
-        name: 'Wanted Poster Board',
+        name: 'Trophy Fossil Board',
         class: 'TacticalProp',
         maxHealth: 80,
         worldWidth: 1.0,        // 50px / 50
@@ -2678,7 +2678,7 @@ export const PROP_TYPES = {
     },
 
     spittoon: {
-        name: 'Spittoon',
+        name: 'Carved Gourd Spittoon',
         class: 'PhysicsProp',
         maxHealth: 40,
         worldWidth: 0.5,        // 25px / 50
@@ -2699,7 +2699,7 @@ export const PROP_TYPES = {
     // Additional props from interior5 sprite bundle (Bundle 5: Special Props & Structural)
 
     trapdoorOpen: {
-        name: 'Trapdoor (Open)',
+        name: 'Thatch Cellar Hatch (Open)',
         class: 'SpecialProp',
         maxHealth: Infinity,
         worldWidth: 1.2,        // 60px / 50
@@ -2716,7 +2716,7 @@ export const PROP_TYPES = {
     },
 
     stagePlatform: {
-        name: 'Stage Platform',
+        name: 'Luau Stage Platform',
         class: 'StructuralProp',
         maxHealth: 200,
         worldWidth: 1.6,        // 80px / 50
@@ -2732,7 +2732,7 @@ export const PROP_TYPES = {
     },
 
     hitchingPost: {
-        name: 'Hitching Post',
+        name: 'Canoe Mooring Post',
         class: 'StructuralProp',
         maxHealth: 120,
         worldWidth: 0.4,        // 20px / 50
@@ -2748,7 +2748,7 @@ export const PROP_TYPES = {
     },
 
     balconyRailing: {
-        name: 'Balcony Railing',
+        name: 'Bamboo Balcony Railing',
         class: 'StructuralProp',
         maxHealth: 100,
         worldWidth: 2.0,        // 100px / 50
@@ -2764,7 +2764,7 @@ export const PROP_TYPES = {
     },
 
     windowIntact: {
-        name: 'Window (Intact)',
+        name: 'Shuttered Window',
         class: 'TacticalProp',
         maxHealth: 40,
         worldWidth: 1.0,        // 50px / 50
@@ -2784,7 +2784,7 @@ export const PROP_TYPES = {
     },
 
     windowBroken: {
-        name: 'Window (Broken)',
+        name: 'Shuttered Window (Broken)',
         class: 'StructuralProp',
         maxHealth: 20,
         worldWidth: 1.0,        // 50px / 50

@@ -31,84 +31,58 @@ export class PreloadScene extends Phaser.Scene {
 
         // === ENEMY SPRITES ===
 
-        // Load 8-directional sprites for Velociraptor
-        this.load.image('velociraptor-down', 'assets/sprites/enemies/velociraptor/velociraptor-down.png');
-        this.load.image('velociraptor-up', 'assets/sprites/enemies/velociraptor/velociraptor-top.png');
-        this.load.image('velociraptor-left', 'assets/sprites/enemies/velociraptor/velociraptor-left.png');
-        this.load.image('velociraptor-right', 'assets/sprites/enemies/velociraptor/velociraptor-right.png');
-        this.load.image('velociraptor-down-left', 'assets/sprites/enemies/velociraptor/velociraptor-down-left.png');
-        this.load.image('velociraptor-down-right', 'assets/sprites/enemies/velociraptor/velociraptor-down-right.png');
-        this.load.image('velociraptor-up-left', 'assets/sprites/enemies/velociraptor/velociraptor-top-left.png');
-        this.load.image('velociraptor-up-right', 'assets/sprites/enemies/velociraptor/velociraptor-top-right.png');
+        // Animated enemy sprites: each type has an 8-frame walk loop (facing the
+        // camera), an 8-frame walk-back loop (facing away, used when moving up/
+        // away from the player), and an 8-frame attack loop (188x188 per frame),
+        // generated via SpriteCook. Left/right facing is achieved with
+        // sprite.flipX rather than separate art - see Enemy.js updateDirection().
+        const animatedEnemyTypes = ['velociraptor', 'compy', 'ankylosaurus', 'archaeopteryx', 'pteranodon'];
+        for (const type of animatedEnemyTypes) {
+            this.load.spritesheet(`${type}-walk`, `assets/sprites/enemies/${type}/${type}-walk.png`, {
+                frameWidth: 188,
+                frameHeight: 188
+            });
+            this.load.spritesheet(`${type}-walk-back`, `assets/sprites/enemies/${type}/${type}-walk-back.png`, {
+                frameWidth: 188,
+                frameHeight: 188
+            });
+            this.load.spritesheet(`${type}-attack`, `assets/sprites/enemies/${type}/${type}-attack.png`, {
+                frameWidth: 188,
+                frameHeight: 188
+            });
+        }
 
-        // Load 8-directional sprites for Ankylosaurus Tank
-        this.load.image('ankylosaurus-down', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-down.png');
-        this.load.image('ankylosaurus-up', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-up.png');
-        this.load.image('ankylosaurus-left', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-left.png');
-        this.load.image('ankylosaurus-right', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-right.png');
-        this.load.image('ankylosaurus-down-left', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-bottom-left.png');
-        this.load.image('ankylosaurus-down-right', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-bottom-right.png');
-        this.load.image('ankylosaurus-up-left', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-top-left.png');
-        this.load.image('ankylosaurus-up-right', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-top-right.png');
+        // Animated boss sprites - same walk/walk-back/attack scheme as regular
+        // enemies. Triceratops has two sprite sets (phase 1 and the electric-blue
+        // evolved phase 2) swapped at runtime in transitionToPhase2Triceratops().
+        const animatedBossTypes = ['trex', 'spinosaurus', 'triceratops', 'triceratops-evolved'];
+        for (const type of animatedBossTypes) {
+            this.load.spritesheet(`${type}-walk`, `assets/sprites/enemies/${type}/${type}-walk.png`, {
+                frameWidth: 188,
+                frameHeight: 188
+            });
+            this.load.spritesheet(`${type}-walk-back`, `assets/sprites/enemies/${type}/${type}-walk-back.png`, {
+                frameWidth: 188,
+                frameHeight: 188
+            });
+            this.load.spritesheet(`${type}-attack`, `assets/sprites/enemies/${type}/${type}-attack.png`, {
+                frameWidth: 188,
+                frameHeight: 188
+            });
+        }
 
-        // Load 8-directional sprites for Compy
-        this.load.image('compy-down', 'assets/sprites/enemies/compy/compy-down.png');
-        this.load.image('compy-up', 'assets/sprites/enemies/compy/compy-top.png');
-        this.load.image('compy-left', 'assets/sprites/enemies/compy/compy-left.png');
-        this.load.image('compy-right', 'assets/sprites/enemies/compy/compy-right.png');
-        this.load.image('compy-down-left', 'assets/sprites/enemies/compy/compy-down-left.png');
-        this.load.image('compy-down-right', 'assets/sprites/enemies/compy/compy-down-right.png');
-        this.load.image('compy-up-left', 'assets/sprites/enemies/compy/compy-top-left.png');
-        this.load.image('compy-up-right', 'assets/sprites/enemies/compy/compy-top-right.png');
-
-        // Load 8-directional sprites for Archaeopteryx
-        this.load.image('archaeopteryx-down', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-bottom.png');
-        this.load.image('archaeopteryx-up', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-top.png');
-        this.load.image('archaeopteryx-left', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-left.png');
-        this.load.image('archaeopteryx-right', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-right.png');
-        this.load.image('archaeopteryx-down-left', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-bottom-left.png');
-        this.load.image('archaeopteryx-down-right', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-bottom-right.png');
-        this.load.image('archaeopteryx-up-left', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-top-left.png');
-        this.load.image('archaeopteryx-up-right', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-top-right.png');
-
-        // Load 8-directional sprites for Pteranodon
-        this.load.image('pteranodon-down', 'assets/sprites/enemies/pteranodon/pteranodon-bottom.png');
-        this.load.image('pteranodon-up', 'assets/sprites/enemies/pteranodon/pteranodon-top.png');
-        this.load.image('pteranodon-left', 'assets/sprites/enemies/pteranodon/pteranodon-left.png');
-        this.load.image('pteranodon-right', 'assets/sprites/enemies/pteranodon/pteranodon-right.png');
-        this.load.image('pteranodon-down-left', 'assets/sprites/enemies/pteranodon/pteranodon-bottom-left.png');
-        this.load.image('pteranodon-down-right', 'assets/sprites/enemies/pteranodon/pteranodon-bottom-right.png');
-        this.load.image('pteranodon-up-left', 'assets/sprites/enemies/pteranodon/pteranodon-top-left.png');
-        this.load.image('pteranodon-up-right', 'assets/sprites/enemies/pteranodon/pteranodon-top-right.png');
-
-        // Load Iron Jaw (T-Rex) boss sprite (4 directional views in 2x2 grid)
-        this.load.spritesheet('trex-boss', 'assets/sprites/enemies/trex.png', {
-            frameWidth: 128,
-            frameHeight: 128
+        // Triceratops evolved (phase 2) roar/summon cycle - played when it calls
+        // in minions (spawnMinions), phase 1 never summons so it has no equivalent
+        this.load.spritesheet('triceratops-evolved-summon', 'assets/sprites/enemies/triceratops-evolved/triceratops-evolved-summon.png', {
+            frameWidth: 188,
+            frameHeight: 188
         });
 
-        // Load Spiny Terror (Spinosaurus) boss sprite (4 directional views in 2x2 grid)
-        this.load.spritesheet('spinosaurus-boss', 'assets/sprites/enemies/spinosaurus.png', {
-            frameWidth: 128,
-            frameHeight: 128
-        });
-
-        // Load Spinosaurus tail segment sprite (4 variations in 2x2 grid)
+        // Load Spinosaurus tail segment sprite (4 variations in 2x2 grid) - still
+        // static art, unrelated to the boss's own walk/attack animation
         this.load.spritesheet('spinosaurus-tail-segment', 'assets/sprites/enemies/spinosaurus_tail.png', {
             frameWidth: 64,
             frameHeight: 64
-        });
-
-        // Load The Behemoth (Triceratops) boss sprite - Phase 1 (4 directional views in 2x2 grid)
-        this.load.spritesheet('triceratops-boss', 'assets/sprites/enemies/triceratops.png', {
-            frameWidth: 128,
-            frameHeight: 128
-        });
-
-        // Load The Behemoth (Triceratops) boss sprite - Phase 2 evolved form (4 directional views in 2x2 grid)
-        this.load.spritesheet('triceratops-evolved', 'assets/sprites/enemies/triceratops_evolved.png', {
-            frameWidth: 128,
-            frameHeight: 128
         });
 
         // === PROJECTILES ===
@@ -162,15 +136,6 @@ export class PreloadScene extends Phaser.Scene {
             frameHeight: 341
         });
 
-        // Load environment props sprite sheet - 3x3 grid of debris & destruction effects
-        this.load.spritesheet('interior6', 'assets/sprites/environment/interior6.png', {
-            frameWidth: 341,  // Each sprite in the 3x3 grid
-            frameHeight: 341
-        });
-
-        // Load decorative back wall image
-        this.load.image('backwall', 'assets/sprites/environment/walls.png');
-
         // this.load.image('barrel', 'assets/sprites/environment/barrel.png');
         // this.load.image('saloon-doors', 'assets/sprites/environment/saloon-doors.png');
 
@@ -184,7 +149,7 @@ export class PreloadScene extends Phaser.Scene {
         const graphics = this.add.graphics();
 
         // Draw diamond shape
-        graphics.fillStyle(0x6B4423, 1); // Wood color
+        graphics.fillStyle(0xC9A66B, 1); // Bamboo tan
         graphics.beginPath();
         graphics.moveTo(32, 0);   // Top
         graphics.lineTo(64, 16);  // Right
@@ -194,7 +159,7 @@ export class PreloadScene extends Phaser.Scene {
         graphics.fillPath();
 
         // Add shading for depth
-        graphics.fillStyle(0x5A3419, 1); // Darker shade
+        graphics.fillStyle(0xA6845A, 1); // Darker bamboo shade
         graphics.beginPath();
         graphics.moveTo(32, 16);  // Center
         graphics.lineTo(64, 16);  // Right
@@ -239,8 +204,37 @@ export class PreloadScene extends Phaser.Scene {
             }
         }
 
-        // Enemy animations
-        this.createEnemyIdleAnimation('velociraptor-bandit', 2); // 2 frames
+        // Enemy/boss animations: 8-frame walk/walk-back (looping) and 8-frame attack (one-shot) per type
+        const animatedEnemyTypes = ['velociraptor', 'compy', 'ankylosaurus', 'archaeopteryx', 'pteranodon'];
+        const animatedBossTypes = ['trex', 'spinosaurus', 'triceratops', 'triceratops-evolved'];
+        for (const type of [...animatedEnemyTypes, ...animatedBossTypes]) {
+            this.anims.create({
+                key: `${type}-walk`,
+                frames: this.anims.generateFrameNumbers(`${type}-walk`, { start: 0, end: 7 }),
+                frameRate: 8,
+                repeat: -1
+            });
+            this.anims.create({
+                key: `${type}-walk-back`,
+                frames: this.anims.generateFrameNumbers(`${type}-walk-back`, { start: 0, end: 7 }),
+                frameRate: 8,
+                repeat: -1
+            });
+            this.anims.create({
+                key: `${type}-attack`,
+                frames: this.anims.generateFrameNumbers(`${type}-attack`, { start: 0, end: 7 }),
+                frameRate: 10,
+                repeat: 0
+            });
+        }
+
+        // Triceratops evolved (phase 2) roar/summon - one-shot, no walk-back equivalent
+        this.anims.create({
+            key: 'triceratops-evolved-summon',
+            frames: this.anims.generateFrameNumbers('triceratops-evolved-summon', { start: 0, end: 7 }),
+            frameRate: 10,
+            repeat: 0
+        });
 
         console.log('Starting game...');
         this.scene.start('StartScene');
@@ -274,13 +268,4 @@ export class PreloadScene extends Phaser.Scene {
         }).setOrigin(0.5);
     }
 
-    createEnemyIdleAnimation(spriteKey, frameCount) {
-        const endFrame = frameCount - 1;
-        this.anims.create({
-            key: `${spriteKey}-idle`,
-            frames: this.anims.generateFrameNumbers(spriteKey, { start: 0, end: endFrame }),
-            frameRate: 6,
-            repeat: -1
-        });
-    }
 }

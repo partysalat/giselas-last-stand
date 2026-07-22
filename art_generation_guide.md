@@ -2132,7 +2132,7 @@ Required file paths (per `src/scenes/PreloadScene.js`):
 
 **ChatGPT Base Prompt:**
 ```
-Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a single video game enemy sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 CHARACTER: A brown-and-tan velociraptor styled as a western outlaw. He stands upright in a menacing, threatening stance, balanced on powerful hind legs. [ADD DIRECTION]
 
@@ -2149,14 +2149,14 @@ AESTHETIC: Wild west outlaw meets prehistoric predator. Clearly villainous and d
 
 **Bing Condensed Base (add direction):**
 ```
-Isometric 3/4 top-down view of a brown-tan velociraptor dressed as western outlaw wearing black cowboy hat and dark vest, menacing villainous expression, holding pistols in clawed forearms, long balancing tail, viewed at 45-degree angle from above like RimWorld or Stardew Valley character sprite, comic book art style with thick black outlines and cel-shading, wild west prehistoric theme, game character sprite on transparent background
+Isometric 3/4 view from the upper-right of a brown-tan velociraptor dressed as western outlaw wearing black cowboy hat and dark vest, menacing villainous expression, holding pistols in clawed forearms, long balancing tail, viewed at 45-degree angle from the upper-right like RimWorld or Stardew Valley character sprite, comic book art style with thick black outlines and cel-shading, wild west prehistoric theme, game character sprite on transparent background
 ```
 
 **Direction modifiers:** (ChatGPT) `, shown facing toward the camera` | `, shown facing away from camera with back and tail visible` | `, shown facing left in profile view` | `, shown facing right in profile view`
 
 **2x2 Grid Bundle Prompt:**
 ```
-Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 ENEMY CHARACTER: Raptor Rustler - brown-tan velociraptor bandit styled as western outlaw. Black cowboy hat, dark leather vest, holding pistols in clawed forearms. Menacing villain with long stiff tail extending behind, feathered neck ridge, textured scaly hide.
 
@@ -2178,6 +2178,8 @@ BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
 BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
 - Raptor in RIGHT PROFILE (mirror of left), tail curling right, both forearms extended right with pistols, hat visible from right side
 
+IMPORTANT: These are CHARACTER ROTATION views, not four copies of the same pose. The isometric 45-degree viewing angle stays fixed - the CHARACTER rotates to face a different direction in each frame. Front and back must look VERY different from each other: front shows the face and both forearms/pistols pointed at the viewer; back shows only the rear of the head and hide with the tail trailing, no face visible. Left and right must be true side-on silhouettes - only one eye visible, body turned fully sideways, not a three-quarter repeat of the front pose. If two quadrants look like the same angle, the sheet is wrong.
+
 COMPOSITION: Enemy centered taking 70% of frame. White/transparent background. Clear borders between frames. All four views must maintain consistent size.
 ```
 
@@ -2192,7 +2194,7 @@ COMPOSITION: Enemy centered taking 70% of frame. White/transparent background. C
 
 **ChatGPT Base Prompt:**
 ```
-Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a single video game enemy sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 CHARACTER: A small sandy-tan compsognathus styled as a quick-draw gunslinger. Small and nimble, standing upright in a fast, agile posture. [ADD DIRECTION]
 
@@ -2209,14 +2211,14 @@ AESTHETIC: Fast gunslinger meets small prehistoric predator. Conveys speed and a
 
 **Bing Condensed Base (add direction):**
 ```
-Isometric 3/4 top-down view of a small sandy-tan compsognathus dressed as quick-draw gunslinger, small and nimble looking, bandana and small cowboy hat, dual pistols, fast and agile posture, viewed at 45-degree angle from above like RimWorld or Stardew Valley character sprite, comic book art style with thick black outlines and cel-shading, wild west prehistoric theme, game character sprite on transparent background
+Isometric 3/4 view from the upper-right of a small sandy-tan compsognathus dressed as quick-draw gunslinger, small and nimble looking, bandana and small cowboy hat, dual pistols, fast and agile posture, viewed at 45-degree angle from the upper-right like RimWorld or Stardew Valley character sprite, comic book art style with thick black outlines and cel-shading, wild west prehistoric theme, game character sprite on transparent background
 ```
 
 **Direction modifiers:** (ChatGPT) `, shown facing toward the camera` | `, shown facing away from camera with back visible` | `, shown facing left in profile view` | `, shown facing right in profile view`
 
 **2x2 Grid Bundle Prompt:**
 ```
-Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 ENEMY CHARACTER: Compy Bandit - sandy-tan compsognathus styled as quick-draw gunslinger. Small and nimble. Tiny red bandana, small brown cowboy hat, dual pistols in small clawed forearms. Slender bird-like body, long thin tail, long neck. Fast, agile threat.
 
@@ -2238,6 +2240,8 @@ BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
 BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
 - Compy in RIGHT PROFILE (mirror), slender body side view, both pistols aimed right, hat from right side
 
+IMPORTANT: These are CHARACTER ROTATION views, not four copies of the same pose. The isometric 45-degree viewing angle stays fixed - the CHARACTER rotates to face a different direction in each frame. Front and back must look VERY different from each other: front shows the face and both forearms/pistols pointed at the viewer; back shows only the rear of the slender body and thin tail, no face visible. Left and right must be true side-on silhouettes - only one eye visible, body turned fully sideways, not a three-quarter repeat of the front pose. If two quadrants look like the same angle, the sheet is wrong.
+
 COMPOSITION: Compy centered taking 60% of frame (smaller than other enemies). White/transparent background. Clear borders. Consistent size across all views.
 ```
 
@@ -2252,7 +2256,7 @@ COMPOSITION: Compy centered taking 60% of frame (smaller than other enemies). Wh
 
 **ChatGPT Base Prompt:**
 ```
-Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a single video game enemy sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 CHARACTER: A large grey-brown ankylosaurus styled as a heavy tank unit. Big and slow looking with a stocky, intimidating build. [ADD DIRECTION]
 
@@ -2273,7 +2277,7 @@ AESTHETIC: Heavy tank meets armored prehistoric beast. Intimidating and durable.
 
 **2x2 Grid Bundle Prompt:**
 ```
-Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 ENEMY CHARACTER: Ironhide Ankylosaurus - large grey-brown ankylosaurus styled as heavy tank unit. Big and intimidating. Rows of bony armor plates and spikes on back, heavy tail club, worn brown leather vest, heavy weapons in thick clawed forearms. Battle-hardened appearance. Twice the size of regular enemies.
 
@@ -2295,6 +2299,8 @@ BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
 BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
 - Ankylosaurus in RIGHT PROFILE (mirror), side view of armor plating and tail club, heavy weapons aimed right, sturdy rightward stance
 
+IMPORTANT: These are CHARACTER ROTATION views, not four copies of the same pose. The isometric 45-degree viewing angle stays fixed - the CHARACTER rotates to face a different direction in each frame. Front and back must look VERY different from each other: front shows the face and forearms with weapons forward; back shows only the rear armor plates and tail club, no face visible. Left and right must be true side-on silhouettes - only one eye visible, body turned fully sideways, not a three-quarter repeat of the front pose. If two quadrants look like the same angle, the sheet is wrong.
+
 COMPOSITION: Tank enemy centered taking 80% of frame (large unit). White/transparent background. Clear borders. Massive, durable appearance maintained across all views.
 ```
 
@@ -2309,7 +2315,7 @@ COMPOSITION: Tank enemy centered taking 80% of frame (large unit). White/transpa
 
 **ChatGPT Base Prompt:**
 ```
-Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a single video game enemy sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 CHARACTER: A translucent ghostly pteranodon styled as a supernatural western outlaw. Hovering above ground with an eerie, spectral presence. [ADD DIRECTION]
 
@@ -2330,7 +2336,7 @@ AESTHETIC: Supernatural ghost meets prehistoric flyer. Eerie and otherworldly. B
 
 **2x2 Grid Bundle Prompt:**
 ```
-Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 ENEMY CHARACTER: Ghost Wing - translucent ghostly pteranodon styled as supernatural western outlaw. Hovering above ground with eerie spectral presence. Tattered weathered brown cowboy hat with holes. Translucent leathery wings spread wide, long pointed head crest, semi-transparent body with faint ethereal tan-grey glow. Eye-like glowing spots visible through wings.
 
@@ -2352,6 +2358,8 @@ BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
 BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
 - Pteranodon in RIGHT PROFILE (mirror), side view of wing and crest, hat from right side, hovering rightward
 
+IMPORTANT: These are CHARACTER ROTATION views, not four copies of the same pose. The isometric 45-degree viewing angle stays fixed - the CHARACTER rotates to face a different direction in each frame. Front and back must look VERY different from each other: front shows the head crest, beak, and glowing eye-spots facing the viewer; back shows only the rear of the wings and crest, no face visible. Left and right must be true side-on silhouettes - only one wing and one eye-spot visible, body turned fully sideways, not a three-quarter repeat of the front pose. If two quadrants look like the same angle, the sheet is wrong.
+
 COMPOSITION: Ghost enemy centered taking 70% of frame. White/transparent background. Clear borders. Ethereal, translucent appearance maintained. Wings must be visible in all views.
 ```
 
@@ -2366,7 +2374,7 @@ COMPOSITION: Ghost enemy centered taking 70% of frame. White/transparent backgro
 
 **ChatGPT Base Prompt:**
 ```
-Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a single video game enemy sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 CHARACTER: An archaeopteryx styled as an aerial bandit. Dynamic flying pose showing motion and agility in the air. [ADD DIRECTION]
 
@@ -2387,7 +2395,7 @@ AESTHETIC: Aerial bandit meets prehistoric flyer. Conveys speed and flight. Bold
 
 **2x2 Grid Bundle Prompt:**
 ```
-Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 ENEMY CHARACTER: Sky Bandit - archaeopteryx aerial bandit styled as flying ace. Dynamic flying pose showing motion and agility. Brown aviator goggles on head, red bandana around neck. Feathered wings spread wide for gliding, long feathered tail, clawed wing-fingers. Forest-green feathers with lighter underside. Fast, agile aerial enemy.
 
@@ -2409,6 +2417,8 @@ BOTTOM-LEFT: "LEFT SIDE VIEW - FLYING LEFT"
 BOTTOM-RIGHT: "RIGHT SIDE VIEW - FLYING RIGHT"
 - Archaeopteryx in RIGHT PROFILE (mirror), both wings extended right, goggles from right side, feathered tail trailing left, fast rightward flight
 
+IMPORTANT: These are CHARACTER ROTATION views, not four copies of the same pose. The isometric 45-degree viewing angle stays fixed - the CHARACTER rotates to face a different direction in each frame. Front and back must look VERY different from each other: front shows the goggled face and both wings spread toward the viewer; back shows only the rear of the body and tail, no face visible. Left and right must be true side-on silhouettes - only one wing and one goggle lens visible, body turned fully sideways, not a three-quarter repeat of the front pose. If two quadrants look like the same angle, the sheet is wrong.
+
 COMPOSITION: Flying enemy centered taking 70% of frame. White/transparent background. Clear borders. Wings must be prominently visible in all views. Aerial, gliding appearance maintained.
 ```
 
@@ -2423,7 +2433,7 @@ COMPOSITION: Flying enemy centered taking 70% of frame. White/transparent backgr
 
 **ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
 
 BOSS CHARACTER: Iron Jaw - Wave 4 boss. A massive dark green tyrannosaurus rex. 3x the size of regular enemies. Fortress-like apex predator with battle-scarred hide plated like armor.
 
@@ -2473,7 +2483,7 @@ COMPOSITION: Each frame equal size, boss centered taking up 85% of frame space. 
 
 **Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
 
-**Base Prompt:** Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. Iron Jaw - massive dark green tyrannosaurus rex boss, 3x regular size, apex predator. Muscular scarred hide, massive jaws with sharp teeth, small clawed forearms, thick tail, menacing red eyes. Battle-worn scales with scratches. Bold comic book art with thick black outlines, cel-shaded, dark green with lighter underside. Boss centered taking 85% of frame, solid stance, transparent background.
+**Base Prompt:** Create a single video game BOSS sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above. Iron Jaw - massive dark green tyrannosaurus rex boss, 3x regular size, apex predator. Muscular scarred hide, massive jaws with sharp teeth, small clawed forearms, thick tail, menacing red eyes. Battle-worn scales with scratches. Bold comic book art with thick black outlines, cel-shaded, dark green with lighter underside. Boss centered taking 85% of frame, solid stance, transparent background.
 
 **Direction modifiers:** `, facing toward camera with jaws open` | `, facing away showing back and tail` | `, left profile with jaws facing left` | `, right profile with jaws facing right`
 
@@ -2485,7 +2495,7 @@ COMPOSITION: Each frame equal size, boss centered taking up 85% of frame space. 
 
 **ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
 
 BOSS CHARACTER: The Spiny Terror - Wave 8 boss. A massive teal-green spinosaurus with a large distinctive sail along its spine and a long crocodile-like snout. Amphibious apex predator boss.
 
@@ -2536,7 +2546,7 @@ COMPOSITION: Each frame equal size, boss with sail centered taking up 90% of fra
 
 **Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
 
-**Base Prompt:** Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Spiny Terror - massive teal-green spinosaurus with tall spine sail, tattered pirate hat, long crocodile-like jaws, glowing eyes. Amphibious apex predator. Bold comic book art with thick black outlines, cel-shaded, deep teal-green with darker shadows. Boss centered with sail visible taking 90% of frame, transparent background.
+**Base Prompt:** Create a single video game BOSS sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above. The Spiny Terror - massive teal-green spinosaurus with tall spine sail, tattered pirate hat, long crocodile-like jaws, glowing eyes. Amphibious apex predator. Bold comic book art with thick black outlines, cel-shaded, deep teal-green with darker shadows. Boss centered with sail visible taking 90% of frame, transparent background.
 
 **Direction modifiers:** `, facing toward camera with jaws forward and sail visible` | `, facing away showing back of body with sail visible` | `, left profile with sail along spine` | `, right profile with sail along spine`
 
@@ -2548,7 +2558,7 @@ COMPOSITION: Each frame equal size, boss with sail centered taking up 90% of fra
 
 **ChatGPT Sprite Sheet - 4 Variations in One Image:**
 ```
-Create a video game boss component sprite sheet showing 4 tail segment variations arranged in a 2x2 grid. This is for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+Create a video game boss component sprite sheet showing 4 tail segment variations arranged in a 2x2 grid. This is for an isometric shooter game. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
 
 BOSS COMPONENT: Spinosaurus tail segments - destructible boss parts for The Spiny Terror boss fight. These are the four spiked tail segments that protect the main boss body and must be destroyed independently.
 
@@ -2593,7 +2603,7 @@ COMPOSITION: Each frame equal size, single tail segment centered taking up 70% o
 
 **Phase 1 - ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a video game FINAL BOSS CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game FINAL BOSS CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
 
 FINAL BOSS CHARACTER: The Behemoth Phase 1 - Wave 12 final boss. A colossal olive-grey triceratops. Legendary final boss - biggest enemy in entire game. Ancient prehistoric titan.
 
@@ -2645,7 +2655,7 @@ COMPOSITION: Each frame equal size, legendary boss dominates 95% of frame space.
 
 **Phase 2 - ChatGPT Sprite Sheet - 4 Directions in One Image:**
 ```
-Create a video game FINAL BOSS EVOLVED FORM CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
+Create a video game FINAL BOSS EVOLVED FORM CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for an isometric shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
 
 FINAL BOSS EVOLVED: The Behemoth Phase 2 - Wave 12 final boss SECOND FORM. Same colossal triceratops but TRANSFORMED with electrical powers. This is the "ultimate final form" moment. Storm god boss.
 
@@ -2698,9 +2708,9 @@ COMPOSITION: Each frame equal size, legendary evolved boss dominates 95% of fram
 
 **Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
 
-**Phase 1 Base Prompt:** Create a single video game FINAL BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Behemoth Phase 1 - colossal olive-grey triceratops, golden cowboy hat, golden sheriff's badge, golden leg bands, legendary final boss. Massive frilled head shield, three horns, heavily muscled quadrupedal body, battle-scarred ancient. Bold comic book art with thick black outlines, cel-shaded, bold olive-grey hide with golden accessories. Boss dominates 95% of frame, transparent background.
+**Phase 1 Base Prompt:** Create a single video game FINAL BOSS sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above. The Behemoth Phase 1 - colossal olive-grey triceratops, golden cowboy hat, golden sheriff's badge, golden leg bands, legendary final boss. Massive frilled head shield, three horns, heavily muscled quadrupedal body, battle-scarred ancient. Bold comic book art with thick black outlines, cel-shaded, bold olive-grey hide with golden accessories. Boss dominates 95% of frame, transparent background.
 
-**Phase 2 Base Prompt:** Create a single video game FINAL BOSS EVOLVED FORM sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Behemoth Phase 2 - same colossal triceratops but ELECTRIC BLUE with crackling lightning across the frill and entire body, electrical aura, glowing electric eyes, yellow lightning bolts. Golden cowboy accessories now GLOWING with electrical energy. Storm god transformation. Bold comic book art with thick black outlines, cel-shaded, bright electric blue with yellow lightning effects. Boss dominates 95% of frame, transparent background.
+**Phase 2 Base Prompt:** Create a single video game FINAL BOSS EVOLVED FORM sprite for an isometric shooter. Use an isometric 3/4 perspective viewed from the upper-right at 45 degrees above. The Behemoth Phase 2 - same colossal triceratops but ELECTRIC BLUE with crackling lightning across the frill and entire body, electrical aura, glowing electric eyes, yellow lightning bolts. Golden cowboy accessories now GLOWING with electrical energy. Storm god transformation. Bold comic book art with thick black outlines, cel-shaded, bright electric blue with yellow lightning effects. Boss dominates 95% of frame, transparent background.
 
 **Direction modifiers (both phases):** `, facing toward camera with horns forward` | `, facing away showing back and tail` | `, left profile view` | `, right profile view`
 

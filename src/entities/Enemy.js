@@ -190,55 +190,31 @@ export class Enemy {
         const { screenX, screenY } = worldToScreen(worldX, worldY, this.worldZ);
 
         // Create sprite based on enemy type
-        if (type === 'velociraptor') {
-            // Use directional sprites for velociraptor
-            this.sprite = scene.add.sprite(screenX, screenY, 'velociraptor-down');
-            this.currentDirection = 'down';
+        const animatedEnemyTypes = ['velociraptor', 'compy', 'ankylosaurus', 'archaeopteryx', 'pteranodon'];
+        const bossSpritePrefixes = {
+            boss_trex: 'trex',
+            boss_spinosaurus: 'spinosaurus',
+            boss_triceratops: 'triceratops'
+        };
+        if (animatedEnemyTypes.includes(type) || bossSpritePrefixes[type]) {
+            // Animated walk/walk-back/attack sprite - see updateDirection() and fireBullet()
+            const prefix = bossSpritePrefixes[type] || type;
+            this.sprite = scene.add.sprite(screenX, screenY, `${prefix}-walk`, 0);
             this.useDirectionalSprites = true;
-            this.spritePrefix = 'velociraptor';
-        } else if (type === 'ankylosaurus') {
-            // Use directional sprites for ankylosaurus tank
-            this.sprite = scene.add.sprite(screenX, screenY, 'ankylosaurus-down');
-            this.currentDirection = 'down';
-            this.useDirectionalSprites = true;
-            this.spritePrefix = 'ankylosaurus';
-        } else if (type === 'compy') {
-            // Use directional sprites for compy
-            this.sprite = scene.add.sprite(screenX, screenY, 'compy-down');
-            this.currentDirection = 'down';
-            this.useDirectionalSprites = true;
-            this.spritePrefix = 'compy';
-        } else if (type === 'archaeopteryx') {
-            // Use directional sprites for archaeopteryx
-            this.sprite = scene.add.sprite(screenX, screenY, 'archaeopteryx-down');
-            this.currentDirection = 'down';
-            this.useDirectionalSprites = true;
-            this.spritePrefix = 'archaeopteryx';
-        } else if (type === 'pteranodon') {
-            // Use directional sprites for pteranodon
-            this.sprite = scene.add.sprite(screenX, screenY, 'pteranodon-down');
-            this.currentDirection = 'down';
-            this.useDirectionalSprites = true;
-            this.spritePrefix = 'pteranodon';
-        } else if (type === 'boss_trex') {
-            // Use spritesheet for Iron Jaw boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(screenX, screenY, 'trex-boss', 0);
-            this.useDirectionalSprites = false;
-            this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
-            this.bossFrameIndex = 0;
-        } else if (type === 'boss_spinosaurus') {
-            // Use spritesheet for Spinosaurus boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(screenX, screenY, 'spinosaurus-boss', 0);
-            this.useDirectionalSprites = false;
-            this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
-            this.bossFrameIndex = 0;
-        } else if (type === 'boss_triceratops') {
-            // Use spritesheet for Triceratops boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(screenX, screenY, 'triceratops-boss', 0);
-            this.useDirectionalSprites = false;
-            this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
-            this.bossFrameIndex = 0;
-            this.currentPhase = 1;  // Track phase for sprite switching
+            this.spritePrefix = prefix;
+            this.facingRight = true;
+            if (type === 'boss_triceratops') {
+                this.currentPhase = 1;  // Track phase for sprite switching
+            }
+            this.sprite.on('animationcomplete', (anim) => {
+                const isAttack = anim.key === `${this.spritePrefix}-attack`;
+                const isSummon = anim.key === `${this.spritePrefix}-summon`;
+                if ((isAttack || isSummon) && this.alive) {
+                    this.sprite.play(`${this.spritePrefix}-walk`);
+                    this.sprite.anims.pause();
+                    this.sprite.anims.setCurrentFrame(this.sprite.anims.currentAnim.frames[0]);
+                }
+            });
         } else {
             // Create placeholder graphics for other enemies
             this.sprite = scene.add.circle(screenX, screenY, config.radius, config.color);
@@ -800,37 +776,25 @@ export class Enemy {
     }
 
     updateDirection(velocityX, velocityY) {
-        // Determine direction based on velocity (supports 8 directions)
-        let newDirection = this.currentDirection;
-
-        // Define threshold for considering movement in a direction
+        // Animated sprites: mirror horizontally based on movement direction (no
+        // separate left/right art), and pick front-walk vs. back-walk based on
+        // whether the enemy is moving toward the camera (positive worldY, per
+        // CoordinateTransform) or away from it. See the sprite creation block
+        // in the constructor for the animationcomplete wiring.
         const threshold = 0.3;
-
-        const absX = Math.abs(velocityX);
-        const absY = Math.abs(velocityY);
-
-        // Check for diagonal movement (both X and Y significant)
-        if (absX > threshold && absY > threshold) {
-            // Diagonal movement
-            if (velocityY < 0) {
-                // Moving up
-                newDirection = velocityX < 0 ? 'up-left' : 'up-right';
-            } else {
-                // Moving down
-                newDirection = velocityX < 0 ? 'down-left' : 'down-right';
-            }
-        } else if (absY > absX && absY > threshold) {
-            // Primarily vertical movement
-            newDirection = velocityY < 0 ? 'up' : 'down';
-        } else if (absX > absY && absX > threshold) {
-            // Primarily horizontal movement
-            newDirection = velocityX < 0 ? 'left' : 'right';
+        if (velocityX < -threshold) {
+            this.facingRight = false;
+        } else if (velocityX > threshold) {
+            this.facingRight = true;
         }
+        this.sprite.setFlipX(!this.facingRight);
 
-        // Only update texture if direction changed
-        if (newDirection !== this.currentDirection) {
-            this.currentDirection = newDirection;
-            this.sprite.setTexture(`${this.spritePrefix}-${newDirection}`);
+        const walkKey = velocityY < -threshold
+            ? `${this.spritePrefix}-walk-back`
+            : `${this.spritePrefix}-walk`;
+        const isAttacking = this.sprite.anims.currentAnim && this.sprite.anims.currentAnim.key === `${this.spritePrefix}-attack` && this.sprite.anims.isPlaying;
+        if (!isAttacking && (!this.sprite.anims.isPlaying || this.sprite.anims.currentAnim?.key !== walkKey)) {
+            this.sprite.play(walkKey);
         }
     }
 
@@ -1518,6 +1482,17 @@ export class Enemy {
      * Fire a bullet at target
      */
     fireBullet(targetX, targetY, bulletType = 'normal') {
+        if (this.useDirectionalSprites) {
+            // Face the actual target before attacking, regardless of which way
+            // the last movement was facing (there's no back-facing attack art -
+            // the enemy visually turns to aim, which reads correctly either way).
+            if (Math.abs(targetX - this.worldX) > 0.1) {
+                this.facingRight = targetX > this.worldX;
+                this.sprite.setFlipX(!this.facingRight);
+            }
+            this.sprite.play(`${this.spritePrefix}-attack`);
+        }
+
         // Check if bounty - use special bullets
         if (this.isBounty && bulletType === 'normal') {
             bulletType = 'burst';  // Desperado shoots 3-round bursts
@@ -1652,17 +1627,7 @@ export class Enemy {
             this.worldX += Math.cos(angle) * currentSpeed * deltaSeconds;
             this.worldY += Math.sin(angle) * currentSpeed * deltaSeconds;
 
-            // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=right, 3=left)
-            const absX = Math.abs(dx);
-            const absY = Math.abs(dy);
-
-            if (absY > absX) {
-                // Primarily vertical movement
-                this.sprite.setFrame(dy < 0 ? 1 : 0);  // Moving up: frame 1, Moving down: frame 0
-            } else {
-                // Primarily horizontal movement
-                this.sprite.setFrame(dx < 0 ? 3 : 2);  // Moving left: frame 3, Moving right: frame 2
-            }
+            this.updateDirection(dx, dy);
         }
     }
 
@@ -1680,6 +1645,8 @@ export class Enemy {
     }
 
     fireBubbleSpread(targetX, targetY) {
+        this.sprite.play(`${this.spritePrefix}-attack`);
+
         // Calculate base angle to player
         const baseAngle = Math.atan2(targetY - this.worldY, targetX - this.worldX);
 
@@ -1848,17 +1815,7 @@ export class Enemy {
         this.worldX += Math.cos(angle) * this.config.speed * deltaSeconds;
         this.worldY += Math.sin(angle) * this.config.speed * deltaSeconds;
 
-        // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=right, 3=left)
-        const absX = Math.abs(dx);
-        const absY = Math.abs(dy);
-
-        if (absY > absX) {
-            // Primarily vertical movement
-            this.sprite.setFrame(dy < 0 ? 1 : 0);  // Moving up: frame 1, Moving down: frame 0
-        } else {
-            // Primarily horizontal movement
-            this.sprite.setFrame(dx < 0 ? 3 : 2);  // Moving left: frame 3, Moving right: frame 2
-        }
+        this.updateDirection(dx, dy);
     }
 
     createMudClouds(count) {
@@ -1934,6 +1891,7 @@ export class Enemy {
     }
 
     tailSegmentSweep() {
+        this.sprite.play(`${this.spritePrefix}-attack`);
         this.sweepDamageDealt = false;  // Add at start
 
         // Make all tailSegments glow (use tint for sprites)
@@ -2053,23 +2011,7 @@ export class Enemy {
             this.worldX += Math.cos(angle) * this.config.speed * deltaSeconds;
             this.worldY += Math.sin(angle) * this.config.speed * deltaSeconds;
 
-            // Update sprite frame based on direction (4 frames: 0=down, 1=up, 2=left, 3=right)
-            if (this.useSprite) {
-                const absX = Math.abs(dx);
-                const absY = Math.abs(dy);
-
-                if (absY > absX) {
-                    // Primarily vertical movement
-                    this.bossFrameIndex = dy < 0 ? 1 : 0;  // Moving up: frame 1, Moving down: frame 0
-                } else {
-                    // Primarily horizontal movement
-                    this.bossFrameIndex = dx < 0 ? 3 : 2;  // Moving left: frame 3, Moving right: frame 2
-                }
-
-                // Set the appropriate texture based on current phase
-                const textureName = this.currentPhase === 2 ? 'triceratops-evolved' : 'triceratops-boss';
-                this.sprite.setTexture(textureName, this.bossFrameIndex);
-            }
+            this.updateDirection(dx, dy);
         }
     }
 
@@ -2205,7 +2147,7 @@ export class Enemy {
         this.attackingInProgress = true;
 
         // Rise up visual - add yellow tint for sprites
-        if (this.useSprite) {
+        if (this.useDirectionalSprites) {
             this.sprite.setTint(0xffff00);
         }
         const originalY = this.sprite.y;
@@ -2217,7 +2159,7 @@ export class Enemy {
             yoyo: true,
             onComplete: () => {
                 // Impact - clear tint for sprites
-                if (this.useSprite) {
+                if (this.useDirectionalSprites) {
                     this.sprite.clearTint();
                 }
                 this.scene.cameras.main.shake(300, 0.02);
@@ -2271,6 +2213,7 @@ export class Enemy {
     chargeAttack(playerX, playerY) {
         console.log('Triceratops: Charge!');
         this.attackingInProgress = true;
+        this.sprite.play(`${this.spritePrefix}-attack`);
 
         // Telegraph line showing charge path
         const line = this.scene.add.line(
@@ -2503,10 +2446,9 @@ export class Enemy {
         // Full health restore
         this.health = this.maxHealth;
 
-        // Switch to evolved sprite (electric blue form)
-        if (this.useSprite) {
-            this.sprite.setTexture('triceratops-evolved', this.bossFrameIndex);
-        }
+        // Switch to evolved animated sprite set (electric blue form)
+        this.spritePrefix = 'triceratops-evolved';
+        this.sprite.play(`${this.spritePrefix}-walk`);
 
         // Visual effects
         this.scene.cameras.main.shake(500, 0.03);
@@ -2557,6 +2499,7 @@ export class Enemy {
 
     spawnMinions(minionTypes) {
         console.log('Triceratops spawning minions:', minionTypes);
+        this.sprite.play(`${this.spritePrefix}-summon`);
 
         minionTypes.forEach((type, index) => {
             const angle = (index / minionTypes.length) * Math.PI * 2;
