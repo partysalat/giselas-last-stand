@@ -39,16 +39,16 @@ export class PreloadScene extends Phaser.Scene {
         const animatedEnemyTypes = ['velociraptor', 'compy', 'ankylosaurus', 'archaeopteryx', 'pteranodon'];
         for (const type of animatedEnemyTypes) {
             this.load.spritesheet(`${type}-walk`, `assets/sprites/enemies/${type}/${type}-walk.png`, {
-                frameWidth: 188,
-                frameHeight: 188
+                frameWidth: 256,
+                frameHeight: 256
             });
             this.load.spritesheet(`${type}-walk-back`, `assets/sprites/enemies/${type}/${type}-walk-back.png`, {
-                frameWidth: 188,
-                frameHeight: 188
+                frameWidth: 256,
+                frameHeight: 256
             });
             this.load.spritesheet(`${type}-attack`, `assets/sprites/enemies/${type}/${type}-attack.png`, {
-                frameWidth: 188,
-                frameHeight: 188
+                frameWidth: 256,
+                frameHeight: 256
             });
         }
 
@@ -58,24 +58,24 @@ export class PreloadScene extends Phaser.Scene {
         const animatedBossTypes = ['trex', 'spinosaurus', 'triceratops', 'triceratops-evolved'];
         for (const type of animatedBossTypes) {
             this.load.spritesheet(`${type}-walk`, `assets/sprites/enemies/${type}/${type}-walk.png`, {
-                frameWidth: 188,
-                frameHeight: 188
+                frameWidth: 256,
+                frameHeight: 256
             });
             this.load.spritesheet(`${type}-walk-back`, `assets/sprites/enemies/${type}/${type}-walk-back.png`, {
-                frameWidth: 188,
-                frameHeight: 188
+                frameWidth: 256,
+                frameHeight: 256
             });
             this.load.spritesheet(`${type}-attack`, `assets/sprites/enemies/${type}/${type}-attack.png`, {
-                frameWidth: 188,
-                frameHeight: 188
+                frameWidth: 256,
+                frameHeight: 256
             });
         }
 
         // Triceratops evolved (phase 2) roar/summon cycle - played when it calls
         // in minions (spawnMinions), phase 1 never summons so it has no equivalent
         this.load.spritesheet('triceratops-evolved-summon', 'assets/sprites/enemies/triceratops-evolved/triceratops-evolved-summon.png', {
-            frameWidth: 188,
-            frameHeight: 188
+            frameWidth: 256,
+            frameHeight: 256
         });
 
         // Load Spinosaurus tail segment sprite (4 variations in 2x2 grid) - still
