@@ -33,7 +33,7 @@ export class PreloadScene extends Phaser.Scene {
 
         // Animated enemy sprites: each type has an 8-frame walk loop (facing the
         // camera), an 8-frame walk-back loop (facing away, used when moving up/
-        // away from the player), and an 8-frame attack loop (188x188 per frame),
+        // away from the player), and an 8-frame attack loop (256x256 per frame),
         // generated via SpriteCook. Left/right facing is achieved with
         // sprite.flipX rather than separate art - see Enemy.js updateDirection().
         const animatedEnemyTypes = ['velociraptor', 'compy', 'ankylosaurus', 'archaeopteryx', 'pteranodon'];
