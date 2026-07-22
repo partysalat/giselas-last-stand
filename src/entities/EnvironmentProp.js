@@ -1869,7 +1869,7 @@ export class EnvironmentProp {
             });
         });
 
-        // TODO: Implement electrical conductor mechanic for Leviathan boss
+        // TODO: Implement electrical conductor mechanic for The Behemoth boss
         console.log(`Wet zone created: ${this.electricalMultiplier}x electrical damage for ${this.wetZoneDuration}ms`);
     }
 

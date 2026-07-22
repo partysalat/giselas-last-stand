@@ -112,7 +112,7 @@ export class InputManager {
 
         // Target cycling with Q/E
         // Q = cycle props (barrels, lamps, chandeliers, etc.)
-        // E = cycle enemies (including tentacles)
+        // E = cycle enemies (including tail segments)
         if (Phaser.Input.Keyboard.JustDown(this.keys.Q)) {
             this.cyclePropTarget = true;
             this.inputMode = 'keyboard';

@@ -4,12 +4,12 @@ import { ISOMETRIC_CONFIG } from '../config.js';
 
 // Enemy type configurations
 const ENEMY_TYPES = {
-    lobster: {
-        name: 'Bandit Lobster',
+    velociraptor: {
+        name: 'Raptor Rustler',
         health: 30,
         speed: 3.0, // World units per second
         damage: 10,
-        color: 0xff6600,
+        color: 0x8b7355,
         radius: 0.3, // Collision radius in world units (~15 pixels)
         behavior: 'ranged_shooter',        // CHANGED for ranged combat
         attackRange: 8,                    // Changed from 400 pixels to 8 world units
@@ -17,12 +17,12 @@ const ENEMY_TYPES = {
         bulletDamage: 8,                   // NEW
         telegraphDuration: 400             // NEW - wind-up before shot
     },
-    shrimp: {
-        name: 'Quick-Draw Shrimp',
+    compy: {
+        name: 'Compy Bandit',
         health: 15,
         speed: 7.0, // World units per second (faster than player)
         damage: 5,
-        color: 0xff9999,
+        color: 0xc9a876,
         radius: 0.2, // Collision radius in world units (~10 pixels)
         behavior: 'ranged_kiter',          // CHANGED for ranged combat
         attackRange: 7,                    // Changed from 350 pixels to 7 world units
@@ -30,49 +30,49 @@ const ENEMY_TYPES = {
         bulletDamage: 4,                   // NEW
         kiteDistance: 4                    // Changed from 200 pixels to 4 world units
     },
-    hermit: {
-        name: 'Hermit Crab Tank',
+    ankylosaurus: {
+        name: 'Ironhide Ankylosaurus',
         health: 100,
         speed: 1.5, // World units per second (slow tank)
         damage: 20,
-        color: 0x8b4513,
+        color: 0x6b6b5c,
         radius: 0.5, // Collision radius in world units (~25 pixels)
         behavior: 'tank',
         attackRange: 2,                    // Changed from 100 pixels to 2 world units
         attackCooldown: 2000
     },
-    jellyfish: {
-        name: 'Jellyfish Ghost',
+    pteranodon: {
+        name: 'Ghost Wing',
         health: 40,
         speed: 2.5, // World units per second
         damage: 15,
-        color: 0xcc99ff,
+        color: 0xa89f8a,
         radius: 0.35, // Collision radius in world units (~18 pixels)
         behavior: 'teleport',
         attackRange: 10,                   // Changed from 500 pixels to 10 world units
         attackCooldown: 3000,
         teleportCooldown: 5000
     },
-    flyingfish: {
-        name: 'Flying Fish',
+    archaeopteryx: {
+        name: 'Sky Bandit',
         health: 20,
         speed: 5.5, // World units per second (slightly faster than player)
         damage: 8,
-        color: 0x00ccff,
+        color: 0x4a7c59,
         radius: 0.25, // Collision radius in world units (~12 pixels)
         behavior: 'swoop',
         attackRange: 12,                   // Changed from 600 pixels to 12 world units
         attackCooldown: 2500,
         swoopDistance: 6                   // Changed from 300 pixels to 6 world units
     },
-    boss_iron_shell: {
-        name: 'Iron Shell',
+    boss_trex: {
+        name: 'Iron Jaw',
         health: 400,
         speed: 2.5, // World units per second
         damage: 15,
-        color: 0x4a4a4a,
-        radius: 0.9,  // Collision radius in world units (~45 pixels, 3x hermit)
-        behavior: 'boss_iron_shell',
+        color: 0x2d4a2d,
+        radius: 0.9,  // Collision radius in world units (~45 pixels, 3x ankylosaurus)
+        behavior: 'boss_trex',
         attackRange: 10,                   // Changed from 500 pixels to 10 world units
         attackCooldown: 3000,
         isBoss: true,
@@ -87,40 +87,40 @@ const ENEMY_TYPES = {
         bubbleDamage: 12,
         bubbleCount: 3
     },
-    boss_kraken_arm: {
-        name: "The Kraken's Arm",
+    boss_spinosaurus: {
+        name: "The Spiny Terror",
         health: 300,  // Body health
         speed: 1.5, // World units per second (slow boss)
         damage: 20,
-        color: 0x9966cc,
+        color: 0x2f6b5e,
         radius: 1.2,  // Collision radius in world units (~60 pixels)
-        behavior: 'boss_kraken_arm',
+        behavior: 'boss_spinosaurus',
         attackRange: 12,                   // Changed from 600 pixels to 12 world units
         attackCooldown: 4000,
         isBoss: true,
-        // Tentacle properties
-        tentacleHealth: 80,
-        tentacleCount: 4,
-        tentacleRegenRate: 5,  // HP per second
-        tentacleLength: 3,  // World units (was 40, now ~150 pixels)
-        // Ink cloud properties
-        inkCloudRadius: 2,                 // Changed from 100 pixels to 2 world units
-        inkCloudDuration: 8000,
-        inkCloudSlowFactor: 0.2,
-        inkTrigger1: 0.6,  // 60% body HP
-        inkTrigger2: 0.3,  // 30% body HP
+        // Tail segment properties
+        tailSegmentHealth: 80,
+        tailSegmentCount: 4,
+        tailSegmentRegenRate: 5,  // HP per second
+        tailSegmentLength: 3,  // World units (was 40, now ~150 pixels)
+        // Mud cloud properties
+        mudCloudRadius: 2,                 // Changed from 100 pixels to 2 world units
+        mudCloudDuration: 8000,
+        mudCloudSlowFactor: 0.2,
+        mudTrigger1: 0.6,  // 60% body HP
+        mudTrigger2: 0.3,  // 30% body HP
         // Sweep attack
         sweepCooldown: 10000,
         sweepDamage: 25
     },
-    boss_leviathan: {
-        name: 'The Leviathan',
+    boss_triceratops: {
+        name: 'The Behemoth',
         health: 400,  // Per phase
         speed: 3.0, // World units per second
         damage: 25,
-        color: 0xff4500,
+        color: 0x7a7050,
         radius: 1.2,  // Collision radius in world units (~60 pixels)
-        behavior: 'boss_leviathan',
+        behavior: 'boss_triceratops',
         attackRange: 14,                   // Changed from 700 pixels to 14 world units
         attackCooldown: 5000,
         isBoss: true,
@@ -144,8 +144,8 @@ const ENEMY_TYPES = {
         tidalWaveDamage: 40,
         tidalWaveCooldown: 12000,
         // Minion spawning
-        phase2InitialAdds: ['shrimp', 'shrimp', 'lobster', 'lobster'],
-        phase2MidAdds: ['shrimp', 'lobster'],
+        phase2InitialAdds: ['compy', 'compy', 'velociraptor', 'velociraptor'],
+        phase2MidAdds: ['compy', 'velociraptor'],
         minionSpawnThreshold: 0.5
     }
 };
@@ -153,7 +153,7 @@ const ENEMY_TYPES = {
 export { ENEMY_TYPES };
 
 export class Enemy {
-    constructor(scene, worldX, worldY, type = 'lobster', isBounty = false, bountyValue = 0, difficultyMultipliers = null) {
+    constructor(scene, worldX, worldY, type = 'velociraptor', isBounty = false, bountyValue = 0, difficultyMultipliers = null) {
         this.scene = scene;
         this.type = type;
         this.isBounty = isBounty;
@@ -190,51 +190,51 @@ export class Enemy {
         const { screenX, screenY } = worldToScreen(worldX, worldY, this.worldZ);
 
         // Create sprite based on enemy type
-        if (type === 'lobster') {
-            // Use directional sprites for bandit lobster
-            this.sprite = scene.add.sprite(screenX, screenY, 'bandit-lobster-down');
+        if (type === 'velociraptor') {
+            // Use directional sprites for velociraptor
+            this.sprite = scene.add.sprite(screenX, screenY, 'velociraptor-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
-            this.spritePrefix = 'bandit-lobster';
-        } else if (type === 'hermit') {
-            // Use directional sprites for hermit tank
-            this.sprite = scene.add.sprite(screenX, screenY, 'hermit-tank-down');
+            this.spritePrefix = 'velociraptor';
+        } else if (type === 'ankylosaurus') {
+            // Use directional sprites for ankylosaurus tank
+            this.sprite = scene.add.sprite(screenX, screenY, 'ankylosaurus-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
-            this.spritePrefix = 'hermit-tank';
-        } else if (type === 'shrimp') {
-            // Use directional sprites for shrimp
-            this.sprite = scene.add.sprite(screenX, screenY, 'shrimp-down');
+            this.spritePrefix = 'ankylosaurus';
+        } else if (type === 'compy') {
+            // Use directional sprites for compy
+            this.sprite = scene.add.sprite(screenX, screenY, 'compy-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
-            this.spritePrefix = 'shrimp';
-        } else if (type === 'flyingfish') {
-            // Use directional sprites for flying fish
-            this.sprite = scene.add.sprite(screenX, screenY, 'flying-fish-down');
+            this.spritePrefix = 'compy';
+        } else if (type === 'archaeopteryx') {
+            // Use directional sprites for archaeopteryx
+            this.sprite = scene.add.sprite(screenX, screenY, 'archaeopteryx-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
-            this.spritePrefix = 'flying-fish';
-        } else if (type === 'jellyfish') {
-            // Use directional sprites for jellyfish
-            this.sprite = scene.add.sprite(screenX, screenY, 'jellyfish-down');
+            this.spritePrefix = 'archaeopteryx';
+        } else if (type === 'pteranodon') {
+            // Use directional sprites for pteranodon
+            this.sprite = scene.add.sprite(screenX, screenY, 'pteranodon-down');
             this.currentDirection = 'down';
             this.useDirectionalSprites = true;
-            this.spritePrefix = 'jellyfish';
-        } else if (type === 'boss_iron_shell') {
-            // Use spritesheet for Iron Shell boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(screenX, screenY, 'iron-shell-boss', 0);
+            this.spritePrefix = 'pteranodon';
+        } else if (type === 'boss_trex') {
+            // Use spritesheet for Iron Jaw boss (4 frames, will use frame 0 as default)
+            this.sprite = scene.add.sprite(screenX, screenY, 'trex-boss', 0);
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
-        } else if (type === 'boss_kraken_arm') {
-            // Use spritesheet for Kraken boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(screenX, screenY, 'kraken-boss', 0);
+        } else if (type === 'boss_spinosaurus') {
+            // Use spritesheet for Spinosaurus boss (4 frames, will use frame 0 as default)
+            this.sprite = scene.add.sprite(screenX, screenY, 'spinosaurus-boss', 0);
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
-        } else if (type === 'boss_leviathan') {
-            // Use spritesheet for Leviathan boss (4 frames, will use frame 0 as default)
-            this.sprite = scene.add.sprite(screenX, screenY, 'leviathan-boss', 0);
+        } else if (type === 'boss_triceratops') {
+            // Use spritesheet for Triceratops boss (4 frames, will use frame 0 as default)
+            this.sprite = scene.add.sprite(screenX, screenY, 'triceratops-boss', 0);
             this.useDirectionalSprites = false;
             this.useSprite = true;  // Flag to indicate this uses a sprite (not circle)
             this.bossFrameIndex = 0;
@@ -272,7 +272,7 @@ export class Enemy {
 
         // Behavior-specific properties
         this.lastTeleport = 0;
-        this.swoopPhase = 'idle'; // for flying fish: 'idle', 'rising', 'swooping'
+        this.swoopPhase = 'idle'; // for archaeopteryx: 'idle', 'rising', 'swooping'
         this.swoopTarget = { x: 0, y: 0 };
 
         // Shooting properties
@@ -289,17 +289,17 @@ export class Enemy {
         this.chargeHitPlayer = false;
         this.lastChargeTime = 0;
 
-        // Kraken tentacle system
-        this.tentacles = [];
-        this.tentacleSprites = [];
+        // Spinosaurus tailSegment system
+        this.tailSegments = [];
+        this.tailSegmentSprites = [];
         this.bodyInvulnerable = false;
-        this.inkClouds = [];
-        this.inkTriggered1 = false;
-        this.inkTriggered2 = false;
+        this.mudClouds = [];
+        this.mudTriggered1 = false;
+        this.mudTriggered2 = false;
         this.lastSweepTime = 0;
         this.beamCrushTriggered = false; // Phase 6: Support beam destruction
 
-        // Leviathan environmental effects (Phase 6)
+        // Triceratops environmental effects (Phase 6)
         this.lastTailSweep = 0;
         this.lastLightningStrike = 0;
         this.lastLightningChain = 0;
@@ -337,24 +337,24 @@ export class Enemy {
 
     createVisualIndicators() {
         switch(this.type) {
-            case 'lobster':
-                // Lobster now uses sprites, no visual indicators needed
+            case 'velociraptor':
+                // Velociraptor now uses sprites, no visual indicators needed
                 break;
-            case 'shrimp':
-                // Shrimp now uses sprites, no visual indicators needed
+            case 'compy':
+                // Compy now uses sprites, no visual indicators needed
                 break;
-            case 'hermit':
-                // Hermit now uses sprites, no visual indicators needed
+            case 'ankylosaurus':
+                // Ankylosaurus now uses sprites, no visual indicators needed
                 break;
-            case 'jellyfish':
-                // Jellyfish now uses sprites, no visual indicators needed
+            case 'pteranodon':
+                // Pteranodon now uses sprites, no visual indicators needed
                 break;
-            case 'flyingfish':
-                // Flying fish now uses sprites, no visual indicators needed
+            case 'archaeopteryx':
+                // Archaeopteryx now uses sprites, no visual indicators needed
                 break;
-            case 'boss_kraken_arm':
-                // Create tentacle system
-                this.initializeKrakenTentacles();
+            case 'boss_spinosaurus':
+                // Create tailSegment system
+                this.initializeSpinosaurusTailSegments();
                 break;
         }
     }
@@ -731,14 +731,14 @@ export class Enemy {
             case 'swoop':
                 this.updateSwoop(time, playerWorldX, playerWorldY, formationHandled);
                 break;
-            case 'boss_iron_shell':
+            case 'boss_trex':
                 this.updateBossIronShell(time, playerWorldX, playerWorldY);
                 break;
-            case 'boss_kraken_arm':
-                this.updateBossKrakenArm(time, playerWorldX, playerWorldY);
+            case 'boss_spinosaurus':
+                this.updateBossSpinosaurusArm(time, playerWorldX, playerWorldY);
                 break;
-            case 'boss_leviathan':
-                this.updateBossLeviathan(time, playerWorldX, playerWorldY);
+            case 'boss_triceratops':
+                this.updateBossTriceratops(time, playerWorldX, playerWorldY);
                 break;
         }
 
@@ -1040,7 +1040,7 @@ export class Enemy {
                 case 'idle':
                     // Circle around player at high altitude
                     const angle = Math.atan2(dy, dx) + Math.PI / 2;
-                    // Flying fish flies over obstacles (no obstacle avoidance needed)
+                    // Archaeopteryx flies over obstacles (no obstacle avoidance needed)
                     const deltaSeconds = this.deltaSeconds;
                     this.worldX += Math.cos(angle) * this.worldSpeed * 0.6 * deltaSeconds;
                     this.worldY += Math.sin(angle) * this.worldSpeed * 0.6 * deltaSeconds;
@@ -1064,7 +1064,7 @@ export class Enemy {
                         this.swoopTarget.y - this.worldY,
                         this.swoopTarget.x - this.worldX
                     );
-                    // Flying fish flies over obstacles (no obstacle avoidance needed)
+                    // Archaeopteryx flies over obstacles (no obstacle avoidance needed)
                     const deltaSeconds2 = this.deltaSeconds;
                     this.worldX += Math.cos(swoopAngle) * this.worldSpeed * 1.5 * deltaSeconds2;
                     this.worldY += Math.sin(swoopAngle) * this.worldSpeed * 1.5 * deltaSeconds2;
@@ -1088,7 +1088,7 @@ export class Enemy {
                 case 'rising':
                     // Move away from player after swoop
                     const escapeAngle = Math.atan2(dy, dx) + Math.PI;
-                    // Flying fish flies over obstacles (no obstacle avoidance needed)
+                    // Archaeopteryx flies over obstacles (no obstacle avoidance needed)
                     const deltaSeconds3 = this.deltaSeconds;
                     this.worldX += Math.cos(escapeAngle) * this.worldSpeed * deltaSeconds3;
                     this.worldY += Math.sin(escapeAngle) * this.worldSpeed * deltaSeconds3;
@@ -1113,20 +1113,20 @@ export class Enemy {
 
     updateVisuals() {
         switch(this.type) {
-            case 'lobster':
-                // Lobster now uses sprites, no visual indicators to update
+            case 'velociraptor':
+                // Velociraptor now uses sprites, no visual indicators to update
                 break;
-            case 'shrimp':
-                // Shrimp now uses sprites, no visual indicators to update
+            case 'compy':
+                // Compy now uses sprites, no visual indicators to update
                 break;
-            case 'hermit':
-                // Hermit now uses sprites, no visual indicators to update
+            case 'ankylosaurus':
+                // Ankylosaurus now uses sprites, no visual indicators to update
                 break;
-            case 'jellyfish':
-                // Jellyfish now uses sprites, no visual indicators to update
+            case 'pteranodon':
+                // Pteranodon now uses sprites, no visual indicators to update
                 break;
-            case 'flyingfish':
-                // Flying fish now uses sprites, no visual indicators to update
+            case 'archaeopteryx':
+                // Archaeopteryx now uses sprites, no visual indicators to update
                 break;
         }
 
@@ -1213,21 +1213,21 @@ export class Enemy {
     }
 
     takeDamage(amount) {
-        // Leviathan phase 1 protection - prevent death, trigger phase 2
-        if (this.type === 'boss_leviathan' && this.bossPhase === 1) {
+        // Triceratops phase 1 protection - prevent death, trigger phase 2
+        if (this.type === 'boss_triceratops' && this.bossPhase === 1) {
             this.health -= amount;
             if (this.health <= 0) {
                 this.health = 0;
                 // Don't call kill() - will transition in next update
                 return 0;
             }
-            console.log('Leviathan took', amount, 'damage. Health:', this.health);
+            console.log('Triceratops took', amount, 'damage. Health:', this.health);
             return this.health;
         }
 
-        // Kraken-specific invulnerability
-        if (this.type === 'boss_kraken_arm' && this.bodyInvulnerable) {
-            console.log('Kraken body is invulnerable! Damage tentacles first!');
+        // Spinosaurus-specific invulnerability
+        if (this.type === 'boss_spinosaurus' && this.bodyInvulnerable) {
+            console.log('Spinosaurus body is invulnerable! Damage tailSegments first!');
             return this.health;
         }
 
@@ -1305,31 +1305,31 @@ export class Enemy {
 
         // Clean up type-specific visuals
         switch(this.type) {
-            case 'lobster':
-                // Lobster now uses sprites, no visual indicators to destroy
+            case 'velociraptor':
+                // Velociraptor now uses sprites, no visual indicators to destroy
                 break;
-            case 'shrimp':
-                // Shrimp now uses sprites, no visual indicators to destroy
+            case 'compy':
+                // Compy now uses sprites, no visual indicators to destroy
                 break;
-            case 'hermit':
-                // Hermit now uses sprites, no visual indicators to destroy
+            case 'ankylosaurus':
+                // Ankylosaurus now uses sprites, no visual indicators to destroy
                 break;
-            case 'jellyfish':
-                // Jellyfish now uses sprites, no visual indicators to destroy
+            case 'pteranodon':
+                // Pteranodon now uses sprites, no visual indicators to destroy
                 break;
-            case 'flyingfish':
-                // Flying fish now uses sprites, no visual indicators to destroy
+            case 'archaeopteryx':
+                // Archaeopteryx now uses sprites, no visual indicators to destroy
                 break;
-            case 'boss_kraken_arm':
-                // Destroy tentacle sprites
-                if (this.tentacleSprites) {
-                    this.tentacleSprites.forEach(sprite => {
+            case 'boss_spinosaurus':
+                // Destroy tailSegment sprites
+                if (this.tailSegmentSprites) {
+                    this.tailSegmentSprites.forEach(sprite => {
                         if (sprite) sprite.destroy();
                     });
                 }
-                // Destroy ink clouds
-                if (this.inkClouds) {
-                    this.inkClouds.forEach(cloud => {
+                // Destroy mud clouds
+                if (this.mudClouds) {
+                    this.mudClouds.forEach(cloud => {
                         if (cloud) cloud.destroy();
                     });
                 }
@@ -1342,7 +1342,7 @@ export class Enemy {
     }
 
     /**
-     * Ranged Shooter behavior (Bandit Lobster)
+     * Ranged Shooter behavior (Bandit Velociraptor)
      * Advances toward player, stops, winds up, shoots
      */
     updateRangedShooter(time, playerX, playerY, skipMovement = false) {
@@ -1438,7 +1438,7 @@ export class Enemy {
     }
 
     /**
-     * Ranged Kiter behavior (Quick-Draw Shrimp)
+     * Ranged Kiter behavior (Quick-Draw Compy)
      * Maintains distance while shooting rapidly
      */
     updateRangedKiter(time, playerX, playerY, skipMovement = false) {
@@ -1557,7 +1557,7 @@ export class Enemy {
     }
 
     /**
-     * Iron Shell Boss Behavior (Wave 3)
+     * Iron Jaw Boss Behavior (Wave 3)
      * Phase 1 (100-50% HP): Slow tank with bubble spread attacks
      * Phase 2 (50-0% HP): Faster movement with charge attacks
      */
@@ -1676,7 +1676,7 @@ export class Enemy {
         // Add red tint to sprite to show damage/phase 2
         this.sprite.setTint(0xff6666);
 
-        console.log('Iron Shell entered Phase 2!');
+        console.log('Iron Jaw entered Phase 2!');
     }
 
     fireBubbleSpread(targetX, targetY) {
@@ -1708,28 +1708,28 @@ export class Enemy {
         });
     }
 
-    initializeKrakenTentacles() {
-        const tentacleCount = this.config.tentacleCount || 4;
+    initializeSpinosaurusTailSegments() {
+        const tailSegmentCount = this.config.tailSegmentCount || 4;
 
-        for (let i = 0; i < tentacleCount; i++) {
-            const angle = (i / tentacleCount) * Math.PI * 2;
-            const tentacleX = this.worldX + Math.cos(angle) * this.config.tentacleLength;
-            const tentacleY = this.worldY + Math.sin(angle) * this.config.tentacleLength;
+        for (let i = 0; i < tailSegmentCount; i++) {
+            const angle = (i / tailSegmentCount) * Math.PI * 2;
+            const tailSegmentX = this.worldX + Math.cos(angle) * this.config.tailSegmentLength;
+            const tailSegmentY = this.worldY + Math.sin(angle) * this.config.tailSegmentLength;
 
-            // Create tentacle visual using sprite (each tentacle uses a different frame for variety)
-            const tentacleSprite = this.scene.add.sprite(
-                tentacleX,
-                tentacleY,
-                'kraken-tentacle',
-                i  // Use frame 0, 1, 2, 3 for each of the 4 tentacles
+            // Create tailSegment visual using sprite (each tailSegment uses a different frame for variety)
+            const tailSegmentSprite = this.scene.add.sprite(
+                tailSegmentX,
+                tailSegmentY,
+                'spinosaurus-tail-segment',
+                i  // Use frame 0, 1, 2, 3 for each of the 4 tailSegments
             );
 
-            this.tentacleSprites.push(tentacleSprite);
+            this.tailSegmentSprites.push(tailSegmentSprite);
 
-            // Create tentacle data
-            this.tentacles.push({
-                health: this.config.tentacleHealth,
-                maxHealth: this.config.tentacleHealth,
+            // Create tailSegment data
+            this.tailSegments.push({
+                health: this.config.tailSegmentHealth,
+                maxHealth: this.config.tailSegmentHealth,
                 angle: angle,
                 lastRegenTime: Date.now(),
                 alive: true
@@ -1741,12 +1741,12 @@ export class Enemy {
     }
 
     /**
-     * Kraken's Arm Boss Behavior (Wave 6)
-     * Must damage all tentacles to expose body
-     * Ink clouds at 60% and 30% HP
-     * Tentacle sweep attack every 10 seconds
+     * Spinosaurus's Arm Boss Behavior (Wave 6)
+     * Must damage all tailSegments to expose body
+     * Mud clouds at 60% and 30% HP
+     * TailSegment sweep attack every 10 seconds
      */
-    updateBossKrakenArm(time, playerX, playerY) {
+    updateBossSpinosaurusArm(time, playerX, playerY) {
         const currentTime = Date.now();
         const healthPercent = this.health / this.maxHealth;
 
@@ -1754,53 +1754,53 @@ export class Enemy {
         if (healthPercent <= 0.5 && !this.beamCrushTriggered) {
             this.beamCrushTriggered = true;
 
-            console.log('Kraken at 50% HP - crushing support beam!');
+            console.log('Spinosaurus at 50% HP - crushing support beam!');
 
             if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                 // Crush a random support beam
                 const beamIndex = Math.floor(Math.random() * 3); // 0, 1, or 2
                 this.scene.fortificationManager.destructionManager.handleBossEvent(
-                    'boss_kraken_arm',
+                    'boss_spinosaurus',
                     'beamCrush',
                     { beamIndex }
                 );
             }
         }
 
-        // Update tentacle positions (writhing animation)
-        this.tentacles.forEach((tentacle, i) => {
-            if (tentacle.alive && this.tentacleSprites[i]) {
-                const baseAngle = tentacle.angle;
+        // Update tailSegment positions (writhing animation)
+        this.tailSegments.forEach((tailSegment, i) => {
+            if (tailSegment.alive && this.tailSegmentSprites[i]) {
+                const baseAngle = tailSegment.angle;
                 const wobble = Math.sin(currentTime / 500 + i) * 0.3;
                 const angle = baseAngle + wobble;
 
-                // Calculate tentacle world position
-                const tentacleWorldX = this.worldX + Math.cos(angle) * this.config.tentacleLength;
-                const tentacleWorldY = this.worldY + Math.sin(angle) * this.config.tentacleLength;
+                // Calculate tailSegment world position
+                const tailSegmentWorldX = this.worldX + Math.cos(angle) * this.config.tailSegmentLength;
+                const tailSegmentWorldY = this.worldY + Math.sin(angle) * this.config.tailSegmentLength;
 
                 // Store world coordinates for targeting
-                tentacle.worldX = tentacleWorldX;
-                tentacle.worldY = tentacleWorldY;
+                tailSegment.worldX = tailSegmentWorldX;
+                tailSegment.worldY = tailSegmentWorldY;
 
                 // Convert to screen coordinates for sprite positioning
-                const { screenX, screenY } = worldToScreen(tentacleWorldX, tentacleWorldY, this.worldZ);
-                this.tentacleSprites[i].setPosition(screenX, screenY);
+                const { screenX, screenY } = worldToScreen(tailSegmentWorldX, tailSegmentWorldY, this.worldZ);
+                this.tailSegmentSprites[i].setPosition(screenX, screenY);
 
                 // Regeneration
-                if (tentacle.health < tentacle.maxHealth) {
-                    const regenElapsed = (currentTime - tentacle.lastRegenTime) / 1000;
-                    tentacle.health = Math.min(
-                        tentacle.maxHealth,
-                        tentacle.health + (this.config.tentacleRegenRate * regenElapsed)
+                if (tailSegment.health < tailSegment.maxHealth) {
+                    const regenElapsed = (currentTime - tailSegment.lastRegenTime) / 1000;
+                    tailSegment.health = Math.min(
+                        tailSegment.maxHealth,
+                        tailSegment.health + (this.config.tailSegmentRegenRate * regenElapsed)
                     );
-                    tentacle.lastRegenTime = currentTime;
+                    tailSegment.lastRegenTime = currentTime;
                 }
             }
         });
 
-        // Check if body should be vulnerable (when all tentacles destroyed)
-        const aliveTentacles = this.tentacles.filter(t => t.alive).length;
-        this.bodyInvulnerable = aliveTentacles > 0;
+        // Check if body should be vulnerable (when all tailSegments destroyed)
+        const aliveTailSegments = this.tailSegments.filter(t => t.alive).length;
+        this.bodyInvulnerable = aliveTailSegments > 0;
 
         // Visual indicator for invulnerability (use tint for sprites)
         if (this.bodyInvulnerable) {
@@ -1809,30 +1809,30 @@ export class Enemy {
             this.sprite.clearTint();  // Normal color when vulnerable
         }
 
-        // Ink cloud triggers
-        if (healthPercent <= 0.6 && !this.inkTriggered1) {
-            this.createInkClouds(3);
-            this.inkTriggered1 = true;
+        // Mud cloud triggers
+        if (healthPercent <= 0.6 && !this.mudTriggered1) {
+            this.createMudClouds(3);
+            this.mudTriggered1 = true;
         }
-        if (healthPercent <= 0.3 && !this.inkTriggered2) {
-            this.createInkClouds(3);
-            this.inkTriggered2 = true;
+        if (healthPercent <= 0.3 && !this.mudTriggered2) {
+            this.createMudClouds(3);
+            this.mudTriggered2 = true;
         }
 
-        // Tentacle slam attacks (individual)
-        this.tentacles.forEach((tentacle, i) => {
-            if (tentacle.alive && !tentacle.slamming) {
-                const timeSinceLastSlam = currentTime - (tentacle.lastSlamTime || 0);
+        // TailSegment slam attacks (individual)
+        this.tailSegments.forEach((tailSegment, i) => {
+            if (tailSegment.alive && !tailSegment.slamming) {
+                const timeSinceLastSlam = currentTime - (tailSegment.lastSlamTime || 0);
                 if (timeSinceLastSlam >= 4000) {
-                    this.tentacleSlam(i, playerX, playerY);
+                    this.tailSegmentSlam(i, playerX, playerY);
                 }
             }
         });
 
-        // Tentacle sweep attack (all at once)
+        // TailSegment sweep attack (all at once)
         const sweepReady = (currentTime - this.lastSweepTime) >= this.config.sweepCooldown;
         if (sweepReady) {
-            this.tentacleSweep();
+            this.tailSegmentSweep();
             this.lastSweepTime = currentTime;
         }
 
@@ -1861,35 +1861,35 @@ export class Enemy {
         }
     }
 
-    createInkClouds(count) {
+    createMudClouds(count) {
         for (let i = 0; i < count; i++) {
             // Random position in arena
             const x = 300 + Math.random() * 1320;
             const y = 200 + Math.random() * 680;
 
-            const cloud = this.scene.add.circle(x, y, this.config.inkCloudRadius, 0x000000, 0.6);
+            const cloud = this.scene.add.circle(x, y, this.config.mudCloudRadius, 0x000000, 0.6);
             cloud.createdAt = Date.now();
 
-            this.inkClouds.push(cloud);
+            this.mudClouds.push(cloud);
 
             // Auto-remove after duration
-            this.scene.time.delayedCall(this.config.inkCloudDuration, () => {
-                const index = this.inkClouds.indexOf(cloud);
+            this.scene.time.delayedCall(this.config.mudCloudDuration, () => {
+                const index = this.mudClouds.indexOf(cloud);
                 if (index > -1) {
-                    this.inkClouds.splice(index, 1);
+                    this.mudClouds.splice(index, 1);
                     cloud.destroy();
                 }
             });
         }
 
-        console.log('Kraken created ink clouds!');
+        console.log('Spinosaurus created mud clouds!');
     }
 
-    tentacleSlam(tentacleIndex, targetX, targetY) {
-        const tentacle = this.tentacles[tentacleIndex];
-        tentacle.slamming = true;
-        tentacle.slamTargetX = targetX;
-        tentacle.slamTargetY = targetY;
+    tailSegmentSlam(tailSegmentIndex, targetX, targetY) {
+        const tailSegment = this.tailSegments[tailSegmentIndex];
+        tailSegment.slamming = true;
+        tailSegment.slamTargetX = targetX;
+        tailSegment.slamTargetY = targetY;
 
         // Telegraph
         const telegraph = this.scene.add.circle(targetX, targetY, 30, 0xff0000, 0.3);
@@ -1919,29 +1919,29 @@ export class Enemy {
                 onComplete: () => impact.destroy()
             });
 
-            // Phase 6: Trigger environmental destruction from tentacle slam
+            // Phase 6: Trigger environmental destruction from tailSegment slam
             if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                 this.scene.fortificationManager.destructionManager.handleBossEvent(
-                    'boss_kraken_arm',
-                    'tentacleSlam',
+                    'boss_spinosaurus',
+                    'tailSegmentSlam',
                     { x: targetX, y: targetY }
                 );
             }
 
-            tentacle.slamming = false;
-            tentacle.lastSlamTime = Date.now();
+            tailSegment.slamming = false;
+            tailSegment.lastSlamTime = Date.now();
         });
     }
 
-    tentacleSweep() {
+    tailSegmentSweep() {
         this.sweepDamageDealt = false;  // Add at start
 
-        // Make all tentacles glow (use tint for sprites)
-        this.tentacleSprites.forEach(sprite => {
+        // Make all tailSegments glow (use tint for sprites)
+        this.tailSegmentSprites.forEach(sprite => {
             if (sprite) sprite.setTint(0xffff00);
         });
 
-        // Rotate tentacles 360 degrees
+        // Rotate tailSegments 360 degrees
         const sweepDuration = 2000;
         const startTime = Date.now();
 
@@ -1952,13 +1952,13 @@ export class Enemy {
                 const progress = (Date.now() - startTime) / sweepDuration;
                 const rotationOffset = progress * Math.PI * 2;
 
-                this.tentacles.forEach((tentacle, i) => {
-                    tentacle.angle = (i / this.tentacles.length) * Math.PI * 2 + rotationOffset;
+                this.tailSegments.forEach((tailSegment, i) => {
+                    tailSegment.angle = (i / this.tailSegments.length) * Math.PI * 2 + rotationOffset;
 
                     // Check collision with all players
-                    if (this.tentacleSprites[i] && this.scene.playerManager) {
-                        const tx = this.tentacleSprites[i].x;
-                        const ty = this.tentacleSprites[i].y;
+                    if (this.tailSegmentSprites[i] && this.scene.playerManager) {
+                        const tx = this.tailSegmentSprites[i].x;
+                        const ty = this.tailSegmentSprites[i].y;
 
                         this.scene.playerManager.getLivingPlayers().forEach(player => {
                             const px = player.getX();
@@ -1974,45 +1974,45 @@ export class Enemy {
                 });
 
                 if (progress >= 1) {
-                    // Reset tentacle colors (clear tint for sprites)
-                    this.tentacleSprites.forEach(sprite => {
+                    // Reset tailSegment colors (clear tint for sprites)
+                    this.tailSegmentSprites.forEach(sprite => {
                         if (sprite) sprite.clearTint();
                     });
                 }
             }
         });
 
-        console.log('Kraken performing tentacle sweep!');
+        console.log('Spinosaurus performing tailSegment sweep!');
     }
 
-    takeTentacleDamage(tentacleIndex, amount) {
-        if (tentacleIndex >= 0 && tentacleIndex < this.tentacles.length) {
-            const tentacle = this.tentacles[tentacleIndex];
-            if (tentacle.alive) {
-                tentacle.health -= amount;
+    takeTailSegmentDamage(tailSegmentIndex, amount) {
+        if (tailSegmentIndex >= 0 && tailSegmentIndex < this.tailSegments.length) {
+            const tailSegment = this.tailSegments[tailSegmentIndex];
+            if (tailSegment.alive) {
+                tailSegment.health -= amount;
 
-                if (tentacle.health <= 0) {
-                    tentacle.health = 0;
-                    tentacle.alive = false;
+                if (tailSegment.health <= 0) {
+                    tailSegment.health = 0;
+                    tailSegment.alive = false;
 
-                    // Destroy tentacle visual
-                    if (this.tentacleSprites[tentacleIndex]) {
-                        this.tentacleSprites[tentacleIndex].destroy();
+                    // Destroy tailSegment visual
+                    if (this.tailSegmentSprites[tailSegmentIndex]) {
+                        this.tailSegmentSprites[tailSegmentIndex].destroy();
                     }
                 }
 
-                return tentacle.health;
+                return tailSegment.health;
             }
         }
         return -1;
     }
 
     /**
-     * Leviathan Boss Behavior (Wave 9 - Final Boss)
+     * Triceratops Boss Behavior (Wave 9 - Final Boss)
      * Phase 1 (400 HP): Bullet storm, ground pound, charge
      * Phase 2 (400 HP): Lightning strikes, tidal wave, spawns minions
      */
-    updateBossLeviathan(time, playerX, playerY) {
+    updateBossTriceratops(time, playerX, playerY) {
         const dx = playerX - this.worldX;
         const dy = playerY - this.worldY;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -2020,7 +2020,7 @@ export class Enemy {
 
         // Check for phase transition at 0 HP (but don't die)
         if (this.health <= 0 && this.bossPhase === 1) {
-            this.transitionToPhase2Leviathan();
+            this.transitionToPhase2Triceratops();
             return;
         }
 
@@ -2037,9 +2037,9 @@ export class Enemy {
 
         // Attack pattern selection based on phase
         if (this.bossPhase === 1) {
-            this.leviathanPhase1Attacks(currentTime, playerX, playerY, distance);
+            this.triceratopsPhase1Attacks(currentTime, playerX, playerY, distance);
         } else {
-            this.leviathanPhase2Attacks(currentTime, playerX, playerY, distance);
+            this.triceratopsPhase2Attacks(currentTime, playerX, playerY, distance);
         }
 
         // Movement
@@ -2067,13 +2067,13 @@ export class Enemy {
                 }
 
                 // Set the appropriate texture based on current phase
-                const textureName = this.currentPhase === 2 ? 'leviathan-evolved' : 'leviathan-boss';
+                const textureName = this.currentPhase === 2 ? 'triceratops-evolved' : 'triceratops-boss';
                 this.sprite.setTexture(textureName, this.bossFrameIndex);
             }
         }
     }
 
-    leviathanPhase1Attacks(currentTime, playerX, playerY, distance) {
+    triceratopsPhase1Attacks(currentTime, playerX, playerY, distance) {
         // Bullet Storm attack
         const bulletStormReady = (currentTime - (this.lastBulletStorm || 0)) >= this.config.bulletStormCooldown;
         if (bulletStormReady && distance <= this.config.attackRange) {
@@ -2111,7 +2111,7 @@ export class Enemy {
         if (lightningReady) {
             if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                 this.scene.fortificationManager.destructionManager.handleBossEvent(
-                    'boss_leviathan',
+                    'boss_triceratops',
                     'lightningStrike',
                     { propIndex: 0 } // Random prop
                 );
@@ -2120,7 +2120,7 @@ export class Enemy {
         }
     }
 
-    leviathanPhase2Attacks(currentTime, playerX, playerY, distance) {
+    triceratopsPhase2Attacks(currentTime, playerX, playerY, distance) {
         // Lightning Strike attack
         const lightningReady = (currentTime - (this.lastLightning || 0)) >= this.config.lightningCooldown;
         if (lightningReady) {
@@ -2150,7 +2150,7 @@ export class Enemy {
         if (chainReady) {
             if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                 this.scene.fortificationManager.destructionManager.handleBossEvent(
-                    'boss_leviathan',
+                    'boss_triceratops',
                     'lightningChain',
                     { x: this.worldX, y: this.worldY }
                 );
@@ -2165,7 +2165,7 @@ export class Enemy {
 
             if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                 this.scene.fortificationManager.destructionManager.handleBossEvent(
-                    'boss_leviathan',
+                    'boss_triceratops',
                     'explodeLights',
                     {}
                 );
@@ -2174,7 +2174,7 @@ export class Enemy {
     }
 
     bulletStormAttack() {
-        console.log('Leviathan: Bullet Storm!');
+        console.log('Triceratops: Bullet Storm!');
 
         // Scale bullet storm damage with difficulty multiplier
         const scaledBulletStormDamage = Math.ceil(this.config.bulletStormDamage * this.difficultyMultipliers.damage);
@@ -2201,7 +2201,7 @@ export class Enemy {
     }
 
     groundPoundAttack(playerX, playerY) {
-        console.log('Leviathan: Ground Pound!');
+        console.log('Triceratops: Ground Pound!');
         this.attackingInProgress = true;
 
         // Rise up visual - add yellow tint for sprites
@@ -2269,7 +2269,7 @@ export class Enemy {
     }
 
     chargeAttack(playerX, playerY) {
-        console.log('Leviathan: Charge!');
+        console.log('Triceratops: Charge!');
         this.attackingInProgress = true;
 
         // Telegraph line showing charge path
@@ -2321,7 +2321,7 @@ export class Enemy {
     }
 
     lightningStrikeAttack() {
-        console.log('Leviathan: Lightning Strike!');
+        console.log('Triceratops: Lightning Strike!');
 
         // Prevent multiple hits in single attack
         this.lightningDamageDealt = false;
@@ -2384,7 +2384,7 @@ export class Enemy {
     }
 
     tidalWaveAttack() {
-        console.log('Leviathan: Tidal Wave!');
+        console.log('Triceratops: Tidal Wave!');
         this.attackingInProgress = true;
 
         // Move to edge of arena (world space)
@@ -2451,7 +2451,7 @@ export class Enemy {
     }
 
     tailSweepAttack(playerX, playerY) {
-        console.log('Leviathan: Tail Sweep!');
+        console.log('Triceratops: Tail Sweep!');
         this.attackingInProgress = true;
 
         // Calculate sweep angle toward player
@@ -2469,7 +2469,7 @@ export class Enemy {
             // Phase 6: Trigger environmental effect to knock back light props
             if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                 this.scene.fortificationManager.destructionManager.handleBossEvent(
-                    'boss_leviathan',
+                    'boss_triceratops',
                     'tailSweep',
                     { x: this.worldX, y: this.worldY, angle }
                 );
@@ -2494,8 +2494,8 @@ export class Enemy {
         });
     }
 
-    transitionToPhase2Leviathan() {
-        console.log('Leviathan: PHASE 2!');
+    transitionToPhase2Triceratops() {
+        console.log('Triceratops: PHASE 2!');
         this.bossPhase = 2;
         this.phaseTransitioning = true;
         this.currentPhase = 2;
@@ -2505,7 +2505,7 @@ export class Enemy {
 
         // Switch to evolved sprite (electric blue form)
         if (this.useSprite) {
-            this.sprite.setTexture('leviathan-evolved', this.bossFrameIndex);
+            this.sprite.setTexture('triceratops-evolved', this.bossFrameIndex);
         }
 
         // Visual effects
@@ -2515,7 +2515,7 @@ export class Enemy {
         // Phase 6: Electrical surge on phase transition
         if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
             this.scene.fortificationManager.destructionManager.handleBossEvent(
-                'boss_leviathan',
+                'boss_triceratops',
                 'electricalSurge',
                 {}
             );
@@ -2524,7 +2524,7 @@ export class Enemy {
             this.scene.time.delayedCall(1000, () => {
                 if (this.scene.fortificationManager && this.scene.fortificationManager.destructionManager) {
                     this.scene.fortificationManager.destructionManager.handleBossEvent(
-                        'boss_leviathan',
+                        'boss_triceratops',
                         'electrifyMetal',
                         {}
                     );
@@ -2533,7 +2533,7 @@ export class Enemy {
         }
 
         // Announcement
-        const announcement = this.scene.add.text(960, 400, 'THE LEVIATHAN EVOLVES', {
+        const announcement = this.scene.add.text(960, 400, 'THE BEHEMOTH EVOLVES', {
             fontSize: '64px',
             color: '#ff0000',
             fontFamily: 'Arial',
@@ -2556,7 +2556,7 @@ export class Enemy {
     }
 
     spawnMinions(minionTypes) {
-        console.log('Leviathan spawning minions:', minionTypes);
+        console.log('Triceratops spawning minions:', minionTypes);
 
         minionTypes.forEach((type, index) => {
             const angle = (index / minionTypes.length) * Math.PI * 2;
@@ -2628,9 +2628,9 @@ export class Enemy {
         this.sprite.setAlpha(this.alphaValue);
 
         // Also update child elements
-        // Kraken boss tentacle sprites
-        if (this.tentacleSprites) {
-            this.tentacleSprites.forEach(sprite => {
+        // Spinosaurus boss tailSegment sprites
+        if (this.tailSegmentSprites) {
+            this.tailSegmentSprites.forEach(sprite => {
                 if (sprite) sprite.setAlpha(this.alphaValue);
             });
         }

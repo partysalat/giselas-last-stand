@@ -253,12 +253,12 @@ export class Player {
     }
 
     getTargetCenterHeight(targetEnemy) {
-        if (targetEnemy.type === 'tentacle') {
-            // Tentacles: estimate center height based on sprite position
+        if (targetEnemy.type === 'tailSegment') {
+            // Tail Segments: estimate center height based on sprite position
             const enemy = targetEnemy.enemy;
-            const tentSprite = enemy.tentacleSprites ? enemy.tentacleSprites[targetEnemy.tentacleIndex] : null;
+            const tentSprite = enemy.tailSegmentSprites ? enemy.tailSegmentSprites[targetEnemy.tailSegmentIndex] : null;
             if (!tentSprite) return 0;
-            // Tentacles are roughly 40 pixels tall, center is ~20 pixels
+            // Tail Segments are roughly 40 pixels tall, center is ~20 pixels
             return 0.4; // ~20 pixels in world units
         } else if (targetEnemy.type === 'enemy') {
             // Regular enemy: use worldZ + half height
@@ -281,9 +281,9 @@ export class Player {
         }
 
         // Validate target based on type
-        if (targetEnemy.type === 'tentacle') {
+        if (targetEnemy.type === 'tailSegment') {
             const enemy = targetEnemy.enemy;
-            const tentData = enemy.tentacles ? enemy.tentacles[targetEnemy.tentacleIndex] : null;
+            const tentData = enemy.tailSegments ? enemy.tailSegments[targetEnemy.tailSegmentIndex] : null;
             if (!enemy || !enemy.isAlive() || !tentData || !tentData.alive) {
                 return;
             }
@@ -320,14 +320,14 @@ export class Player {
         // Get target world coordinates based on type
         let targetWorldX, targetWorldY;
 
-        if (targetEnemy.type === 'tentacle') {
+        if (targetEnemy.type === 'tailSegment') {
             const enemy = targetEnemy.enemy;
             if (!enemy) return;
-            // Get tentacle's actual world position from stored coordinates
-            const tentacle = enemy.tentacles[targetEnemy.tentacleIndex];
-            if (!tentacle) return;
-            targetWorldX = tentacle.worldX || enemy.worldX;
-            targetWorldY = tentacle.worldY || enemy.worldY;
+            // Get tail segment's actual world position from stored coordinates
+            const tailSegment = enemy.tailSegments[targetEnemy.tailSegmentIndex];
+            if (!tailSegment) return;
+            targetWorldX = tailSegment.worldX || enemy.worldX;
+            targetWorldY = tailSegment.worldY || enemy.worldY;
         } else if (targetEnemy.type === 'enemy') {
             const enemy = targetEnemy.enemy;
             if (!enemy) return;

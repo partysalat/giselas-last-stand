@@ -459,7 +459,7 @@ export class GameScene extends Phaser.Scene {
             );
 
             // Handle target cycling
-            // E key = cycle enemies (including tentacles)
+            // E key = cycle enemies (including tailSegments)
             if (inputManager.shouldCycleEnemyTarget()) {
                 targetSelector.cycleToEnemyTarget(
                     player.worldX,
@@ -477,17 +477,17 @@ export class GameScene extends Phaser.Scene {
                 );
             }
 
-            // Check if player is in ink cloud
+            // Check if player is in mud cloud
             let speedMultiplier = 1.0;
             for (const enemy of this.enemies) {
-                if (enemy.type === 'boss_kraken_arm' && enemy.inkClouds) {
-                    for (const cloud of enemy.inkClouds) {
+                if (enemy.type === 'boss_spinosaurus' && enemy.mudClouds) {
+                    for (const cloud of enemy.mudClouds) {
                         const dx = player.getX() - cloud.x;
                         const dy = player.getY() - cloud.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
 
-                        if (dist < enemy.config.inkCloudRadius) {
-                            speedMultiplier = enemy.config.inkCloudSlowFactor;
+                        if (dist < enemy.config.mudCloudRadius) {
+                            speedMultiplier = enemy.config.mudCloudSlowFactor;
                             break;
                         }
                     }
@@ -755,10 +755,10 @@ export class GameScene extends Phaser.Scene {
                 let isAlive = false;
 
                 // Get coordinates based on target type
-                if (lockedTarget.type === 'tentacle') {
+                if (lockedTarget.type === 'tailSegment') {
                     const enemy = lockedTarget.enemy;
-                    const tentSprite = enemy.tentacleSprites ? enemy.tentacleSprites[lockedTarget.tentacleIndex] : null;
-                    const tentData = enemy.tentacles ? enemy.tentacles[lockedTarget.tentacleIndex] : null;
+                    const tentSprite = enemy.tailSegmentSprites ? enemy.tailSegmentSprites[lockedTarget.tailSegmentIndex] : null;
+                    const tentData = enemy.tailSegments ? enemy.tailSegments[lockedTarget.tailSegmentIndex] : null;
 
                     if (tentSprite && tentData && tentData.alive) {
                         targetX = tentSprite.x;
@@ -811,10 +811,10 @@ export class GameScene extends Phaser.Scene {
                 let isAlive = false;
 
                 // Get coordinates based on target type
-                if (currentTarget.type === 'tentacle') {
+                if (currentTarget.type === 'tailSegment') {
                     const enemy = currentTarget.enemy;
-                    const tentSprite = enemy.tentacleSprites ? enemy.tentacleSprites[currentTarget.tentacleIndex] : null;
-                    const tentData = enemy.tentacles ? enemy.tentacles[currentTarget.tentacleIndex] : null;
+                    const tentSprite = enemy.tailSegmentSprites ? enemy.tailSegmentSprites[currentTarget.tailSegmentIndex] : null;
+                    const tentData = enemy.tailSegments ? enemy.tailSegments[currentTarget.tailSegmentIndex] : null;
 
                     if (tentSprite && tentData && tentData.alive) {
                         targetX = tentSprite.x;
@@ -1005,18 +1005,18 @@ export class GameScene extends Phaser.Scene {
                     }
                 }
 
-                // After checking body collision, check tentacles for Kraken boss
-                if (enemy.type === 'boss_kraken_arm' && enemy.tentacleSprites) {
-                    for (let k = 0; k < enemy.tentacleSprites.length; k++) {
-                        const tentSprite = enemy.tentacleSprites[k];
-                        if (!tentSprite || !enemy.tentacles[k] || !enemy.tentacles[k].alive) continue;
+                // After checking body collision, check tailSegments for Spinosaurus boss
+                if (enemy.type === 'boss_spinosaurus' && enemy.tailSegmentSprites) {
+                    for (let k = 0; k < enemy.tailSegmentSprites.length; k++) {
+                        const tentSprite = enemy.tailSegmentSprites[k];
+                        if (!tentSprite || !enemy.tailSegments[k] || !enemy.tailSegments[k].alive) continue;
 
                         const tdx = bullet.getSprite().x - tentSprite.x;
                         const tdy = bullet.getSprite().y - tentSprite.y;
                         const tdist = Math.sqrt(tdx * tdx + tdy * tdy);
 
-                        if (tdist < 24) { // bullet radius (4) + tentacle radius (20)
-                            enemy.takeTentacleDamage(k, bullet.getDamage());
+                        if (tdist < 24) { // bullet radius (4) + tailSegment radius (20)
+                            enemy.takeTailSegmentDamage(k, bullet.getDamage());
                             // Track which player hit this enemy (for scoring)
                             enemy.lastHitByPlayerIndex = player.playerIndex;
                             hitEnemy = true;
@@ -1024,7 +1024,7 @@ export class GameScene extends Phaser.Scene {
                             // Visual feedback (use tint for sprites)
                             tentSprite.setTint(0xffffff);
                             this.time.delayedCall(100, () => {
-                                if (tentSprite && enemy.tentacles[k] && enemy.tentacles[k].alive) {
+                                if (tentSprite && enemy.tailSegments[k] && enemy.tailSegments[k].alive) {
                                     tentSprite.clearTint();
                                 }
                             });
@@ -1631,7 +1631,7 @@ export class GameScene extends Phaser.Scene {
                     // Screen shake on hit
                     this.cameras.main.shake(150, 0.003);
 
-                    // Check for explosion (bounty lobster bullets)
+                    // Check for explosion (bounty velociraptor bullets)
                     const explosion = bullet.explode();
                     if (explosion) {
                         // Explosion AoE - damage other players in radius (using world coordinates)

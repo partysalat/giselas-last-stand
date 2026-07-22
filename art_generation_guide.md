@@ -2094,3 +2094,616 @@ Epic title screen illustration: Red cartoon crab Gisela in dynamic action pose i
 
 **Status:** Test assets validated ✅
 **Ready for:** Bulk generation Phase 1
+---
+
+## Dinosaur Enemies (Wave Reskin)
+
+**Date:** 2026-07-21
+**Context:** Enemies reskinned from sea-creature bandits to dinosaurs. Gisela, the saloon, all mechanics, and all attack behaviors are unchanged — only the creature and its visuals change. Same style rules as above apply throughout: isometric 3/4 view at 45°, comic book art with thick black ink outlines, cel-shading with 2-3 flat tone levels, no gradients, transparent background, wild-west-outlaw accessories (hats, bandanas, holsters, goggles) kept on every dinosaur to preserve the theme.
+
+**Type mapping used in code** (`src/entities/Enemy.js`, `src/systems/WaveManager.js`):
+
+| Old (sea creature) | New (dinosaur) | Display Name | Sprite prefix / folder |
+|-|-|-|-|
+| lobster | Velociraptor | Raptor Rustler | `velociraptor` |
+| shrimp | Compsognathus | Compy Bandit | `compy` |
+| hermit | Ankylosaurus | Ironhide Ankylosaurus | `ankylosaurus` |
+| jellyfish | Pteranodon | Ghost Wing | `pteranodon` |
+| flyingfish | Archaeopteryx | Sky Bandit | `archaeopteryx` |
+| boss_iron_shell | T-Rex | Iron Jaw | `trex` (spritesheet) |
+| boss_kraken_arm | Spinosaurus | The Spiny Terror | `spinosaurus` (spritesheet + tail segments) |
+| boss_leviathan | Triceratops | The Behemoth | `triceratops` (spritesheet, 2 phases) |
+
+Required file paths (per `src/scenes/PreloadScene.js`):
+- `assets/sprites/enemies/velociraptor/velociraptor-{down,top,left,right,down-left,down-right,top-left,top-right}.png`
+- `assets/sprites/enemies/compy/compy-{down,top,left,right,down-left,down-right,top-left,top-right}.png`
+- `assets/sprites/enemies/ankylosaurus/ankylosaurus-{down,up,left,right,bottom-left,bottom-right,top-left,top-right}.png`
+- `assets/sprites/enemies/archaeopteryx/archaeopteryx-{bottom,top,left,right,bottom-left,bottom-right,top-left,top-right}.png`
+- `assets/sprites/enemies/pteranodon/pteranodon-{bottom,top,left,right,bottom-left,bottom-right,top-left,top-right}.png`
+- `assets/sprites/enemies/trex.png` (128×128 frames, 2×2 grid)
+- `assets/sprites/enemies/spinosaurus.png` (128×128 frames, 2×2 grid)
+- `assets/sprites/enemies/spinosaurus_tail.png` (64×64 frames, 2×2 grid — 4 destructible tail segments)
+- `assets/sprites/enemies/triceratops.png` (128×128 frames, 2×2 grid — Phase 1)
+- `assets/sprites/enemies/triceratops_evolved.png` (128×128 frames, 2×2 grid — Phase 2)
+
+---
+
+### Enemy: Raptor Rustler (Velociraptor) — Multi-Directional
+
+**ChatGPT Base Prompt:**
+```
+Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+CHARACTER: A brown-and-tan velociraptor styled as a western outlaw. He stands upright in a menacing, threatening stance, balanced on powerful hind legs. [ADD DIRECTION]
+
+OUTFIT: Black cowboy hat, dark brown/black leather vest strapped across his chest. Holding pistols in both clawed forearms. Menacing, villainous expression with narrowed reptilian eyes.
+
+FEATURES: Natural velociraptor anatomy - sharp curved claws gripping pistols, long stiff tail extending behind for balance, rows of small sharp teeth, feathered ridge along the back of the neck, textured scaly hide. Cartoonish proportions but clearly a villain.
+
+STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Clean, vibrant colors - earthy brown-tan hide, black hat, dark vest. No gradients, flat color zones with clear shadows.
+
+COMPOSITION: Character centered, taking up 70% of frame. Aggressive stance. White or transparent background with no environmental elements.
+
+AESTHETIC: Wild west outlaw meets prehistoric predator. Clearly villainous and distinct from hero. Bold and readable at small sizes.
+```
+
+**Bing Condensed Base (add direction):**
+```
+Isometric 3/4 top-down view of a brown-tan velociraptor dressed as western outlaw wearing black cowboy hat and dark vest, menacing villainous expression, holding pistols in clawed forearms, long balancing tail, viewed at 45-degree angle from above like RimWorld or Stardew Valley character sprite, comic book art style with thick black outlines and cel-shading, wild west prehistoric theme, game character sprite on transparent background
+```
+
+**Direction modifiers:** (ChatGPT) `, shown facing toward the camera` | `, shown facing away from camera with back and tail visible` | `, shown facing left in profile view` | `, shown facing right in profile view`
+
+**2x2 Grid Bundle Prompt:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Raptor Rustler - brown-tan velociraptor bandit styled as western outlaw. Black cowboy hat, dark leather vest, holding pistols in clawed forearms. Menacing villain with long stiff tail extending behind, feathered neck ridge, textured scaly hide.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Brown-tan hide, black hat, dark vest. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments.
+
+FRAME LAYOUT - 2x2 Grid with clear separation:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Raptor faces directly toward viewer, both clawed forearms holding pistols aimed forward, hat visible from front angle
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Raptor faces away from viewer, back hide and stiff tail dominate, back of hat visible, forearms at sides
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Raptor in LEFT PROFILE, tail curling left, both forearms extended left with pistols, hat visible from left side
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Raptor in RIGHT PROFILE (mirror of left), tail curling right, both forearms extended right with pistols, hat visible from right side
+
+COMPOSITION: Enemy centered taking 70% of frame. White/transparent background. Clear borders between frames. All four views must maintain consistent size.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: brown-tan velociraptor bandit, black cowboy hat, dark vest, pistols in clawed forearms, long balancing tail, 4 directions (front/back/left/right). Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, western outlaw raptor, enemy sprite sheet, transparent background
+```
+
+---
+
+### Enemy: Compy Bandit (Compsognathus) — Multi-Directional
+
+**ChatGPT Base Prompt:**
+```
+Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+CHARACTER: A small sandy-tan compsognathus styled as a quick-draw gunslinger. Small and nimble, standing upright in a fast, agile posture. [ADD DIRECTION]
+
+OUTFIT: Tiny red bandana around neck, small brown cowboy hat. Holding dual pistols in small clawed forearms in quick-draw stance. Fast gunslinger vibe.
+
+FEATURES: Natural compsognathus anatomy - slender bird-like body, long thin tail for balance, long neck, small sharp teeth, quick darting posture. Small size compared to other enemies. Cartoonish but clearly a speedy threat.
+
+STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Clean, vibrant colors - sandy tan for hide, brown for hat, red bandana. No gradients, flat color zones with clear shadows.
+
+COMPOSITION: Character centered, taking up 60% of frame (smaller than other enemies). Dynamic quick-draw pose. White or transparent background with no environmental elements.
+
+AESTHETIC: Fast gunslinger meets small prehistoric predator. Conveys speed and agility. Bold and readable at small sizes.
+```
+
+**Bing Condensed Base (add direction):**
+```
+Isometric 3/4 top-down view of a small sandy-tan compsognathus dressed as quick-draw gunslinger, small and nimble looking, bandana and small cowboy hat, dual pistols, fast and agile posture, viewed at 45-degree angle from above like RimWorld or Stardew Valley character sprite, comic book art style with thick black outlines and cel-shading, wild west prehistoric theme, game character sprite on transparent background
+```
+
+**Direction modifiers:** (ChatGPT) `, shown facing toward the camera` | `, shown facing away from camera with back visible` | `, shown facing left in profile view` | `, shown facing right in profile view`
+
+**2x2 Grid Bundle Prompt:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Compy Bandit - sandy-tan compsognathus styled as quick-draw gunslinger. Small and nimble. Tiny red bandana, small brown cowboy hat, dual pistols in small clawed forearms. Slender bird-like body, long thin tail, long neck. Fast, agile threat.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Sandy tan body, brown hat, red bandana. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION rotating 90-degree increments. Smaller than other enemies.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Compy faces toward viewer, both small forearms with dual pistols in quick-draw stance, hat visible from front
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Compy faces away, back of slender body and thin tail visible, back of hat visible, pistols at sides
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Compy in LEFT PROFILE, slender body side view, both pistols aimed left, hat from left side
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Compy in RIGHT PROFILE (mirror), slender body side view, both pistols aimed right, hat from right side
+
+COMPOSITION: Compy centered taking 60% of frame (smaller than other enemies). White/transparent background. Clear borders. Consistent size across all views.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: sandy-tan compsognathus gunslinger, small cowboy hat, bandana, dual pistols, fast nimble pose, long thin tail, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, quick-draw dinosaur enemy, sprite sheet, transparent background
+```
+
+---
+
+### Enemy: Ironhide Ankylosaurus — Multi-Directional
+
+**ChatGPT Base Prompt:**
+```
+Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+CHARACTER: A large grey-brown ankylosaurus styled as a heavy tank unit. Big and slow looking with a stocky, intimidating build. [ADD DIRECTION]
+
+OUTFIT: Worn brown leather vest strapped over the bony back plating. Carrying heavy weapons in thick clawed forearms. Battle-hardened appearance.
+
+FEATURES: Natural ankylosaurus anatomy - rows of bony armor plates and spikes covering the back, heavy rounded tail club dragging behind, thick stubby legs, low wide stance. Large size - twice the size of regular enemies. Tough, durable tank unit.
+
+STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Clean colors - grey-brown for armor plating, brown leather vest. No gradients, flat color zones with clear shadows.
+
+COMPOSITION: Character centered, taking up 80% of frame (large tank enemy). Solid, planted stance. White or transparent background with no environmental elements.
+
+AESTHETIC: Heavy tank meets armored prehistoric beast. Intimidating and durable. Bold and readable at small sizes.
+```
+
+**Bing Base:** `Isometric 3/4 view large ankylosaurus, bony armor plating and tail club, cowboy vest, tough tanky appearance, carrying heavy weapons, 45° angle above, RimWorld style sprite, comic book art, thick outlines, cel-shading, wild west prehistoric theme, transparent background`
+
+**Direction modifiers:** (ChatGPT) `, facing toward camera` | `, facing away showing back of armor plating and tail club` | `, left profile` | `, right profile`
+
+**2x2 Grid Bundle Prompt:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Ironhide Ankylosaurus - large grey-brown ankylosaurus styled as heavy tank unit. Big and intimidating. Rows of bony armor plates and spikes on back, heavy tail club, worn brown leather vest, heavy weapons in thick clawed forearms. Battle-hardened appearance. Twice the size of regular enemies.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Grey-brown armor, brown leather. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION. Larger enemy, heavy tank appearance.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Ankylosaurus faces toward viewer, front armor plating visible, thick forearms with heavy weapons forward, intimidating frontal stance
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Ankylosaurus faces away, BACK armor plates and tail club dominate, forearms at sides, heavy tank moving away
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Ankylosaurus in LEFT PROFILE, side view of armor plating and tail club, heavy weapons aimed left, sturdy leftward stance
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Ankylosaurus in RIGHT PROFILE (mirror), side view of armor plating and tail club, heavy weapons aimed right, sturdy rightward stance
+
+COMPOSITION: Tank enemy centered taking 80% of frame (large unit). White/transparent background. Clear borders. Massive, durable appearance maintained across all views.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: large ankylosaurus tank, bony armor plates, tail club, heavy weapons, battle-worn, intimidating size, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, tank dinosaur enemy, sprite sheet, transparent background
+```
+
+---
+
+### Enemy: Ghost Wing (Pteranodon) — Multi-Directional
+
+**ChatGPT Base Prompt:**
+```
+Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+CHARACTER: A translucent ghostly pteranodon styled as a supernatural western outlaw. Hovering above ground with an eerie, spectral presence. [ADD DIRECTION]
+
+OUTFIT: Tattered, weathered brown cowboy hat perched between the head crest. Hat has holes and worn edges showing age.
+
+FEATURES: Natural pteranodon anatomy - translucent leathery wings spread wide, long pointed head crest, sharp toothless beak, semi-transparent body with faint ethereal glow. Eye-like glowing spots visible through the wings. Ghostly, supernatural appearance. Hovering off the ground.
+
+STYLE: Bold comic book art with thick black ink outlines around shapes. Cel-shaded for depth with 2-3 tone levels. Translucent tan-grey body with slight glow, weathered brown hat. Use lighter tones to show transparency. No gradients, flat color zones with clear shadows.
+
+COMPOSITION: Character centered, taking up 70% of frame. Hovering pose with wings spread. White or transparent background with no environmental elements.
+
+AESTHETIC: Supernatural ghost meets prehistoric flyer. Eerie and otherworldly. Bold and readable at small sizes.
+```
+
+**Bing Base:** `Isometric 3/4 view translucent ghostly pteranodon, tattered cowboy hat, supernatural eerie appearance, hovering with wings spread, spectral western outlaw, 45° angle, RimWorld sprite style, comic book art, thick outlines, cel-shading, wild west prehistoric theme, transparent background`
+
+**Direction modifiers:** (ChatGPT) `, facing toward camera` | `, facing away from camera` | `, left side with wing trailing` | `, right side with wing trailing`
+
+**2x2 Grid Bundle Prompt:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Ghost Wing - translucent ghostly pteranodon styled as supernatural western outlaw. Hovering above ground with eerie spectral presence. Tattered weathered brown cowboy hat with holes. Translucent leathery wings spread wide, long pointed head crest, semi-transparent body with faint ethereal tan-grey glow. Eye-like glowing spots visible through wings.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Translucent tan-grey body with glow, weathered brown hat. Use lighter tones for transparency. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION. Ghostly, supernatural appearance with hovering pose.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Pteranodon faces toward viewer, front of head crest and beak visible, eye-like spots staring forward through translucent wings, tattered hat from front angle
+
+TOP-RIGHT: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Pteranodon faces away, BACK of wings and crest visible, back of tattered hat, ghostly hovering away
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FACING LEFT"
+- Pteranodon in LEFT PROFILE, side view of wing and crest, hat from left side, hovering leftward
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FACING RIGHT"
+- Pteranodon in RIGHT PROFILE (mirror), side view of wing and crest, hat from right side, hovering rightward
+
+COMPOSITION: Ghost enemy centered taking 70% of frame. White/transparent background. Clear borders. Ethereal, translucent appearance maintained. Wings must be visible in all views.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: translucent ghostly pteranodon, tattered cowboy hat, hovering with wings spread, supernatural tan-grey glow, eerie spectral, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, ghost dinosaur enemy, sprite sheet, transparent background
+```
+
+---
+
+### Enemy: Sky Bandit (Archaeopteryx) — Multi-Directional
+
+**ChatGPT Base Prompt:**
+```
+Create a single video game enemy sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+CHARACTER: An archaeopteryx styled as an aerial bandit. Dynamic flying pose showing motion and agility in the air. [ADD DIRECTION]
+
+OUTFIT: Brown aviator goggles on head, red bandana around neck. Flying ace bandit appearance.
+
+FEATURES: Natural archaeopteryx anatomy - feathered wings spread wide for gliding, long feathered tail, small toothed beak, clawed wing-fingers. Fast, agile aerial enemy. Forest-green feathers with lighter underside.
+
+STYLE: Bold comic book art with thick black ink outlines around every shape. Cel-shaded for depth with 2-3 tone levels. Clean, vibrant colors - forest-green feathers, brown goggles, red bandana. Motion lines optional to show flight. No gradients, flat color zones with clear shadows.
+
+COMPOSITION: Character centered, taking up 70% of frame. Dynamic aerial pose with wings spread. White or transparent background with no environmental elements.
+
+AESTHETIC: Aerial bandit meets prehistoric flyer. Conveys speed and flight. Bold and readable at small sizes.
+```
+
+**Bing Base:** `Isometric 3/4 view archaeopteryx, feathered wings spread, aviator goggles, bandana, aerial bandit appearance, dynamic flying pose, 45° angle above, RimWorld sprite style, comic book art, thick outlines, cel-shading, wild west prehistoric theme, transparent background`
+
+**Direction modifiers:** (ChatGPT) `, flying toward camera` | `, flying away from camera` | `, flying left showing side profile` | `, flying right showing side profile`
+
+**2x2 Grid Bundle Prompt:**
+```
+Create a video game enemy CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+ENEMY CHARACTER: Sky Bandit - archaeopteryx aerial bandit styled as flying ace. Dynamic flying pose showing motion and agility. Brown aviator goggles on head, red bandana around neck. Feathered wings spread wide for gliding, long feathered tail, clawed wing-fingers. Forest-green feathers with lighter underside. Fast, agile aerial enemy.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Forest-green feathers, brown goggles, red bandana. Motion lines optional. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION. Dynamic aerial poses with wings spread.
+
+FRAME LAYOUT - 2x2 Grid:
+
+TOP-LEFT: "FRONT VIEW - FLYING TOWARD CAMERA"
+- Archaeopteryx flies toward viewer, both wings spread wide visible from front, goggles facing forward, feathered tail behind, dynamic forward flight
+
+TOP-RIGHT: "BACK VIEW - FLYING AWAY FROM CAMERA"
+- Archaeopteryx flies away, BACK of body and tail prominent, wings spread visible from behind, flying away from viewer
+
+BOTTOM-LEFT: "LEFT SIDE VIEW - FLYING LEFT"
+- Archaeopteryx in LEFT PROFILE, both wings extended left, goggles from left side, feathered tail trailing right, fast leftward flight
+
+BOTTOM-RIGHT: "RIGHT SIDE VIEW - FLYING RIGHT"
+- Archaeopteryx in RIGHT PROFILE (mirror), both wings extended right, goggles from right side, feathered tail trailing left, fast rightward flight
+
+COMPOSITION: Flying enemy centered taking 70% of frame. White/transparent background. Clear borders. Wings must be prominently visible in all views. Aerial, gliding appearance maintained.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid directional turnaround: archaeopteryx aerial bandit, feathered wings spread wide, aviator goggles, bandana, dynamic flying pose, forest-green feathers, 4 directions. Isometric 3/4 at 45°, comic book art, thick outlines, cel-shading, aerial dinosaur enemy, sprite sheet, transparent background
+```
+
+---
+
+### Boss: Iron Jaw (T-Rex) — Wave 4 Boss, Multi-Directional
+
+**ChatGPT Sprite Sheet - 4 Directions in One Image:**
+```
+Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
+
+BOSS CHARACTER: Iron Jaw - Wave 4 boss. A massive dark green tyrannosaurus rex. 3x the size of regular enemies. Fortress-like apex predator with battle-scarred hide plated like armor.
+
+FEATURES: Enormous muscular body with thick armored-looking hide covered in scars and old wounds. Massive jaws lined with sharp teeth. Small clawed forearms. Thick powerful tail for balance. Menacing red eyes. Battle-worn hide with scratches and scars. Dark green scales with lighter underside visible. Tyrannosaurus anatomy at massive intimidating scale.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. No gradients. Wild west meets apex predator aesthetic.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. Think of it as North, South, East, West views.
+
+FRAME LAYOUT - 2x2 Grid with clear separation:
+
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Character faces directly toward the viewer
+- Massive jaws open in a threatening pose, facing forward
+- Small clawed forearms held close to the chest
+- Front of muscular body and hide visible from front angle
+- This is what the player sees when the boss moves DOWN on screen toward them
+
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Character faces directly away from the viewer
+- BACK of the massive body and thick tail dominate - this is the key identifying feature
+- Eyes not visible (viewing from behind)
+- Small forearms visible at the sides
+- Legs visible from behind in a powerful stance
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Character in complete LEFT PROFILE moving toward the left side
+- Body visible from side angle showing its muscular depth and scarred hide
+- Massive jaws open, facing toward the LEFT direction
+- Thick tail extending behind for balance
+- Side profile of head with menacing red eye visible on left
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Character in complete RIGHT PROFILE moving toward the right side
+- Body visible from side angle showing its muscular depth (mirror of left view)
+- Massive jaws open, facing toward the RIGHT direction
+- Thick tail extending behind for balance
+- Side profile of head with menacing red eye visible on right
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. Front view and back view should look VERY different (front shows jaws/forearms forward, back shows tail and hide back). Left and right profiles should be clear mirror images.
+
+COMPOSITION: Each frame equal size, boss centered taking up 85% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size and detail level.
+```
+
+**Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
+
+**Base Prompt:** Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. Iron Jaw - massive dark green tyrannosaurus rex boss, 3x regular size, apex predator. Muscular scarred hide, massive jaws with sharp teeth, small clawed forearms, thick tail, menacing red eyes. Battle-worn scales with scratches. Bold comic book art with thick black outlines, cel-shaded, dark green with lighter underside. Boss centered taking 85% of frame, solid stance, transparent background.
+
+**Direction modifiers:** `, facing toward camera with jaws open` | `, facing away showing back and tail` | `, left profile with jaws facing left` | `, right profile with jaws facing right`
+
+**Behavior notes:** Phase 1 fires bubble spread attacks. Phase 2 (below 50% HP) adds charge attacks with red tint on hide.
+
+---
+
+### Boss: The Spiny Terror (Spinosaurus) — Wave 8 Boss, Multi-Directional with Tail Segments
+
+**ChatGPT Sprite Sheet - 4 Directions in One Image:**
+```
+Create a video game boss CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like boss sprites in Stardew Valley or Enter the Gungeon.
+
+BOSS CHARACTER: The Spiny Terror - Wave 8 boss. A massive teal-green spinosaurus with a large distinctive sail along its spine and a long crocodile-like snout. Amphibious apex predator boss.
+
+OUTFIT & FEATURES: Tattered weathered pirate-style hat sitting between the sail and the head, torn and aged. Large teal-green sail rising prominently along the spine (all 4 segments must be visible in each frame, glowing faintly along their edges). Long crocodile-like jaws lined with conical teeth. Muscular four-limbed body built for both land and water. Glowing intelligent eyes. Battle-worn scaly hide. Enormous - dwarfs all regular enemies.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Deep teal-green body, darker shadows, glowing sail edges. Mystical prehistoric-predator appearance. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. The body rotates while all 4 sail segments remain visible along the spine.
+
+FRAME LAYOUT - 2x2 Grid with clear separation:
+
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Body faces directly toward the viewer
+- Glowing eyes visible on front of head, staring forward
+- Tattered pirate hat visible from front angle behind the head
+- Long crocodile jaws open menacingly toward viewer
+- Sail visible rising behind the body with all 4 segments glowing along the top
+- This is what the player sees when the boss moves DOWN on screen toward them
+
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Body faces away from the viewer
+- BACK of the body dominates - rear view of tail and hindquarters
+- Back of pirate hat visible from behind
+- Eyes not visible or barely visible (viewing from behind)
+- Full sail visible spanning the spine with all 4 segments
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Body in LEFT PROFILE orientation
+- Side view of long jaws and head
+- Pirate hat visible from left side angle
+- One glowing eye visible in side profile
+- Sail clearly visible along the spine in full side profile, all 4 segments distinct
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Body in RIGHT PROFILE orientation (mirror of left view)
+- Side view of long jaws and head from right angle
+- Pirate hat visible from right side angle
+- One glowing eye visible in side profile
+- Sail clearly visible along the spine in full side profile, all 4 segments distinct
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. All four sail segments must be visible in every frame. Front and back views should look very different (front shows jaws/eyes, back shows rear of body).
+
+COMPOSITION: Each frame equal size, boss with sail centered taking up 90% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size and detail level.
+```
+
+**Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
+
+**Base Prompt:** Create a single video game BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Spiny Terror - massive teal-green spinosaurus with tall spine sail, tattered pirate hat, long crocodile-like jaws, glowing eyes. Amphibious apex predator. Bold comic book art with thick black outlines, cel-shaded, deep teal-green with darker shadows. Boss centered with sail visible taking 90% of frame, transparent background.
+
+**Direction modifiers:** `, facing toward camera with jaws forward and sail visible` | `, facing away showing back of body with sail visible` | `, left profile with sail along spine` | `, right profile with sail along spine`
+
+**Behavior notes:** Body is invulnerable until all 4 tail segments are destroyed. Tail segments regenerate over time. Creates mud/water spray clouds that slow players.
+
+---
+
+#### Spinosaurus Tail Segments (Separate Destructible Parts)
+
+**ChatGPT Sprite Sheet - 4 Variations in One Image:**
+```
+Create a video game boss component sprite sheet showing 4 tail segment variations arranged in a 2x2 grid. This is for a top-down shooter game. Use an isometric 3/4 perspective viewed from 45 degrees above, like sprites in Stardew Valley or Enter the Gungeon.
+
+BOSS COMPONENT: Spinosaurus tail segments - destructible boss parts for The Spiny Terror boss fight. These are the four spiked tail segments that protect the main boss body and must be destroyed independently.
+
+FEATURES: Thick teal-green tail segments with muscular, armored appearance. Rows of bony spikes running along the top edge. Textured scaly skin with deep teal-green coloring and darker shadows. Faint bioluminescent glow scattered along the spikes. Base end (where it connects to the body) is thicker, tapering toward the tip. Battle-scarred with possible notches showing they've been in combat.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Deep teal-green with darker shadows, subtle glowing spike tips. Mystical prehistoric-predator aesthetic. No gradients. Must match the main Spinosaurus boss visual style.
+
+CRITICAL: Each tail segment should have a DIFFERENT POSE/CURVE for visual variety, but maintain the same design, color, and style. This creates natural variation when all 4 are positioned around the boss.
+
+FRAME LAYOUT - 2x2 Grid with clear separation:
+
+TOP-LEFT FRAME: "TAIL SEGMENT 1 - CURVED LEFT"
+- Segment curves in a strong leftward arc, spikes visible along the top edge, glowing faintly
+
+TOP-RIGHT FRAME: "TAIL SEGMENT 2 - CURVED RIGHT"
+- Segment curves in a strong rightward arc (mirror of Segment 1), spikes visible, glowing faintly
+
+BOTTOM-LEFT FRAME: "TAIL SEGMENT 3 - COILED/S-CURVE"
+- Segment forms an S-shaped curve showing dynamic movement, spikes throughout the curve
+
+BOTTOM-RIGHT FRAME: "TAIL SEGMENT 4 - REACHING FORWARD"
+- Segment extends more directly forward/upward, less curved, more aggressive reaching pose
+
+IMPORTANT: All four segments are the SAME type with identical coloring, texture, spikes, and glow. Only the POSE/CURVE differs. They should all look like they belong to the same creature.
+
+COMPOSITION: Each frame equal size, single tail segment centered taking up 70% of frame space. White/transparent background. Clear borders between frames. All four must be the same size and detail level, matching the Spinosaurus boss aesthetic.
+```
+
+**Bing Condensed (480 chars):**
+```
+2x2 grid of 4 spinosaurus tail segment variations, teal-green with bony spikes, glowing spike tips, curved alive poses, destructible boss parts, 45° angle above, RimWorld sprite style, comic book art, thick black outlines, cel-shading, prehistoric predator aesthetic, wild west theme, game enemy sprite on transparent background
+```
+
+**Usage Notes:**
+- Generate 4 tail segments with different poses for visual variety when positioned around the boss
+- All 4 should match the main Spinosaurus boss in color and style
+- Each tail segment is independently targetable and destructible
+
+---
+
+### Boss: The Behemoth (Triceratops) — Wave 12 Final Boss, Multi-Directional, Two-Phase
+
+**Phase 1 - ChatGPT Sprite Sheet - 4 Directions in One Image:**
+```
+Create a video game FINAL BOSS CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
+
+FINAL BOSS CHARACTER: The Behemoth Phase 1 - Wave 12 final boss. A colossal olive-grey triceratops. Legendary final boss - biggest enemy in entire game. Ancient prehistoric titan.
+
+OUTFIT & FEATURES: Golden cowboy accessories - golden cowboy hat between the horns, golden sheriff's badge on chest, golden bands around the legs showing legendary status. Massive frilled head shield, three prominent horns (one above each eye, one on the snout), heavily muscled quadrupedal body, battle-scarred ancient appearance. Weathered hide showing age and countless battles. Fierce, primal energy. Enormous - fills 95% of frame. Most intimidating enemy in game.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Bold olive-grey hide, golden accessories with shine, dark shadows. Epic final boss presence. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. The massive body rotates while maintaining its powerful, planted stance.
+
+FRAME LAYOUT - 2x2 Grid with clear separation:
+
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Body faces directly toward the viewer
+- Three horns and frilled head shield prominent, facing forward menacingly
+- Golden cowboy hat visible from front angle between the horns
+- Golden sheriff's badge visible on chest/front
+- Muscular legs planted, showing golden leg bands
+- This is what the player sees when the boss moves DOWN on screen toward them
+
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Body faces away from the viewer
+- BACK of the frilled head shield and body dominates
+- Back of golden cowboy hat visible
+- Body showing back hide texture and short thick tail
+- Golden leg bands visible on hindquarters
+- Horns not visible (viewing from behind)
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Body in LEFT PROFILE orientation
+- Side view of frilled head shield and horns facing left
+- Golden hat visible from left side angle
+- Badge visible from side angle on body
+- Muscular quadrupedal stance showing side profile with golden leg band
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Body in RIGHT PROFILE orientation (mirror of left view)
+- Side view of frilled head shield and horns facing right
+- Golden hat visible from right side angle
+- Badge visible from side angle on body
+- Muscular quadrupedal stance showing side profile with golden leg band
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. Front and back views should look very different (front shows horns/frill, back shows rear/tail). Left and right profiles should be clear mirror images.
+
+COMPOSITION: Each frame equal size, legendary boss dominates 95% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size, scale detail, and epic presence.
+```
+
+**Phase 2 - ChatGPT Sprite Sheet - 4 Directions in One Image:**
+```
+Create a video game FINAL BOSS EVOLVED FORM CHARACTER TURNAROUND sprite sheet showing 4 directional views arranged in a 2x2 grid. This is for a top-down shooter game, so each direction must be CLEARLY DISTINCT for gameplay. Use an isometric 3/4 perspective viewed from 45 degrees above, like epic boss sprites in Stardew Valley or Enter the Gungeon.
+
+FINAL BOSS EVOLVED: The Behemoth Phase 2 - Wave 12 final boss SECOND FORM. Same colossal triceratops but TRANSFORMED with electrical powers. This is the "ultimate final form" moment. Storm god boss.
+
+TRANSFORMATION & FEATURES: Electric blue coloring replaces olive-grey. Crackling lightning and electricity arcing across the frilled head shield and ENTIRE body. Electrical aura surrounding boss. Glowing electric eyes radiating power. Energy visibly crackling from the three horns with yellow lightning bolts. Same golden cowboy accessories but now GLOWING with electrical energy - hat, badge, and leg bands all energized and sparking. Same anatomy - massive frilled head shield, three horns, heavily muscled quadrupedal body. Godlike electrical storm powers unleashed. Enormous - fills 95% of frame. Most powerful form in game.
+
+STYLE: Bold comic book art with thick black ink outlines. Cel-shaded with 2-3 flat tone levels. Bright electric blue hide, yellow lightning effects, glowing golden accessories. Dramatic electrical transformation. Lightning effects integrated into cel-shading style. No gradients.
+
+CRITICAL: Each frame must show a DIFFERENT DIRECTION as if rotating a camera around the character in 90-degree increments. The electrified body rotates while maintaining its powerful storm god pose.
+
+FRAME LAYOUT - 2x2 Grid with clear separation:
+
+TOP-LEFT FRAME: "FRONT VIEW - FACING DOWN/TOWARD CAMERA"
+- Body faces directly toward the viewer with GLOWING ELECTRIC EYES
+- Frill and horns prominent with electricity crackling around them
+- Golden cowboy hat GLOWING with electrical energy from front angle
+- Golden sheriff's badge GLOWING and sparking on chest/front
+- Electric blue body with VISIBLE LIGHTNING ARCS across the frill
+- Yellow lightning bolts crackling across the horns
+- This is what the player sees when the boss moves DOWN on screen toward them
+
+TOP-RIGHT FRAME: "BACK VIEW - FACING UP/AWAY FROM CAMERA"
+- Body faces away from the viewer
+- BACK of the electrified frill and body dominates
+- Back of glowing golden hat visible with electrical aura
+- Electric blue body, electricity arcing along the back and tail
+- Golden leg bands GLOWING with lightning effects
+- Eyes not visible (viewing from behind)
+- This is what the player sees when the boss moves UP on screen away from them
+
+BOTTOM-LEFT FRAME: "LEFT SIDE VIEW - FACING LEFT"
+- Body in LEFT PROFILE orientation
+- Side view of frill and horns with GLOWING eye radiating electricity
+- Glowing golden hat visible from left side with electrical sparks
+- Glowing badge visible from side angle sparking with energy
+- Electric blue body showing side profile with lightning arcing along the frill
+- This is what the player sees when the boss moves LEFT on screen
+
+BOTTOM-RIGHT FRAME: "RIGHT SIDE VIEW - FACING RIGHT"
+- Body in RIGHT PROFILE orientation (mirror of left view)
+- Side view of frill and horns with GLOWING eye radiating electricity
+- Glowing golden hat visible from right side with electrical sparks
+- Glowing badge visible from side angle sparking with energy
+- Electric blue body showing side profile with lightning arcing along the frill
+- This is what the player sees when the boss moves RIGHT on screen
+
+IMPORTANT: These are CHARACTER ROTATION views, not camera angle changes. The isometric 45-degree viewing angle stays the same - the CHARACTER rotates to face different directions. Front and back views should look very different. Left and right profiles should be clear mirror images. The electrical effects (lightning, glow, arcs) must be present in ALL four views.
+
+COMPOSITION: Each frame equal size, legendary evolved boss dominates 95% of frame space. White/transparent background. Clear borders between frames. All four views must maintain consistent size, electrical effects, and epic transformed presence.
+```
+
+**Alternative: Single Direction Prompts (if sprite sheet doesn't work)**
+
+**Phase 1 Base Prompt:** Create a single video game FINAL BOSS sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Behemoth Phase 1 - colossal olive-grey triceratops, golden cowboy hat, golden sheriff's badge, golden leg bands, legendary final boss. Massive frilled head shield, three horns, heavily muscled quadrupedal body, battle-scarred ancient. Bold comic book art with thick black outlines, cel-shaded, bold olive-grey hide with golden accessories. Boss dominates 95% of frame, transparent background.
+
+**Phase 2 Base Prompt:** Create a single video game FINAL BOSS EVOLVED FORM sprite for a top-down shooter. Use an isometric 3/4 perspective viewed from 45 degrees above. The Behemoth Phase 2 - same colossal triceratops but ELECTRIC BLUE with crackling lightning across the frill and entire body, electrical aura, glowing electric eyes, yellow lightning bolts. Golden cowboy accessories now GLOWING with electrical energy. Storm god transformation. Bold comic book art with thick black outlines, cel-shaded, bright electric blue with yellow lightning effects. Boss dominates 95% of frame, transparent background.
+
+**Direction modifiers (both phases):** `, facing toward camera with horns forward` | `, facing away showing back and tail` | `, left profile view` | `, right profile view`
+
+**Behavior notes:** Phase 1 (olive-grey) uses bullet storms, ground pounds, and charges. At 0 HP, transitions to Phase 2 (electric blue) with full health restore, lightning strikes, tidal waves, and spawns minions (Compy Bandits and Raptor Rustlers).
+
+---

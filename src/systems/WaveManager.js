@@ -3,10 +3,10 @@ import { BossAnnouncer } from './BossAnnouncer.js';
 import { BossHealthBar } from '../ui/BossHealthBar.js';
 
 const BOUNTY_NAMES = [
-    { name: 'Big Claw McGraw', type: 'lobster' },
-    { name: 'Shelly the Shellfish', type: 'hermit' },
-    { name: 'Reef Reaper', type: 'jellyfish' },
-    { name: 'Pistol Shrimp Pete', type: 'shrimp' }
+    { name: 'Quickclaw McGraw', type: 'velociraptor' },
+    { name: 'Rocky the Ironhide', type: 'ankylosaurus' },
+    { name: 'Sky Reaper', type: 'pteranodon' },
+    { name: 'Pistol Pete', type: 'compy' }
 ];
 
 // Maximum enemies per group to prevent performance issues
@@ -111,140 +111,140 @@ export class WaveManager {
 
         const compositions = {
             1: {
-                mainWave: [{ type: 'lobster', count: 5 }],
+                mainWave: [{ type: 'velociraptor', count: 5 }],
                 subWaves: []
             },
 
             2: {
                 mainWave: [
-                    { type: 'lobster', count: 6 },
-                    { type: 'hermit', count: 1 }
+                    { type: 'velociraptor', count: 6 },
+                    { type: 'ankylosaurus', count: 1 }
                 ],
                 subWaves: []
             },
 
             3: {
                 mainWave: [
-                    { type: 'hermit', count: 2, role: 'tank' },
-                    { type: 'shrimp', count: 4, role: 'shooter' },
-                    { type: 'lobster', count: 2 }
+                    { type: 'ankylosaurus', count: 2, role: 'tank' },
+                    { type: 'compy', count: 4, role: 'shooter' },
+                    { type: 'velociraptor', count: 2 }
                 ],
                 subWaves: waveNumber >= subWaveConfig.startWave && subWaveConfig.maxSubWaves >= 3 ? [
                     {
                         trigger: 0.70,
                         enemies: [
-                            { type: 'shrimp', count: 2 },
-                            { type: 'jellyfish', count: 1 }
+                            { type: 'compy', count: 2 },
+                            { type: 'pteranodon', count: 1 }
                         ]
                     }
                 ] : []
             },
 
-            // BOSS WAVE 4: Iron Shell
+            // BOSS WAVE 4: Iron Jaw
             4: {
-                mainWave: [{ type: 'boss_iron_shell', count: 1, isBoss: true }],
+                mainWave: [{ type: 'boss_trex', count: 1, isBoss: true }],
                 subWaves: this.getBossSubWaves(4)
             },
 
             5: {
                 mainWave: [
-                    { type: 'hermit', count: 3, role: 'tank' },
-                    { type: 'shrimp', count: 5, role: 'shooter' },
-                    { type: 'lobster', count: 3 },
-                    { type: 'jellyfish', count: 1 }
+                    { type: 'ankylosaurus', count: 3, role: 'tank' },
+                    { type: 'compy', count: 5, role: 'shooter' },
+                    { type: 'velociraptor', count: 3 },
+                    { type: 'pteranodon', count: 1 }
                 ],
                 subWaves: waveNumber >= subWaveConfig.startWave ? [
                     {
                         trigger: 0.70,
-                        enemies: [{ type: 'shrimp', count: 3 }]
+                        enemies: [{ type: 'compy', count: 3 }]
                     },
                     {
                         trigger: 0.40,
-                        enemies: [{ type: 'flyingfish', count: 2 }]
+                        enemies: [{ type: 'archaeopteryx', count: 2 }]
                     }
                 ].slice(0, subWaveConfig.maxSubWaves) : []
             },
 
             6: {
                 mainWave: [
-                    { type: 'hermit', count: 4, role: 'tank' },
-                    { type: 'shrimp', count: 5, role: 'shooter' },
-                    { type: 'lobster', count: 2 },
-                    { type: 'flyingfish', count: 3 }
+                    { type: 'ankylosaurus', count: 4, role: 'tank' },
+                    { type: 'compy', count: 5, role: 'shooter' },
+                    { type: 'velociraptor', count: 2 },
+                    { type: 'archaeopteryx', count: 3 }
                 ],
                 subWaves: waveNumber >= subWaveConfig.startWave ? [
                     {
                         trigger: 0.65,
                         enemies: [
-                            { type: 'jellyfish', count: 2 },
-                            { type: 'shrimp', count: 1 }
+                            { type: 'pteranodon', count: 2 },
+                            { type: 'compy', count: 1 }
                         ]
                     },
                     {
                         trigger: 0.35,
-                        enemies: [{ type: 'flyingfish', count: 3 }]
+                        enemies: [{ type: 'archaeopteryx', count: 3 }]
                     }
                 ].slice(0, subWaveConfig.maxSubWaves) : []
             },
 
             7: {
                 mainWave: [
-                    { type: 'hermit', count: 4, role: 'tank' },
-                    { type: 'shrimp', count: 5, role: 'shooter' },
-                    { type: 'jellyfish', count: 3, role: 'shooter' },
-                    { type: 'lobster', count: 2 },
-                    { type: 'flyingfish', count: 3 }
+                    { type: 'ankylosaurus', count: 4, role: 'tank' },
+                    { type: 'compy', count: 5, role: 'shooter' },
+                    { type: 'pteranodon', count: 3, role: 'shooter' },
+                    { type: 'velociraptor', count: 2 },
+                    { type: 'archaeopteryx', count: 3 }
                 ],
                 subWaves: waveNumber >= subWaveConfig.startWave ? [
                     {
                         trigger: 0.70,
-                        enemies: [{ type: 'shrimp', count: 3 }]
+                        enemies: [{ type: 'compy', count: 3 }]
                     },
                     {
                         trigger: 0.45,
                         enemies: [
-                            { type: 'jellyfish', count: 2 },
-                            { type: 'flyingfish', count: 2 }
+                            { type: 'pteranodon', count: 2 },
+                            { type: 'archaeopteryx', count: 2 }
                         ]
                     },
                     {
                         trigger: 0.20,
-                        enemies: [{ type: 'hermit', count: 2 }]
+                        enemies: [{ type: 'ankylosaurus', count: 2 }]
                     }
                 ].slice(0, subWaveConfig.maxSubWaves) : []
             },
 
-            // BOSS WAVE 8: Kraken's Arm
+            // BOSS WAVE 8: The Spiny Terror
             8: {
-                mainWave: [{ type: 'boss_kraken_arm', count: 1, isBoss: true }],
+                mainWave: [{ type: 'boss_spinosaurus', count: 1, isBoss: true }],
                 subWaves: this.getBossSubWaves(8)
             },
 
             9: {
                 mainWave: [
-                    { type: 'hermit', count: 5, role: 'tank' },
-                    { type: 'shrimp', count: 6, role: 'shooter' },
-                    { type: 'jellyfish', count: 4, role: 'shooter' },
-                    { type: 'lobster', count: 2 },
-                    { type: 'flyingfish', count: 4 }
+                    { type: 'ankylosaurus', count: 5, role: 'tank' },
+                    { type: 'compy', count: 6, role: 'shooter' },
+                    { type: 'pteranodon', count: 4, role: 'shooter' },
+                    { type: 'velociraptor', count: 2 },
+                    { type: 'archaeopteryx', count: 4 }
                 ],
                 subWaves: waveNumber >= subWaveConfig.startWave ? [
                     {
                         trigger: 0.70,
                         enemies: [
-                            { type: 'shrimp', count: 3 },
-                            { type: 'jellyfish', count: 2 }
+                            { type: 'compy', count: 3 },
+                            { type: 'pteranodon', count: 2 }
                         ]
                     },
                     {
                         trigger: 0.45,
-                        enemies: [{ type: 'flyingfish', count: 3 }]
+                        enemies: [{ type: 'archaeopteryx', count: 3 }]
                     },
                     {
                         trigger: 0.20,
                         enemies: [
-                            { type: 'hermit', count: 2 },
-                            { type: 'shrimp', count: 2 }
+                            { type: 'ankylosaurus', count: 2 },
+                            { type: 'compy', count: 2 }
                         ]
                     }
                 ].slice(0, subWaveConfig.maxSubWaves) : []
@@ -252,29 +252,29 @@ export class WaveManager {
 
             10: {
                 mainWave: [
-                    { type: 'hermit', count: 6, role: 'tank' },
-                    { type: 'shrimp', count: 7, role: 'shooter' },
-                    { type: 'jellyfish', count: 4, role: 'shooter' },
-                    { type: 'lobster', count: 3 },
-                    { type: 'flyingfish', count: 5 }
+                    { type: 'ankylosaurus', count: 6, role: 'tank' },
+                    { type: 'compy', count: 7, role: 'shooter' },
+                    { type: 'pteranodon', count: 4, role: 'shooter' },
+                    { type: 'velociraptor', count: 3 },
+                    { type: 'archaeopteryx', count: 5 }
                 ],
                 subWaves: waveNumber >= subWaveConfig.startWave ? [
                     {
                         trigger: 0.70,
-                        enemies: [{ type: 'shrimp', count: 4 }]
+                        enemies: [{ type: 'compy', count: 4 }]
                     },
                     {
                         trigger: 0.45,
                         enemies: [
-                            { type: 'jellyfish', count: 3 },
-                            { type: 'flyingfish', count: 3 }
+                            { type: 'pteranodon', count: 3 },
+                            { type: 'archaeopteryx', count: 3 }
                         ]
                     },
                     {
                         trigger: 0.20,
                         enemies: [
-                            { type: 'hermit', count: 3 },
-                            { type: 'lobster', count: 2 }
+                            { type: 'ankylosaurus', count: 3 },
+                            { type: 'velociraptor', count: 2 }
                         ]
                     }
                 ].slice(0, subWaveConfig.maxSubWaves) : []
@@ -282,37 +282,37 @@ export class WaveManager {
 
             11: {
                 mainWave: [
-                    { type: 'hermit', count: 6, role: 'tank' },
-                    { type: 'shrimp', count: 8, role: 'shooter' },
-                    { type: 'jellyfish', count: 5, role: 'shooter' },
-                    { type: 'lobster', count: 3 },
-                    { type: 'flyingfish', count: 5 }
+                    { type: 'ankylosaurus', count: 6, role: 'tank' },
+                    { type: 'compy', count: 8, role: 'shooter' },
+                    { type: 'pteranodon', count: 5, role: 'shooter' },
+                    { type: 'velociraptor', count: 3 },
+                    { type: 'archaeopteryx', count: 5 }
                 ],
                 subWaves: waveNumber >= subWaveConfig.startWave ? [
                     {
                         trigger: 0.65,
-                        enemies: [{ type: 'shrimp', count: 5 }]
+                        enemies: [{ type: 'compy', count: 5 }]
                     },
                     {
                         trigger: 0.40,
                         enemies: [
-                            { type: 'jellyfish', count: 4 },
-                            { type: 'flyingfish', count: 3 }
+                            { type: 'pteranodon', count: 4 },
+                            { type: 'archaeopteryx', count: 3 }
                         ]
                     },
                     {
                         trigger: 0.15,
                         enemies: [
-                            { type: 'hermit', count: 4 },
-                            { type: 'lobster', count: 2 }
+                            { type: 'ankylosaurus', count: 4 },
+                            { type: 'velociraptor', count: 2 }
                         ]
                     }
                 ].slice(0, subWaveConfig.maxSubWaves) : []
             },
 
-            // BOSS WAVE 12: The Leviathan (FINAL BOSS)
+            // BOSS WAVE 12: The Behemoth (FINAL BOSS)
             12: {
-                mainWave: [{ type: 'boss_leviathan', count: 1, isBoss: true }],
+                mainWave: [{ type: 'boss_triceratops', count: 1, isBoss: true }],
                 subWaves: this.getBossSubWaves(12)
             }
         };
@@ -328,39 +328,39 @@ export class WaveManager {
 
         const difficultyId = this.difficulty.id;
 
-        // Boss wave 4: Iron Shell
+        // Boss wave 4: Iron Jaw
         if (waveNumber === 4) {
             if (difficultyId === 'easy') return [];
             if (difficultyId === 'medium') return [
-                { trigger: 0.50, enemies: [{ type: 'lobster', count: 3 }] }
+                { trigger: 0.50, enemies: [{ type: 'velociraptor', count: 3 }] }
             ];
             if (difficultyId === 'hard') return [
-                { trigger: 0.50, enemies: [{ type: 'shrimp', count: 4 }] },
-                { trigger: 0.25, enemies: [{ type: 'hermit', count: 3 }] }
+                { trigger: 0.50, enemies: [{ type: 'compy', count: 4 }] },
+                { trigger: 0.25, enemies: [{ type: 'ankylosaurus', count: 3 }] }
             ];
         }
 
-        // Boss wave 8: Kraken's Arm
+        // Boss wave 8: Spinosaurus's Arm
         if (waveNumber === 8) {
             if (difficultyId === 'easy') return [];
             if (difficultyId === 'medium') return [
-                { trigger: 0.50, enemies: [{ type: 'jellyfish', count: 4 }] }
+                { trigger: 0.50, enemies: [{ type: 'pteranodon', count: 4 }] }
             ];
             if (difficultyId === 'hard') return [
-                { trigger: 0.60, enemies: [{ type: 'shrimp', count: 5 }] },
-                { trigger: 0.30, enemies: [{ type: 'flyingfish', count: 3 }] }
+                { trigger: 0.60, enemies: [{ type: 'compy', count: 5 }] },
+                { trigger: 0.30, enemies: [{ type: 'archaeopteryx', count: 3 }] }
             ];
         }
 
-        // Boss wave 12: Leviathan
+        // Boss wave 12: Triceratops
         if (waveNumber === 12) {
             if (difficultyId === 'easy') return [];
             if (difficultyId === 'medium') return [
-                { trigger: 0.50, enemies: [{ type: 'hermit', count: 4 }] }
+                { trigger: 0.50, enemies: [{ type: 'ankylosaurus', count: 4 }] }
             ];
             if (difficultyId === 'hard') return [
-                { trigger: 0.50, enemies: [{ type: 'hermit', count: 5 }] },
-                { trigger: 0.30, enemies: [{ type: 'flyingfish', count: 6 }] }
+                { trigger: 0.50, enemies: [{ type: 'ankylosaurus', count: 5 }] },
+                { trigger: 0.30, enemies: [{ type: 'archaeopteryx', count: 6 }] }
             ];
         }
 
@@ -379,20 +379,20 @@ export class WaveManager {
      */
     getBossDetails(bossType) {
         const details = {
-            boss_iron_shell: {
-                name: 'Iron Shell',
-                subtitle: 'The Armored Terror',
-                color: 0x4a4a4a
+            boss_trex: {
+                name: 'Iron Jaw',
+                subtitle: 'The Apex Terror',
+                color: 0x2d4a2d
             },
-            boss_kraken_arm: {
-                name: "The Kraken's Arm",
-                subtitle: 'Terror from the Deep',
-                color: 0x9966cc
+            boss_spinosaurus: {
+                name: "The Spiny Terror",
+                subtitle: 'The Sail-Backed Menace',
+                color: 0x2f6b5e
             },
-            boss_leviathan: {
-                name: 'The Leviathan',
+            boss_triceratops: {
+                name: 'The Behemoth',
                 subtitle: 'The Unstoppable Force',
-                color: 0xff4500
+                color: 0x7a7050
             }
         };
 

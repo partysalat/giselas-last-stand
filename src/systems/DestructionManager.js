@@ -295,33 +295,33 @@ export class DestructionManager {
 
     /**
      * Handle boss-triggered environmental events
-     * @param {string} bossType - Type of boss (kraken, leviathan, etc.)
+     * @param {string} bossType - Type of boss (spinosaurus, triceratops, etc.)
      * @param {string} eventType - Type of event (slam, electrify, etc.)
      * @param {Object} data - Event-specific data
      */
     handleBossEvent(bossType, eventType, data) {
         console.log(`Boss event: ${bossType} - ${eventType}`, data);
 
-        // Kraken Boss Events
-        if (bossType === 'boss_kraken_arm') {
-            this.handleKrakenEvent(eventType, data);
+        // Spinosaurus Boss Events
+        if (bossType === 'boss_spinosaurus') {
+            this.handleSpinosaurusEvent(eventType, data);
         }
 
-        // Leviathan Boss Events
-        if (bossType === 'boss_leviathan') {
-            this.handleLeviathanEvent(eventType, data);
+        // Triceratops Boss Events
+        if (bossType === 'boss_triceratops') {
+            this.handleTriceratopsEvent(eventType, data);
         }
     }
 
     /**
-     * Handle Kraken-specific boss events
+     * Handle Spinosaurus-specific boss events
      */
-    handleKrakenEvent(eventType, data) {
+    handleSpinosaurusEvent(eventType, data) {
         switch (eventType) {
-            case 'tentacleSlam':
+            case 'tailSegmentSlam':
                 // Destroys all props in 60px impact zone
                 if (data.x !== undefined && data.y !== undefined) {
-                    console.log(`Kraken tentacle slam at (${data.x}, ${data.y})`);
+                    console.log(`Spinosaurus tail segment slam at (${data.x}, ${data.y})`);
 
                     // Destroy props in radius
                     if (this.scene.fortificationManager) {
@@ -339,14 +339,14 @@ export class DestructionManager {
                 break;
 
             case 'throwProp':
-                // Kraken throws a prop - handled in physics system
-                console.log('Kraken threw prop');
+                // Spinosaurus throws a prop - handled in physics system
+                console.log('Spinosaurus threw prop');
                 break;
 
             case 'wallSmash':
                 // Breaks through back room wall (visual effect)
                 if (data.x !== undefined && data.y !== undefined) {
-                    console.log('Kraken smashed through wall!');
+                    console.log('Spinosaurus smashed through wall!');
                     this.createWallSmashEffect(data.x, data.y);
                 }
                 break;
@@ -361,13 +361,13 @@ export class DestructionManager {
     }
 
     /**
-     * Handle Leviathan-specific boss events
+     * Handle Triceratops-specific boss events
      */
-    handleLeviathanEvent(eventType, data) {
+    handleTriceratopsEvent(eventType, data) {
         switch (eventType) {
             case 'electricalSurge':
                 // Auto-ignites all oil lamps in arena
-                console.log('Leviathan electrical surge - igniting all lamps!');
+                console.log('Triceratops electrical surge - igniting all lamps!');
                 this.igniteAllOilLamps();
 
                 // Also make chandeliers sway
@@ -381,7 +381,7 @@ export class DestructionManager {
             case 'tailSweep':
                 // 180° arc attack knocks all lightweight props across room
                 if (data.x !== undefined && data.y !== undefined && data.angle !== undefined) {
-                    console.log('Leviathan tail sweep!');
+                    console.log('Triceratops tail sweep!');
                     this.knockbackLightProps(data.x, data.y, data.angle);
                 }
                 break;
@@ -395,28 +395,28 @@ export class DestructionManager {
 
             case 'electrifyMetal':
                 // All metal props become hazards (10 DPS)
-                console.log('Leviathan electrifying metal props!');
+                console.log('Triceratops electrifying metal props!');
                 this.electrifyMetalProps();
                 break;
 
             case 'lightningChain':
                 // Strikes metal props creating chain damage
                 if (data.x !== undefined && data.y !== undefined) {
-                    console.log('Leviathan lightning chain attack!');
+                    console.log('Triceratops lightning chain attack!');
                     this.createLightningChain(data.x, data.y);
                 }
                 break;
 
             case 'explodeLights':
                 // Stage lights explode in sequence
-                console.log('Leviathan causing stage lights to explode!');
+                console.log('Triceratops causing stage lights to explode!');
                 this.explodeStageLights();
                 break;
         }
     }
 
     /**
-     * Crush a support beam (Kraken attack)
+     * Crush a support beam (Spinosaurus attack)
      */
     crushSupportBeam(beamIndex) {
         if (!this.scene.fortificationManager) return;
@@ -425,7 +425,7 @@ export class DestructionManager {
 
         if (beamIndex >= 0 && beamIndex < supportBeams.length) {
             const beam = supportBeams[beamIndex];
-            console.log(`Kraken crushing support beam ${beamIndex} at (${beam.x}, ${beam.y})`);
+            console.log(`Spinosaurus crushing support beam ${beamIndex} at (${beam.x}, ${beam.y})`);
 
             // Deal massive damage to destroy beam
             beam.takeDamage(999);
@@ -439,7 +439,7 @@ export class DestructionManager {
     }
 
     /**
-     * Create wall smash visual effect (Kraken attack)
+     * Create wall smash visual effect (Spinosaurus attack)
      */
     createWallSmashEffect(x, y) {
         // Create debris particles
@@ -469,7 +469,7 @@ export class DestructionManager {
     }
 
     /**
-     * Ignite all oil lamps (Leviathan electrical surge)
+     * Ignite all oil lamps (Triceratops electrical surge)
      */
     igniteAllOilLamps() {
         if (!this.scene.fortificationManager) return;
@@ -485,7 +485,7 @@ export class DestructionManager {
     }
 
     /**
-     * Knock back all lightweight props (Leviathan tail sweep)
+     * Knock back all lightweight props (Triceratops tail sweep)
      */
     knockbackLightProps(x, y, angle) {
         if (!this.scene.fortificationManager || !this.scene.fortificationManager.physicsManager) return;
@@ -519,7 +519,7 @@ export class DestructionManager {
     }
 
     /**
-     * Strike a random prop with lightning (Leviathan)
+     * Strike a random prop with lightning (Triceratops)
      */
     strikeRandomProp() {
         if (!this.scene.fortificationManager) return;
@@ -552,7 +552,7 @@ export class DestructionManager {
     }
 
     /**
-     * Electrify all metal props (Leviathan Phase 2)
+     * Electrify all metal props (Triceratops Phase 2)
      */
     electrifyMetalProps() {
         if (!this.scene.fortificationManager) return;
@@ -590,7 +590,7 @@ export class DestructionManager {
     }
 
     /**
-     * Create lightning chain effect (Leviathan Phase 2)
+     * Create lightning chain effect (Triceratops Phase 2)
      */
     createLightningChain(startX, startY) {
         if (!this.scene.fortificationManager) return;
@@ -650,7 +650,7 @@ export class DestructionManager {
     }
 
     /**
-     * Explode all stage lights in sequence (Leviathan Phase 2)
+     * Explode all stage lights in sequence (Triceratops Phase 2)
      */
     explodeStageLights() {
         if (!this.scene.fortificationManager) return;

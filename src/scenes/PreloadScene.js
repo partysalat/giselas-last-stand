@@ -31,87 +31,82 @@ export class PreloadScene extends Phaser.Scene {
 
         // === ENEMY SPRITES ===
 
-        // Load 8-directional sprites for Bandit Lobster
-        this.load.image('bandit-lobster-down', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-down.png');
-        this.load.image('bandit-lobster-up', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-top.png');
-        this.load.image('bandit-lobster-left', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-left.png');
-        this.load.image('bandit-lobster-right', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-right.png');
-        this.load.image('bandit-lobster-down-left', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-down-left.png');
-        this.load.image('bandit-lobster-down-right', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-down-right.png');
-        this.load.image('bandit-lobster-up-left', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-top-left.png');
-        this.load.image('bandit-lobster-up-right', 'assets/sprites/enemies/bandit-lobster/bandit-lobster-top-right.png');
+        // Load 8-directional sprites for Velociraptor
+        this.load.image('velociraptor-down', 'assets/sprites/enemies/velociraptor/velociraptor-down.png');
+        this.load.image('velociraptor-up', 'assets/sprites/enemies/velociraptor/velociraptor-top.png');
+        this.load.image('velociraptor-left', 'assets/sprites/enemies/velociraptor/velociraptor-left.png');
+        this.load.image('velociraptor-right', 'assets/sprites/enemies/velociraptor/velociraptor-right.png');
+        this.load.image('velociraptor-down-left', 'assets/sprites/enemies/velociraptor/velociraptor-down-left.png');
+        this.load.image('velociraptor-down-right', 'assets/sprites/enemies/velociraptor/velociraptor-down-right.png');
+        this.load.image('velociraptor-up-left', 'assets/sprites/enemies/velociraptor/velociraptor-top-left.png');
+        this.load.image('velociraptor-up-right', 'assets/sprites/enemies/velociraptor/velociraptor-top-right.png');
 
-        // Load 8-directional sprites for Hermit Tank
-        this.load.image('hermit-tank-down', 'assets/sprites/enemies/hermit-tank/hermit-tank-down.png');
-        this.load.image('hermit-tank-up', 'assets/sprites/enemies/hermit-tank/hermit-tank-up.png');
-        this.load.image('hermit-tank-left', 'assets/sprites/enemies/hermit-tank/hermit-tank-left.png');
-        this.load.image('hermit-tank-right', 'assets/sprites/enemies/hermit-tank/hermit-tank-right.png');
-        this.load.image('hermit-tank-down-left', 'assets/sprites/enemies/hermit-tank/hermit-tank-bottom-left.png');
-        this.load.image('hermit-tank-down-right', 'assets/sprites/enemies/hermit-tank/hermit-tank-bottom-right.png');
-        this.load.image('hermit-tank-up-left', 'assets/sprites/enemies/hermit-tank/hermit-tank-top-left.png');
-        this.load.image('hermit-tank-up-right', 'assets/sprites/enemies/hermit-tank/hermit-tank-top-right.png');
+        // Load 8-directional sprites for Ankylosaurus Tank
+        this.load.image('ankylosaurus-down', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-down.png');
+        this.load.image('ankylosaurus-up', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-up.png');
+        this.load.image('ankylosaurus-left', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-left.png');
+        this.load.image('ankylosaurus-right', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-right.png');
+        this.load.image('ankylosaurus-down-left', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-bottom-left.png');
+        this.load.image('ankylosaurus-down-right', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-bottom-right.png');
+        this.load.image('ankylosaurus-up-left', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-top-left.png');
+        this.load.image('ankylosaurus-up-right', 'assets/sprites/enemies/ankylosaurus/ankylosaurus-top-right.png');
 
-        // Load 8-directional sprites for Shrimp
-        this.load.image('shrimp-down', 'assets/sprites/enemies/shrimp/shrimp-down.png');
-        this.load.image('shrimp-up', 'assets/sprites/enemies/shrimp/shrimp-top.png');
-        this.load.image('shrimp-left', 'assets/sprites/enemies/shrimp/shrimp-left.png');
-        this.load.image('shrimp-right', 'assets/sprites/enemies/shrimp/shrimp-right.png');
-        this.load.image('shrimp-down-left', 'assets/sprites/enemies/shrimp/shrimp-down-left.png');
-        this.load.image('shrimp-down-right', 'assets/sprites/enemies/shrimp/shrimp-down-right.png');
-        this.load.image('shrimp-up-left', 'assets/sprites/enemies/shrimp/shrimp-top-left.png');
-        this.load.image('shrimp-up-right', 'assets/sprites/enemies/shrimp/shrimp-top-right.png');
+        // Load 8-directional sprites for Compy
+        this.load.image('compy-down', 'assets/sprites/enemies/compy/compy-down.png');
+        this.load.image('compy-up', 'assets/sprites/enemies/compy/compy-top.png');
+        this.load.image('compy-left', 'assets/sprites/enemies/compy/compy-left.png');
+        this.load.image('compy-right', 'assets/sprites/enemies/compy/compy-right.png');
+        this.load.image('compy-down-left', 'assets/sprites/enemies/compy/compy-down-left.png');
+        this.load.image('compy-down-right', 'assets/sprites/enemies/compy/compy-down-right.png');
+        this.load.image('compy-up-left', 'assets/sprites/enemies/compy/compy-top-left.png');
+        this.load.image('compy-up-right', 'assets/sprites/enemies/compy/compy-top-right.png');
 
-        // Load 8-directional sprites for Flying Fish
-        this.load.image('flying-fish-down', 'assets/sprites/enemies/flying-fish/flying-fish-bottom.png');
-        this.load.image('flying-fish-up', 'assets/sprites/enemies/flying-fish/flying-fish-top.png');
-        this.load.image('flying-fish-left', 'assets/sprites/enemies/flying-fish/flying-fish-left.png');
-        this.load.image('flying-fish-right', 'assets/sprites/enemies/flying-fish/flying-fish-right.png');
-        this.load.image('flying-fish-down-left', 'assets/sprites/enemies/flying-fish/flying-fish-bottom-left.png');
-        this.load.image('flying-fish-down-right', 'assets/sprites/enemies/flying-fish/flying-fish-bottom-right.png');
-        this.load.image('flying-fish-up-left', 'assets/sprites/enemies/flying-fish/flying-fish-top-left.png');
-        this.load.image('flying-fish-up-right', 'assets/sprites/enemies/flying-fish/flying-fish-top-right.png');
+        // Load 8-directional sprites for Archaeopteryx
+        this.load.image('archaeopteryx-down', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-bottom.png');
+        this.load.image('archaeopteryx-up', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-top.png');
+        this.load.image('archaeopteryx-left', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-left.png');
+        this.load.image('archaeopteryx-right', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-right.png');
+        this.load.image('archaeopteryx-down-left', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-bottom-left.png');
+        this.load.image('archaeopteryx-down-right', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-bottom-right.png');
+        this.load.image('archaeopteryx-up-left', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-top-left.png');
+        this.load.image('archaeopteryx-up-right', 'assets/sprites/enemies/archaeopteryx/archaeopteryx-top-right.png');
 
-        // Load 8-directional sprites for Jellyfish
-        this.load.image('jellyfish-down', 'assets/sprites/enemies/jellyfish/jellyfish-bottom.png');
-        this.load.image('jellyfish-up', 'assets/sprites/enemies/jellyfish/jellyfish-top.png');
-        this.load.image('jellyfish-left', 'assets/sprites/enemies/jellyfish/jellyfish-left.png');
-        this.load.image('jellyfish-right', 'assets/sprites/enemies/jellyfish/jellyfish-right.png');
-        this.load.image('jellyfish-down-left', 'assets/sprites/enemies/jellyfish/jellyfish-bottom-left.png');
-        this.load.image('jellyfish-down-right', 'assets/sprites/enemies/jellyfish/jellyfish-bottom-right.png');
-        this.load.image('jellyfish-up-left', 'assets/sprites/enemies/jellyfish/jellyfish-top-left.png');
-        this.load.image('jellyfish-up-right', 'assets/sprites/enemies/jellyfish/jellyfish-top-right.png');
+        // Load 8-directional sprites for Pteranodon
+        this.load.image('pteranodon-down', 'assets/sprites/enemies/pteranodon/pteranodon-bottom.png');
+        this.load.image('pteranodon-up', 'assets/sprites/enemies/pteranodon/pteranodon-top.png');
+        this.load.image('pteranodon-left', 'assets/sprites/enemies/pteranodon/pteranodon-left.png');
+        this.load.image('pteranodon-right', 'assets/sprites/enemies/pteranodon/pteranodon-right.png');
+        this.load.image('pteranodon-down-left', 'assets/sprites/enemies/pteranodon/pteranodon-bottom-left.png');
+        this.load.image('pteranodon-down-right', 'assets/sprites/enemies/pteranodon/pteranodon-bottom-right.png');
+        this.load.image('pteranodon-up-left', 'assets/sprites/enemies/pteranodon/pteranodon-top-left.png');
+        this.load.image('pteranodon-up-right', 'assets/sprites/enemies/pteranodon/pteranodon-top-right.png');
 
-        this.load.spritesheet('lobster-bandit', 'assets/sprites/enemies/lobster-bandit-idle.png', {
-            frameWidth: 64,
-            frameHeight: 48
-        });
-
-        // Load Iron Shell boss sprite (4 directional views in 2x2 grid)
-        this.load.spritesheet('iron-shell-boss', 'assets/sprites/enemies/iron-shell.png', {
+        // Load Iron Jaw (T-Rex) boss sprite (4 directional views in 2x2 grid)
+        this.load.spritesheet('trex-boss', 'assets/sprites/enemies/trex.png', {
             frameWidth: 128,
             frameHeight: 128
         });
 
-        // Load Kraken boss sprite (4 directional views in 2x2 grid)
-        this.load.spritesheet('kraken-boss', 'assets/sprites/enemies/kraken.png', {
+        // Load Spiny Terror (Spinosaurus) boss sprite (4 directional views in 2x2 grid)
+        this.load.spritesheet('spinosaurus-boss', 'assets/sprites/enemies/spinosaurus.png', {
             frameWidth: 128,
             frameHeight: 128
         });
 
-        // Load Kraken tentacle/arm sprite (4 variations in 2x2 grid)
-        this.load.spritesheet('kraken-tentacle', 'assets/sprites/enemies/kraken_arm.png', {
+        // Load Spinosaurus tail segment sprite (4 variations in 2x2 grid)
+        this.load.spritesheet('spinosaurus-tail-segment', 'assets/sprites/enemies/spinosaurus_tail.png', {
             frameWidth: 64,
             frameHeight: 64
         });
 
-        // Load Leviathan boss sprite - Phase 1 (4 directional views in 2x2 grid)
-        this.load.spritesheet('leviathan-boss', 'assets/sprites/enemies/leviathan.png', {
+        // Load The Behemoth (Triceratops) boss sprite - Phase 1 (4 directional views in 2x2 grid)
+        this.load.spritesheet('triceratops-boss', 'assets/sprites/enemies/triceratops.png', {
             frameWidth: 128,
             frameHeight: 128
         });
 
-        // Load Leviathan boss sprite - Phase 2 evolved form (4 directional views in 2x2 grid)
-        this.load.spritesheet('leviathan-evolved', 'assets/sprites/enemies/leviathan_evolved.png', {
+        // Load The Behemoth (Triceratops) boss sprite - Phase 2 evolved form (4 directional views in 2x2 grid)
+        this.load.spritesheet('triceratops-evolved', 'assets/sprites/enemies/triceratops_evolved.png', {
             frameWidth: 128,
             frameHeight: 128
         });
@@ -245,7 +240,7 @@ export class PreloadScene extends Phaser.Scene {
         }
 
         // Enemy animations
-        this.createEnemyIdleAnimation('lobster-bandit', 2); // 2 frames
+        this.createEnemyIdleAnimation('velociraptor-bandit', 2); // 2 frames
 
         console.log('Starting game...');
         this.scene.start('StartScene');

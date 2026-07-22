@@ -24,9 +24,9 @@ export class ScoreManager {
 
         // Boss victory bonuses
         this.BOSS_VICTORY_BONUS = {
-            boss_iron_shell: 500,
-            boss_kraken_arm: 750,
-            boss_leviathan: 1000
+            boss_trex: 500,
+            boss_spinosaurus: 750,
+            boss_triceratops: 1000
         };
 
         console.log('ScoreManager initialized');

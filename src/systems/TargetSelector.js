@@ -14,9 +14,9 @@ export class TargetSelector {
                 if (!this.lockedTarget.enemy || !this.lockedTarget.enemy.isAlive()) {
                     this.clearLock();
                 }
-            } else if (this.lockedTarget.type === 'tentacle') {
-                const tentacle = this.lockedTarget.enemy.tentacles[this.lockedTarget.tentacleIndex];
-                if (!this.lockedTarget.enemy || !this.lockedTarget.enemy.isAlive() || !tentacle || !tentacle.alive) {
+            } else if (this.lockedTarget.type === 'tailSegment') {
+                const tailSegment = this.lockedTarget.enemy.tailSegments[this.lockedTarget.tailSegmentIndex];
+                if (!this.lockedTarget.enemy || !this.lockedTarget.enemy.isAlive() || !tailSegment || !tailSegment.alive) {
                     this.clearLock();
                 }
             } else if (this.lockedTarget.type === 'prop') {
@@ -26,7 +26,7 @@ export class TargetSelector {
             }
         }
 
-        // Priority 1: Locked target (enemy or tentacle)
+        // Priority 1: Locked target (enemy or tail segment)
         if (this.lockedTarget) {
             this.currentTarget = this.lockedTarget;
             return this.currentTarget;
@@ -136,7 +136,7 @@ export class TargetSelector {
     }
 
     lockTarget(target) {
-        // Accept any target structure (enemy object or tentacle object)
+        // Accept any target structure (enemy object or tail segment object)
         this.lockedTarget = target;
     }
 
@@ -160,18 +160,18 @@ export class TargetSelector {
                 label: enemy.config.name
             });
 
-            // Add Kraken tentacles as separate targets
-            if (enemy.type === 'boss_kraken_arm' && enemy.tentacleSprites) {
-                enemy.tentacleSprites.forEach((sprite, index) => {
-                    if (sprite && enemy.tentacles[index] && enemy.tentacles[index].alive) {
-                        const tentacle = enemy.tentacles[index];
+            // Add Spinosaurus tailSegments as separate targets
+            if (enemy.type === 'boss_spinosaurus' && enemy.tailSegmentSprites) {
+                enemy.tailSegmentSprites.forEach((sprite, index) => {
+                    if (sprite && enemy.tailSegments[index] && enemy.tailSegments[index].alive) {
+                        const tailSegment = enemy.tailSegments[index];
                         targets.push({
-                            type: 'tentacle',
+                            type: 'tailSegment',
                             enemy: enemy,
-                            tentacleIndex: index,
-                            x: tentacle.worldX || enemy.worldX,
-                            y: tentacle.worldY || enemy.worldY,
-                            label: `Tentacle ${index + 1}`
+                            tailSegmentIndex: index,
+                            x: tailSegment.worldX || enemy.worldX,
+                            y: tailSegment.worldY || enemy.worldY,
+                            label: `Tail Segment ${index + 1}`
                         });
                     }
                 });
@@ -253,10 +253,10 @@ export class TargetSelector {
             if (!this.lockedTarget) return false;
             if (t.type === 'enemy') {
                 return t.enemy === this.lockedTarget.enemy && this.lockedTarget.type === 'enemy';
-            } else if (t.type === 'tentacle') {
+            } else if (t.type === 'tailSegment') {
                 return t.enemy === this.lockedTarget.enemy &&
-                       t.tentacleIndex === this.lockedTarget.tentacleIndex &&
-                       this.lockedTarget.type === 'tentacle';
+                       t.tailSegmentIndex === this.lockedTarget.tailSegmentIndex &&
+                       this.lockedTarget.type === 'tailSegment';
             } else if (t.type === 'prop') {
                 return t.prop === this.lockedTarget.prop && this.lockedTarget.type === 'prop';
             }

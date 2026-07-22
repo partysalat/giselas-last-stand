@@ -6,8 +6,8 @@ export class BossAnnouncer {
 
     /**
      * Display boss announcement overlay
-     * @param {string} bossName - Name of the boss (e.g., "Iron Shell")
-     * @param {string} subtitle - Subtitle text (e.g., "The Armored Terror")
+     * @param {string} bossName - Name of the boss (e.g., "Iron Jaw")
+     * @param {string} subtitle - Subtitle text (e.g., "The Apex Terror")
      * @param {number} color - Color for spotlight effect
      */
     announceBoss(bossName, subtitle, color = 0xff0000) {

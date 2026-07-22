@@ -1,6 +1,6 @@
 /**
  * EnemyBullet.js
- * Projectile fired by enemies (Shrimp and Lobsters)
+ * Projectile fired by enemies (Compy and Velociraptors)
  * Note: Enemy bullets CAN and SHOULD hit all players
  * Collision checking is handled in GameScene.updateEnemyBullets()
  */
