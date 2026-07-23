@@ -29,8 +29,8 @@ export class Player {
         this.lastFlipX = false;      // true when facing right
         this.lastShootTime = 0;
 
-        // Scale: 640px frame * 0.1 = 64px display
-        this.sprite.setScale(0.1);
+        // Scale: 128px frame * 0.5 = 64px display
+        this.sprite.setScale(0.5);
 
         // Physical dimensions (must be set before creating shadow)
         this.height = ISOMETRIC_CONFIG.PLAYER_HEIGHT;
@@ -48,8 +48,8 @@ export class Player {
         scene.physics.add.existing(this.sprite);
 
         // Physics body is only used for collision detection, not movement
-        // Offset centers the dummy body within the 640x640 frame
-        this.sprite.body.setCircle(ISOMETRIC_CONFIG.PLAYER_RADIUS, 320, 320);
+        // Offset centers the dummy body within the 128x128 frame
+        this.sprite.body.setCircle(ISOMETRIC_CONFIG.PLAYER_RADIUS, 64, 64);
         // Don't use setCollideWorldBounds - we handle bounds in world space, not screen space
         this.sprite.body.setImmovable(true); // Prevents physics from moving the body
 

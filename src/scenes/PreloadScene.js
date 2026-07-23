@@ -29,7 +29,7 @@ export class PreloadScene extends Phaser.Scene {
             for (const { key, file } of playerSheets) {
                 this.load.spritesheet(`gisela-${color}-${key}`,
                     `assets/sprites/player/${color}/${file}`,
-                    { frameWidth: 640, frameHeight: 640 }
+                    { frameWidth: 128, frameHeight: 128 }
                 );
             }
         }
