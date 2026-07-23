@@ -4,6 +4,11 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     preload() {
+        const assetBase = this.registry.get('assetBase');
+        if (assetBase) {
+            this.load.setBaseURL(assetBase);
+        }
+
         // Add loading bar (optional but nice)
         this.createLoadingBar();
 

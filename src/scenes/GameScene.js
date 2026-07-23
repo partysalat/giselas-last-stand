@@ -1373,8 +1373,9 @@ export class GameScene extends Phaser.Scene {
     handleVictory() {
         this.isGameOver = true;
 
-        if (typeof window.onGameWin === 'function') {
-            window.onGameWin({
+        const onGameWin = this.registry.get('onGameWin') || window.onGameWin;
+        if (typeof onGameWin === 'function') {
+            onGameWin({
                 players: this.playerManager.players.length,
                 difficulty: this.difficulty.id.toUpperCase()
             });
