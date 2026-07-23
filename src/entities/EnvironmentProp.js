@@ -691,37 +691,111 @@ export class EnvironmentProp {
         // Convert explosion radius from world units to pixels
         const explosionRadiusPixels = this.explosionRadius * PIXELS_PER_WORLD_UNIT;
 
-        // Visual explosion effect at SCREEN position
+        // Bright white-yellow core flash - the initial punch of the blast
+        const core = this.scene.add.circle(
+            screenX,
+            screenY,
+            explosionRadiusPixels * 0.6,
+            0xFFFFCC,
+            1
+        );
+        core.setDepth(26);
+        this.scene.tweens.add({
+            targets: core,
+            scale: { from: 0.3, to: 1.6 },
+            alpha: { from: 1, to: 0 },
+            duration: 150,
+            ease: 'Cubic.easeOut',
+            onComplete: () => core.destroy()
+        });
+
+        // Expanding fireball
         const explosion = this.scene.add.circle(
             screenX,
             screenY,
             explosionRadiusPixels,
             0xFF4500,
-            0.6
+            0.75
         );
         explosion.setDepth(25);
+        this.scene.tweens.add({
+            targets: explosion,
+            scale: { from: 0.4, to: 2.2 },
+            alpha: { from: 0.9, to: 0 },
+            duration: 450,
+            ease: 'Cubic.easeOut',
+            onComplete: () => explosion.destroy()
+        });
 
-        // DEBUG: Show physics force radius (slightly larger, blue outline)
-        const forceRadius = this.scene.add.circle(
+        // Shockwave ring - a thick outline racing outward ahead of the smoke
+        const shockwave = this.scene.add.circle(
             screenX,
             screenY,
             explosionRadiusPixels,
-            0x0000FF,
+            0x000000,
             0
         );
-        forceRadius.setStrokeStyle(3, 0x00FFFF);
-        forceRadius.setDepth(25);
-
+        shockwave.setStrokeStyle(6, 0xFFD700, 0.9);
+        shockwave.setDepth(27);
         this.scene.tweens.add({
-            targets: [explosion, forceRadius],
-            scale: { from: 0.5, to: 2 },
-            alpha: { from: 0.8, to: 0 },
-            duration: 400,
-            onComplete: () => {
-                explosion.destroy();
-                forceRadius.destroy();
-            }
+            targets: shockwave,
+            scale: { from: 0.2, to: 2.6 },
+            alpha: { from: 1, to: 0 },
+            duration: 350,
+            ease: 'Cubic.easeOut',
+            onComplete: () => shockwave.destroy()
         });
+
+        // Lingering smoke cloud for extra weight after the flash fades
+        const smoke = this.scene.add.circle(
+            screenX,
+            screenY,
+            explosionRadiusPixels * 0.9,
+            0x333333,
+            0.5
+        );
+        smoke.setDepth(24);
+        this.scene.tweens.add({
+            targets: smoke,
+            scale: { from: 0.6, to: 2.4 },
+            alpha: { from: 0.5, to: 0 },
+            duration: 900,
+            delay: 100,
+            ease: 'Sine.easeOut',
+            onComplete: () => smoke.destroy()
+        });
+
+        // Flying debris chunks flung outward from the blast center
+        const debrisCount = 8;
+        for (let i = 0; i < debrisCount; i++) {
+            const angle = (i / debrisCount) * Math.PI * 2 + Math.random() * 0.4;
+            const distance = explosionRadiusPixels * (0.9 + Math.random() * 0.6);
+            const debris = this.scene.add.circle(
+                screenX,
+                screenY,
+                3 + Math.random() * 4,
+                Math.random() > 0.5 ? 0xFF8C00 : 0x555555,
+                1
+            );
+            debris.setDepth(28);
+            this.scene.tweens.add({
+                targets: debris,
+                x: screenX + Math.cos(angle) * distance,
+                y: screenY + Math.sin(angle) * distance,
+                alpha: { from: 1, to: 0 },
+                duration: 400 + Math.random() * 200,
+                ease: 'Cubic.easeOut',
+                onComplete: () => debris.destroy()
+            });
+        }
+
+        // Screen shake and flash scaled to the size of the blast - bigger barrels hit harder
+        if (this.scene.cameras && this.scene.cameras.main) {
+            const shakeIntensity = Math.min(0.02, 0.006 + this.explosionRadius * 0.003 + this.explosionDamage * 0.0003);
+            const shakeDuration = Math.min(400, 150 + this.explosionRadius * 30);
+            this.scene.cameras.main.shake(shakeDuration, shakeIntensity);
+            this.scene.cameras.main.flash(150, 255, 180, 80);
+        }
 
         // Damage entities in radius (use WORLD coordinates)
         this.scene.time.delayedCall(50, () => {
