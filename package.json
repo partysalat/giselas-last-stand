@@ -7,7 +7,7 @@
   "scripts": {
     "start": "serve -l 8000",
     "dev": "serve -l 8000",
-    "build": "vite build && node scripts/minify-dist.mjs",
+    "build": "vite build && node scripts/postbuild.mjs",
     "copy:frontend": "rm -rf /Users/ben/git/private/trias-kreide-accounting/frontend/public/game && mkdir -p /Users/ben/git/private/trias-kreide-accounting/frontend/public/game && cp -R dist/. /Users/ben/git/private/trias-kreide-accounting/frontend/public/game",
     "build:frontend": "npm run build && npm run copy:frontend",
     "generate-sprites": "node tools/generateSprites.js"

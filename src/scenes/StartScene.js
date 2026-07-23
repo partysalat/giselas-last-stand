@@ -83,7 +83,7 @@ export class StartScene extends Phaser.Scene {
         // Crab sprite placeholder (invisible until player joins)
         const color = this.colors[playerIndex];
         const crabSprite = this.add.sprite(x, y, `gisela-${color}-idle`);
-        crabSprite.setScale(0.2);
+        crabSprite.setScale(1);
         crabSprite.setVisible(false);
 
         // Ready text
