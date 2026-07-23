@@ -18,7 +18,7 @@ export class FortificationManager {
             { radius: 12, waves: [1, 2, 3], propCount: 8 },      // Outer ring
             { radius: 8, waves: [4, 5, 6], propCount: 10 },      // Middle ring
             { radius: 5, waves: [7, 8, 9], propCount: 12 },      // Inner ring
-            { radius: 3, waves: [10, 11, 12], propCount: 8 }     // Core ring
+            { radius: 5, waves: [10, 11, 12], propCount: 8 }     // Core ring
         ];
 
         // Center of world space (15, 12 = center of 30x25 world grid)

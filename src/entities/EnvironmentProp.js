@@ -798,8 +798,10 @@ export class EnvironmentProp {
         }
 
         // Damage entities in radius (use WORLD coordinates)
+        // Knockback force scales with blast size/power - felt but not map-flinging
+        const enemyKnockbackForce = this.explosionRadius * 10 + this.explosionDamage * 0.8;
         this.scene.time.delayedCall(50, () => {
-            this.damageInRadius(this.worldX, this.worldY, this.explosionRadius, this.explosionDamage);
+            this.damageInRadius(this.worldX, this.worldY, this.explosionRadius, this.explosionDamage, enemyKnockbackForce);
         });
 
         // Phase 2: Apply explosion force to nearby props (use WORLD coordinates)
@@ -825,8 +827,9 @@ export class EnvironmentProp {
      * @param {number} worldY - World Y position of damage center
      * @param {number} radius - Damage radius
      * @param {number} damage - Damage amount
+     * @param {number} knockbackForce - Outward knockback force applied to enemies (0 = none)
      */
-    damageInRadius(worldX, worldY, radius, damage) {
+    damageInRadius(worldX, worldY, radius, damage, knockbackForce = 0) {
         // Damage players (use WORLD coordinates)
         if (this.scene.playerManager) {
             this.scene.playerManager.getLivingPlayers().forEach(player => {
@@ -850,6 +853,16 @@ export class EnvironmentProp {
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist < radius) {
+                    // Apply knockback BEFORE damage so a killing blow already has
+                    // knockbackVelocity set when kill() checks for it (death-fling)
+                    if (knockbackForce > 0 && dist > 0 && enemy.applyKnockback) {
+                        const falloff = 1 - (dist / radius);
+                        enemy.applyKnockback(
+                            (dx / dist) * knockbackForce * falloff,
+                            (dy / dist) * knockbackForce * falloff
+                        );
+                    }
+
                     enemy.takeDamage(damage);
                 }
             });
@@ -2234,8 +2247,8 @@ export const PROP_TYPES = {
         weightClass: 'medium',
         color: 0x8B4513,
         blocksBullets: true,
-        explosionRadius: 4.0,   // 200px / 50
-        explosionDamage: 20,
+        explosionRadius: 6.0,   // 300px / 50
+        explosionDamage: 35,
         layer: 'ground',
         spriteScale: 2.5
     },
@@ -2250,8 +2263,8 @@ export const PROP_TYPES = {
         weightClass: 'medium',
         color: 0x8B2500,
         blocksBullets: true,
-        explosionRadius: 1.2,   // 60px / 50
-        explosionDamage: 20,
+        explosionRadius: 5.0,   // 250px / 50 - widened, was too small to ever reach enemies
+        explosionDamage: 30,
         onDestroy: 'createLiquidTrailFire',
         fireRadius: 1.2,        // 60px / 50
         fireDuration: 10000,
@@ -2272,8 +2285,8 @@ export const PROP_TYPES = {
         weightClass: 'medium',
         color: 0xD2691E,
         blocksBullets: true,
-        explosionRadius: 2.0,   // 100px / 50
-        explosionDamage: 30,
+        explosionRadius: 5.5,   // 275px / 50 - widened, was too small to ever reach enemies
+        explosionDamage: 45,
         onDestroy: 'triggerChainExplosions',
         layer: 'ground',
         spriteKey: 'interior3',
@@ -2644,8 +2657,8 @@ export const PROP_TYPES = {
         weightClass: 'medium',
         color: 0x2F4F4F,
         blocksBullets: true,
-        explosionRadius: 1.6,   // 80px / 50
-        explosionDamage: 35,
+        explosionRadius: 5.0,   // 250px / 50 - widened, was too small to ever reach enemies
+        explosionDamage: 50,
         layer: 'ground',
         spriteKey: 'interior3',
         spriteFrame: 5,
@@ -2702,8 +2715,8 @@ export const PROP_TYPES = {
         weightClass: 'medium',
         color: 0xFF4500,
         blocksBullets: true,
-        explosionRadius: 1.4,   // 70px / 50
-        explosionDamage: 25,
+        explosionRadius: 4.5,   // 225px / 50 - widened, was too small to ever reach enemies
+        explosionDamage: 35,
         onDestroy: 'createLiquidTrailFire',
         fireRadius: 1.1,        // 55px / 50
         fireDuration: 10000,

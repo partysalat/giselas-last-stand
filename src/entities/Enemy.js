@@ -1,5 +1,5 @@
 import { EnemyBullet } from './EnemyBullet.js';
-import { worldToScreen, screenToWorld, calculateDepth, worldDistance2D } from '../utils/CoordinateTransform.js';
+import { worldToScreen, screenToWorld, calculateDepth, worldDistance2D, WORLD_MIN_X, WORLD_MAX_X, WORLD_MIN_Y, WORLD_MAX_Y } from '../utils/CoordinateTransform.js';
 import { ISOMETRIC_CONFIG } from '../config.js';
 
 // Enemy type configurations
@@ -264,6 +264,16 @@ export class Enemy {
         this.chargingAttack = false;
         this.chargeHitPlayer = false;
         this.lastChargeTime = 0;
+
+        // Knockback (e.g. from explosions) - applied on top of normal behavior movement
+        this.knockbackVelocityX = 0;
+        this.knockbackVelocityY = 0;
+
+        // Death-fling: briefly ragdolls a killing-blow explosion victim instead of
+        // removing it instantly, so the knockback is visible even on a kill
+        this.isDying = false;
+        this.dyingElapsed = 0;
+        this.dyingDuration = 350; // ms
 
         // Spinosaurus tailSegment system
         this.tailSegments = [];
@@ -652,6 +662,23 @@ export class Enemy {
     update(time, delta, playerWorldX, playerWorldY) {
         if (!this.alive) return;
 
+        // Death-fling: killing blow had knockback, so ragdoll it briefly instead of
+        // vanishing on the spot - skips all normal AI/behavior while it plays out
+        if (this.isDying) {
+            this.deltaSeconds = (delta || 16.67) / 1000;
+            this.dyingElapsed += delta || 16.67;
+            this.updateKnockback(this.deltaSeconds);
+
+            const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
+            this.sprite.setPosition(screenX, screenY);
+            this.sprite.setAlpha(Math.max(0, 1 - this.dyingElapsed / this.dyingDuration));
+
+            if (this.dyingElapsed >= this.dyingDuration) {
+                this.alive = false;
+            }
+            return;
+        }
+
         // Phase 4: Check if stun has expired
         if (this.stunned && Date.now() >= this.stunEndTime) {
             this.stunned = false;
@@ -717,6 +744,8 @@ export class Enemy {
                 this.updateBossTriceratops(time, playerWorldX, playerWorldY);
                 break;
         }
+
+        this.updateKnockback(this.deltaSeconds);
 
         // Update sprite position from world coordinates
         const { screenX, screenY } = worldToScreen(this.worldX, this.worldY, this.worldZ);
@@ -1212,6 +1241,43 @@ export class Enemy {
         return this.health;
     }
 
+    /**
+     * Apply an outward knockback impulse (e.g. from an explosion)
+     * @param {number} forceX - World-space X force
+     * @param {number} forceY - World-space Y force
+     */
+    applyKnockback(forceX, forceY) {
+        // Bosses are much heavier and barely budge
+        const massMultiplier = this.type.startsWith('boss_') ? 0.15 : 1;
+
+        this.knockbackVelocityX += forceX * massMultiplier;
+        this.knockbackVelocityY += forceY * massMultiplier;
+    }
+
+    /**
+     * Decay and apply any active knockback velocity on top of normal movement
+     * @param {number} deltaSeconds - Frame delta in seconds
+     */
+    updateKnockback(deltaSeconds) {
+        if (this.knockbackVelocityX === 0 && this.knockbackVelocityY === 0) {
+            return;
+        }
+
+        this.worldX += this.knockbackVelocityX * deltaSeconds;
+        this.worldY += this.knockbackVelocityY * deltaSeconds;
+
+        this.worldX = Math.max(WORLD_MIN_X + 0.5, Math.min(WORLD_MAX_X - 0.5, this.worldX));
+        this.worldY = Math.max(WORLD_MIN_Y + 0.5, Math.min(WORLD_MAX_Y - 0.5, this.worldY));
+
+        // Friction - decays knockback velocity to zero over a fraction of a second
+        const friction = Math.max(0, 1 - deltaSeconds * 4);
+        this.knockbackVelocityX *= friction;
+        this.knockbackVelocityY *= friction;
+
+        if (Math.abs(this.knockbackVelocityX) < 0.05) this.knockbackVelocityX = 0;
+        if (Math.abs(this.knockbackVelocityY) < 0.05) this.knockbackVelocityY = 0;
+    }
+
     flashProtectionShield() {
         // Create brief shield flash
         const shield = this.scene.add.circle(
@@ -1231,6 +1297,17 @@ export class Enemy {
     }
 
     kill() {
+        // If the killing blow carried explosion knockback, ragdoll briefly instead
+        // of vanishing on the spot so the shove actually reads
+        const hasKnockback = Math.abs(this.knockbackVelocityX) > 0.5 || Math.abs(this.knockbackVelocityY) > 0.5;
+        if (hasKnockback && this.sprite) {
+            this.isDying = true;
+            this.dyingElapsed = 0;
+            this.sprite.setTint(0x880000);
+            console.log('Enemy killed (death-fling)');
+            return;
+        }
+
         this.alive = false;
         console.log('Enemy killed');
     }
@@ -2498,6 +2575,12 @@ export class Enemy {
     }
 
     spawnMinions(minionTypes) {
+        // Scheduled via delayedCall from the phase-2 transition, so the boss
+        // may already be dead (e.g. player wins) by the time this fires.
+        if (!this.sprite || !this.sprite.active) {
+            return;
+        }
+
         console.log('Triceratops spawning minions:', minionTypes);
         this.sprite.play(`${this.spritePrefix}-summon`);
 
